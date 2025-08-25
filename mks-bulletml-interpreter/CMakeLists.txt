@@ -2,17 +2,22 @@ cmake_minimum_required(VERSION 3.5)
 
 project(mks-bulletml-interpreter LANGUAGES C)
 
-# C11 aktivieren
+# activate c11
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # create library
 add_library(mks-bulletml-interpreter SHARED
-    mks-bulletml-interpreter.c
+    mks-bulletml-interpreter.c mks-bulletml-interpreter.h
+    tinyexpr.c tinyexpr.h
+    platform_random.h
 )
 
 # include headers
-target_include_directories(mks-bulletml-interpreter PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(mks-bulletml-interpreter PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    /usr/include/libxml2
+)
 
 # target directory of the .so-file
 set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
@@ -24,4 +29,10 @@ add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
         $<TARGET_FILE:mks-bulletml-interpreter>
         ${PLAYER_BUILD_DIR}
     COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Debug"
+)
+
+# link libraries
+target_link_libraries(mks-bulletml-interpreter
+    xml2
+    m
 )

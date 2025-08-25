@@ -8,8 +8,13 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
+
+#define MKSBMLI_NO_ERROR 0
 
 EXPORT int mksbmli_init();
 EXPORT int mksbmli_shutdown();
+
+EXPORT int mksbmli_set_random_seed(int seed);
 
 #endif // MKSBULLETMLINTERPRETER_H
