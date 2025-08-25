@@ -53,3 +53,12 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# -------------------------------------------------------
+_*/
+_*
+
+*.user
+
+build-mks-bulletml-interpreter-Desktop-Debug/
+build-mks-bulletml-player-Desktop-Debug
