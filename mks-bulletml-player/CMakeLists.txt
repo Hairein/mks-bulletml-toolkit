@@ -13,15 +13,20 @@ set(INTERPRETER_LIB_DIR "../build-mks-bulletml-interpreter-Desktop-Debug")
 # include headers
 include_directories(${INTERPRETER_INCLUDE_DIR})
 
-# inclde .so-file
+# include .so-file
+set(RAYLIB_LIB_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
+link_directories(${RAYLIB_LIB_DIR})
 link_directories(${INTERPRETER_LIB_DIR})
 
 # create executable
 add_executable(mks-bulletml-player
     main.c
+    raylib.h raygui.h raymath.h
 )
 
 # link shared library
 target_link_libraries(mks-bulletml-player
     mks-bulletml-interpreter
+    raylib
+    m
 )
