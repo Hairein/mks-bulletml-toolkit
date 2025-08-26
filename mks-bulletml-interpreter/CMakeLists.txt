@@ -9,8 +9,16 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # create library
 add_library(mks-bulletml-interpreter SHARED
     mks-bulletml-interpreter.c mks-bulletml-interpreter.h
+    raylib.h raymath.h
     tinyexpr.c tinyexpr.h
     platform_random.h
+    playback.c playback.h
+    virtual_bullet.c virtual_bullet.h
+    state.c state.h
+    bulletml.c bulletml.h
+    bulletml_base.h
+    bulletml_base.c
+    action.c action.h
 )
 
 # include headers

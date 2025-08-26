@@ -1,0 +1,20 @@
+#ifndef STATE_H
+#define STATE_H
+
+#include "mks-bulletml-interpreter.h"
+#include "playback.h"
+
+typedef struct {
+    MKSBMLI_PLAYBACK_HANDLE next_free_playback_handle;
+    Playback playbacks[MKSBMLI_MAX_PLAYBACK_HANDLES];
+} State;
+
+void init_state(State* state);
+void shutdown_state(State* state);
+
+int add_playback(State* state, const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE* handle);
+int remove_playback(State* state, MKSBMLI_PLAYBACK_HANDLE handle);
+int count_playbacks(State* state);
+int find_playback(State* state, MKSBMLI_PLAYBACK_HANDLE handle, Playback* playback);
+
+#endif // STATE_H
