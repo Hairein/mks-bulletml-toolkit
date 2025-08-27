@@ -4,7 +4,17 @@
 #include "mks-bulletml-interpreter.h"
 #include "virtual_bullet.h"
 #include "bulletml.h"
+#include "bullet.h"
 #include "action.h"
+#include "fire.h"
+#include "change_direction.h"
+#include "change_speed.h"
+#include "accel.h"
+#include "wait.h"
+#include "vanish.h"
+#include "repeat.h"
+#include "direction.h"
+#include "speed.h"
 
 typedef struct {
     MKSBMLI_PLAYBACK_HANDLE handle;
@@ -32,6 +42,16 @@ int parse_xml_file(Playback* playback, const char* xml_filename);
 void traverse_xml_file(Playback* playback, xmlNode* node, BulletmlBase* parent);
 
 void parse_bulletml(Playback* playback, xmlNode* node, Bulletml* bulletml);
+void parse_bullet(Playback* playback, xmlNode* node, BulletmlBase* parent, Bullet* bullet);
 void parse_action(Playback* playback, xmlNode* node, BulletmlBase* parent, Action* action);
+void parse_fire(Playback* playback, xmlNode* node, BulletmlBase* parent, Fire* fire);
+void parse_change_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, ChangeDirection* change_direction);
+void parse_change_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, ChangeSpeed* change_speed);
+void parse_accel(Playback* playback, xmlNode* node, BulletmlBase* parent, Accel* accel);
+void parse_wait(Playback* playback, xmlNode* node, BulletmlBase* parent, Wait* wait);
+void parse_vanish(Playback* playback, xmlNode* node, BulletmlBase* parent, Vanish* vanish);
+void parse_repeat(Playback* playback, xmlNode* node, BulletmlBase* parent, Repeat* repeat);
+void parse_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, Direction* direction);
+void parse_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, Speed* speed);
 
 #endif // PLAYBACK_H

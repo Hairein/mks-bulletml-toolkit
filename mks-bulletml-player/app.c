@@ -13,7 +13,7 @@ int init_app(App* app) {
 
     const char test_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/basic_bml.xml";
     int add_result = add_xml_file(app, test_xml_filename);
-    printf("add_result: %d\n", (int)add_result);
+    printf("add xml file %s result: %d\n", test_xml_filename, (int)add_result);
 
     return MKSBMLP_NO_ERROR;
 }

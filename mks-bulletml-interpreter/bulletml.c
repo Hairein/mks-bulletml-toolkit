@@ -1,3 +1,4 @@
+#include "utility.h"
 #include "bulletml.h"
 
 void init_bulletml(Bulletml* bulletml, BulletmlBase* parent, BULLETML_ATTRIBUTE_TYPE attribute) {
@@ -8,10 +9,10 @@ void init_bulletml(Bulletml* bulletml, BulletmlBase* parent, BULLETML_ATTRIBUTE_
 }
 
 void dump_bulletml(Bulletml* bulletml) {
-    char type[128] = "none";
+    char type[MKSBMLI_MAX_TEXT_LENGTH] = "none";
     switch(bulletml->attribute) {
-    case BULLETML_ATTRIBUTE_TYPE_VERTICAL: strncpy(type, "vertical", MKSBMLI_MAX_TEXT_LENGTH); break;
-    case BULLETML_ATTRIBUTE_TYPE_HORIZONTAL: strncpy(type, "horizontal", MKSBMLI_MAX_TEXT_LENGTH); break;
+    case BULLETML_ATTRIBUTE_TYPE_VERTICAL: copy_text(type, "vertical"); break;
+    case BULLETML_ATTRIBUTE_TYPE_HORIZONTAL: copy_text(type, "horizontal"); break;
     default: break;
     }
 

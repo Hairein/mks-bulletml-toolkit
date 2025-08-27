@@ -15,10 +15,20 @@ add_library(mks-bulletml-interpreter SHARED
     playback.c playback.h
     virtual_bullet.c virtual_bullet.h
     state.c state.h
+    utility.c utility.h
+    bulletml_base.c bulletml_base.h
     bulletml.c bulletml.h
-    bulletml_base.h
-    bulletml_base.c
+    bullet.c bullet.h
     action.c action.h
+    fire.c fire.h
+    change_direction.c change_direction.h
+    change_speed.c change_speed.h
+    accel.c accel.h
+    wait.c wait.h
+    vanish.c vanish.h
+    repeat.c repeat.h
+    direction.c direction.h
+    speed.c speed.h
 )
 
 # include headers
