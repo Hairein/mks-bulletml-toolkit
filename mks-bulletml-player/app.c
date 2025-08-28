@@ -1,3 +1,7 @@
+#include <limits.h>
+
+#include "mks-bulletml-interpreter.h"
+#include "utility.h"
 #include "app.h"
 
 Color bg_color = {22, 22, 22, 255};
@@ -21,70 +25,90 @@ int init_app(App* app) {
     const char test3_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/aimed_bml.xml";
     int add_result3 = add_xml_file(app, test3_xml_filename);
     printf("add xml file %s result: %d\n", test3_xml_filename, (int)add_result3);
+    printf("\n");
+
+    app->is_playing = false;
+    app->pause_after_frame = false;
+    app->stop_playing = false;
+
+    app->frame_counter = 0;
+
+    mksbmli_set_random_seed(1337);
+
+    app->current_active_playback_index = 0;
+    mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
+    printf("start playing");
 
     return MKSBMLP_NO_ERROR;
 }
 
-int update_app(App* app) {
-    return MKSBMLP_NO_ERROR;
+void update_app(App* app) {
+    handle_input(app);
+
+    if(app->is_playing) {
+        mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);
+
+        printf("playing frame %d...\n", app->frame_counter++);
+        if(app->frame_counter >= UINT_MAX) app->frame_counter -= UINT_MAX;
+    }
 }
 
-int render_app(App* app) {
+void post_update_app(App* app) {
+    if(app->pause_after_frame) {
+        app->pause_after_frame = false;
+
+        app->is_playing = false;
+
+        printf("paused playing\n");
+    }
+
+    if(app->stop_playing) {
+        app->stop_playing = false;
+
+        mksbmli_stop_playback(app->playback_handles[app->current_active_playback_index]);
+        app->frame_counter = 0;
+
+        app->is_playing = false;
+
+        printf("stopped playing\n");
+    }
+}
+
+void render_app(App* app) {
     calculate_playfield(app);
 
     ClearBackground(bg_color);
 
     DrawRectangle(app->projected_playfield.x, app->projected_playfield.y, app->projected_playfield.width, app->projected_playfield.height, playfield_bg_color);
-
-    return MKSBMLP_NO_ERROR;
 }
 
-int set_playfield_dims(App* app, int width, int height)
+void handle_input(App* app)
 {
-    if(width < 64 || width > 4096 || height < 64 || height > 4096) {
-        return MKSBMLP_INVALID_PARAMETER;
+    if(IsKeyReleased(KEY_Q)) {
+        printf("Key Q - Stop Playing\n");
+
+        app->stop_playing = true;
     }
+    else if(IsKeyReleased(KEY_W)) {
+        if(!app->is_playing) {
+            printf("Key W - Play\n");
 
-    app->virtual_playfield_dims = (Vector2){width, height};
-
-    return MKSBMLP_NO_ERROR;
-}
-
-int add_xml_file(App* app, const char* xml_filename){
-    MKSBMLI_PLAYBACK_HANDLE handle;
-    int load_result = mksbmli_load_xml(xml_filename, &handle);
-    if(load_result != MKSBMLP_NO_ERROR) return load_result;
-    if(handle == 0) return MKSBMLP_UNSPECIFIED_ERROR;
-
-    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
-        if(app->playback_handles[index] != 0) continue;
-
-        strcpy((char*)&app->xml_filenames[index], xml_filename);
-        app->playback_handles[index] = handle;
-
-        return MKSBMLP_NO_ERROR;
+            app->is_playing = true;
+        }
     }
+    else if(IsKeyDown(KEY_E)) {
+        if(!app->pause_after_frame) {
+            printf("Key E - Play Frame\n");
 
-    return MKSBMLP_TOO_MANY_XML_FILES;
-}
-
-void calculate_playfield(App* app) {
-    float screen_width = GetScreenWidth();
-    float screen_height = GetScreenHeight();
-
-    float virtual_width_ratio = app->virtual_playfield_dims.x / app->virtual_playfield_dims.y;
-
-    float virtual_width = screen_width;
-    float virtual_height = screen_width / virtual_width_ratio;
-
-    if(virtual_height > screen_height) {
-        float virtual_height_ratio = app->virtual_playfield_dims.y / screen_height;
-        virtual_width = app->virtual_playfield_dims.x / virtual_height_ratio;
-        virtual_height = screen_height;
+            app->is_playing = true;
+            app->pause_after_frame = true;
+        }
     }
+    else if(IsKeyReleased(KEY_R)) {
+        if(app->is_playing && !app->pause_after_frame) {
+            printf("Key R - Pause Playing\n");
 
-    app->projected_playfield.x = screen_width / 2.0f - (virtual_width / 2.0f);
-    app->projected_playfield.y = screen_height / 2.0f - (virtual_height / 2.0f);
-    app->projected_playfield.width = virtual_width;
-    app->projected_playfield.height = virtual_height;
+            app->pause_after_frame = true;
+        }
+    }
 }

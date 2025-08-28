@@ -8,9 +8,6 @@
 #endif
 
 #include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -90,7 +87,6 @@ EXPORT int mksbmli_count_xmls();
 
 EXPORT void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle);
 EXPORT void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle);
-EXPORT bool mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle);
 EXPORT void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);
 
 EXPORT int mksbmli_get_bullets();

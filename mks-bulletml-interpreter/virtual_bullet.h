@@ -13,7 +13,7 @@ typedef struct {
     float speed;
 
     Vector2 directional_velocity;
-    Vector2 angular_velocity;
+    float angular_velocity;
 } VirtualBullet;
 
 void init_virtual_bullet(VirtualBullet* virtual_bullet, MKSBMLI_BULLET_HANDLE handle);

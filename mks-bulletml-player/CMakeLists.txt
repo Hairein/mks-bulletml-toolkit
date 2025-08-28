@@ -26,6 +26,8 @@ add_executable(mks-bulletml-player
     main.c
     raylib.h raygui.h raymath.h
     app.c app.h
+    utility.h
+    utility.c
 )
 
 # link shared library

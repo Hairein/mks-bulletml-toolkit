@@ -8,7 +8,7 @@ void init_virtual_bullet(VirtualBullet* virtual_bullet, MKSBMLI_BULLET_HANDLE ha
     virtual_bullet->speed = 0.0f;
 
     virtual_bullet->directional_velocity = (Vector2){0.0f, 0.0f};
-    virtual_bullet->angular_velocity = (Vector2){0.0f, 0.0f};
+    virtual_bullet->angular_velocity = 0.0f;
 }
 
 int update_virtual_bullet(VirtualBullet* virtual_bullet) {

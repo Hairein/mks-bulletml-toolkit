@@ -4,6 +4,7 @@
 #include "raygui.h"
 
 #include "mks-bulletml-interpreter.h"
+#include "utility.h"
 #include "app.h"
 
 int main()
@@ -21,13 +22,13 @@ int main()
 
     while (!WindowShouldClose())
     {
-        int quit_request = update_app(app);
+        update_app(app);
 
         BeginDrawing();
         render_app(app);
         EndDrawing();
 
-        if(quit_request != MKSBMLP_NO_ERROR) break;
+        post_update_app(app);
     }
 
     CloseWindow();

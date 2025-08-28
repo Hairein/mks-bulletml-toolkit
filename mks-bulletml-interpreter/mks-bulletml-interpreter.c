@@ -59,10 +59,6 @@ void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
     set_state_playing(&state, false);
 }
 
-bool mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle) {
-    return state.is_playing;
-}
-
 void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {
     update_state(&state);
 }

@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <string.h>
+
+#include "platform-random.h"
 #include "utility.h"
 
 int extract_xml_property_text(xmlNode* node, char* name, char* text) {
@@ -61,12 +65,12 @@ void extract_xml_text_content(xmlNode* node, char content[MKSBMLI_MAX_TEXT_LENGT
     }
 }
 
-int copy_filename(char* target, const char* source) {
+void copy_filename(char* target, const char* source) {
     memset(target, 0, MKSBMLI_XML_FILENAME_MAX_LENGTH);
     strncpy(target, source, MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
 }
 
-int copy_text(char* target, const char* source) {
+void copy_text(char* target, const char* source) {
     memset(target, 0, MKSBMLI_MAX_TEXT_LENGTH);
     strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH - 1);
 }
@@ -135,4 +139,8 @@ int get_ars_type_text(ARS_TYPE type, char* text) {
     }
 
     return MKSBMLI_NO_ERROR;
+}
+
+float get_random_unit_float() {
+    return (float)(float)GET_RANDOM() / (float)RAND_MAX;
 }

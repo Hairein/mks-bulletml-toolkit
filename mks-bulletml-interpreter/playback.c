@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "utility.h"
 #include "playback.h"
 
