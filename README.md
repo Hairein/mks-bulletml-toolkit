@@ -1,6 +1,8 @@
 # mks-bulletml-toolkit
 MKS BulletML Toolkit - A collection of tools to work with BulletML XML files
 
+These projects were created with the help of AI.
+
 ---
 
 ## Install dependencies
