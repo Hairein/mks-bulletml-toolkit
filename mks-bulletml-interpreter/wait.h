@@ -3,13 +3,16 @@
 
 #include "mks-bulletml-interpreter.h"
 #include "bulletml-base.h"
+#include "bml-number.h"
 
 typedef struct {
     BULLETML_ELEMENT_TYPE type;
     BulletmlBase* parent;
+
+    BmlNumber content;
 } Wait;
 
-void init_wait(Wait* wait, BulletmlBase* parent);
+void init_wait(Wait* wait, BulletmlBase* parent, const char* expression);
 
 void dump_wait(Wait* wait);
 

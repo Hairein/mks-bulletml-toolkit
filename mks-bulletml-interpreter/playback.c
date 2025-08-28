@@ -238,7 +238,10 @@ void parse_accel(Playback* playback, xmlNode* node, BulletmlBase* parent, Accel*
 }
 
 void parse_wait(Playback* playback, xmlNode* node, BulletmlBase* parent, Wait* wait) {
-    init_wait(wait, parent);
+    char frames[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, frames, "1");
+
+    init_wait(wait, parent, frames);
 }
 
 void parse_vanish(Playback* playback, xmlNode* node, BulletmlBase* parent, Vanish* vanish) {
@@ -252,37 +255,61 @@ void parse_repeat(Playback* playback, xmlNode* node, BulletmlBase* parent, Repea
 void parse_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, Direction* direction) {
     AARS_TYPE type = AARS_TYPE_ABSOLUTE;
     extract_xml_property_aars_type(node, &type);
-    init_direction(direction, parent, type);
+
+    char degrees[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, degrees, "0.0");
+
+    init_direction(direction, parent, type, degrees);
 }
 
 void parse_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, Speed* speed) {
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
-    init_speed(speed, parent, type);
+
+    char degrees[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, degrees, "0.0");
+
+    init_speed(speed, parent, type, degrees);
 }
 
 void parse_horizontal(Playback* playback, xmlNode* node, BulletmlBase* parent, Horizontal* horizontal) {
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
-    init_horizontal(horizontal, parent, type);
+
+    char acceleration[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, acceleration, "0.0");
+
+    init_horizontal(horizontal, parent, type, acceleration);
 }
 
 void parse_vertical(Playback* playback, xmlNode* node, BulletmlBase* parent, Vertical* vertical) {
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
-    init_vertical(vertical, parent, type);
+
+    char acceleration[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, acceleration, "0.0");
+
+    init_vertical(vertical, parent, type, acceleration);
 }
 
 void parse_term(Playback* playback, xmlNode* node, BulletmlBase* parent, Term* term) {
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
-    init_term(term, parent);
+
+    char number[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, number, "0.0");
+
+    init_term(term, parent, number);
 }
 
 void parse_times(Playback* playback, xmlNode* node, BulletmlBase* parent, Times* times) {
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
-    init_times(times, parent);
+
+    char number[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, number, "1");
+
+    init_times(times, parent, number);
 }
 
 void parse_bullet_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, BulletRef* bullet_ref) {

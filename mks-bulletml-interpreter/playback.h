@@ -23,6 +23,8 @@
 #include "action-ref.h"
 #include "fire-ref.h"
 #include "param.h"
+#include "bml-number.h"
+#include "bml-string.h"
 
 typedef struct {
     MKSBMLI_PLAYBACK_HANDLE handle;

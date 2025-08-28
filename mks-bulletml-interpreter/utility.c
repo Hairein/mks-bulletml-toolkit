@@ -17,7 +17,7 @@ void extract_xml_property_label_text(xmlNode* node, char* text) {
 
     char entry[MKSBMLI_MAX_TEXT_LENGTH];
     if(extract_xml_property_text(node, "label", entry) == MKSBMLI_NO_ERROR) {
-        strncpy(entry, text, MKSBMLI_MAX_TEXT_LENGTH - 1);
+        strncpy(text, entry, MKSBMLI_MAX_TEXT_LENGTH - 1);
     }
 }
 
@@ -45,6 +45,19 @@ void extract_xml_property_ars_type(xmlNode* node, ARS_TYPE* type) {
     char entry[MKSBMLI_MAX_TEXT_LENGTH];
     if(extract_xml_property_text(node, "type", entry) == MKSBMLI_NO_ERROR) {
         get_ars_type(entry, type);
+    }
+}
+
+void extract_xml_text_content(xmlNode* node, char content[MKSBMLI_MAX_TEXT_LENGTH], const char* default_text) {
+    memset(content, 0, MKSBMLI_MAX_TEXT_LENGTH);
+    strncpy(content, default_text, MKSBMLI_MAX_TEXT_LENGTH - 1);
+
+    if (node && node->children && node->children->type == XML_TEXT_NODE) {
+        xmlChar* child_content = node->children->content;
+        if (child_content) {
+            memset(content, 0, MKSBMLI_MAX_TEXT_LENGTH);
+            strncpy(content, (const char*)child_content, MKSBMLI_MAX_TEXT_LENGTH - 1);
+        }
     }
 }
 
