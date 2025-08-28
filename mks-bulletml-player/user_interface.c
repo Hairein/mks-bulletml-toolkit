@@ -1,4 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/types.h>
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -8,9 +12,17 @@
 void init_user_interface(UserInterface* ui) {
     memset(ui, 0, sizeof(UserInterface));
 
-    strncpy(ui->xml_filenames[0], "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/basic_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
-    strncpy(ui->xml_filenames[1], "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/inter_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
-    strncpy(ui->xml_filenames[2], "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/aimed_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+    // strncpy(ui->xml_filenames[0], "../bulletml_files/basic_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+    // strncpy(ui->xml_filenames[1], "../bulletml_files/inter_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+    // strncpy(ui->xml_filenames[2], "../bulletml_files/aimed_bml.xml", MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+    char xml_files[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
+    int xml_count = 0;
+    load_xml_filenames("../bulletml_files", xml_files, &xml_count);
+
+    for (int i = 0; i < xml_count; i++) {
+        printf("XML-Datei %d: %s\n", i + 1, xml_files[i]);
+        strncpy(ui->xml_filenames[i], xml_files[i], MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+    }
 
     ui->nos_loaded_xmls_files = count_loaded_xml_files(ui);
 
@@ -19,34 +31,33 @@ void init_user_interface(UserInterface* ui) {
 
     extract_xml_shortnames(ui);
 
-    ui->stop_button_texture = LoadTexture("../assets/button_stop.png");
-    ui->play_button_texture = LoadTexture("../assets/button_play.png");
-    ui->play_frame_button_texture = LoadTexture("../assets/button_play_frame.png");
-    ui->pause_button_texture = LoadTexture("../assets/button_pause.png");
+    ui->stop_button_texture = LoadTexture("../assets/textures/button_stop.png");
+    ui->play_button_texture = LoadTexture("../assets/textures/button_play.png");
+    ui->play_frame_button_texture = LoadTexture("../assets/textures/button_play_frame.png");
+    ui->pause_button_texture = LoadTexture("../assets/textures/button_pause.png");
 
     ui->stop_requested = false;
     ui->play_requested = false;
     ui->play_frame_requested = false;
     ui->pause_requested = false;
+
+    ui->change_virtual_dims_requested = false;
+    int new_virtual_dims[2] = {0, 0};
 }
 
 void render_user_interface(UserInterface* ui) {
-    if (ui->nos_loaded_xmls_files < MKSBMLI_MAX_PLAYBACK_HANDLES) {
-        GuiButton((Rectangle){ 0, 0, 96, 30 }, "Add XML File...");
-    }
-
     if (ui->nos_loaded_xmls_files > 0) {
-        if (GuiDropdownBox((Rectangle){ 96, 0, 256, 30 }, ui->loaded_xml_file_list, &ui->active_xml_file, ui->active_xml_file_edit_mode))
+        if (GuiDropdownBox((Rectangle){ 0, 0, 256, 30 }, ui->loaded_xml_file_list, &ui->active_xml_file, ui->active_xml_file_edit_mode))
         {
             ui->active_xml_file_edit_mode = !ui->active_xml_file_edit_mode;
         }
     }
 
     int panel_start_y = GetScreenHeight() - (int)TOP_BOTTOM_CUTOFF_HALF;
-    if(CustomGuiImageButton((Rectangle){ 30, panel_start_y, 30, 30 }, ui->stop_button_texture)) ui->stop_requested |= true;
-    if(CustomGuiImageButton((Rectangle){ 60, panel_start_y, 30, 30 }, ui->play_button_texture)) ui->play_requested |= true;
-    if(CustomGuiImageButton((Rectangle){ 90, panel_start_y, 30, 30 }, ui->play_frame_button_texture)) ui->play_frame_requested |= true;
-    if(CustomGuiImageButton((Rectangle){ 120, panel_start_y, 30, 30 }, ui->pause_button_texture)) ui->pause_requested |= true;
+    if(CustomGuiImageButton((Rectangle){ 0, panel_start_y, 30, 30 }, ui->stop_button_texture)) ui->stop_requested |= true;
+    if(CustomGuiImageButton((Rectangle){ 30, panel_start_y, 30, 30 }, ui->play_button_texture)) ui->play_requested |= true;
+    if(CustomGuiImageButton((Rectangle){ 60, panel_start_y, 30, 30 }, ui->play_frame_button_texture)) ui->play_frame_requested |= true;
+    if(CustomGuiImageButton((Rectangle){ 90, panel_start_y, 30, 30 }, ui->pause_button_texture)) ui->pause_requested |= true;
 }
 
 void extract_xml_shortnames(UserInterface* ui) {
@@ -96,4 +107,48 @@ void query_playback_controls(UserInterface* ui, bool* stop, bool* play, bool* pl
     ui->play_requested = false;
     ui->play_frame_requested = false;
     ui->pause_requested = false;
+}
+
+bool query_virtual_dims_change(UserInterface* ui, int* width, int* height) {
+    if (!ui->change_virtual_dims_requested) return false;
+
+    ui->change_virtual_dims_requested = false;
+
+    if(ui->new_virtual_dims[0] < 64) ui->new_virtual_dims[0] = 64;
+    if(ui->new_virtual_dims[0] > 4096) ui->new_virtual_dims[0] = 4096;
+    if(ui->new_virtual_dims[1] < 64) ui->new_virtual_dims[1] = 64;
+    if(ui->new_virtual_dims[1] > 4096) ui->new_virtual_dims[1] = 4096;
+
+    *width = ui->new_virtual_dims[0];
+    *height = ui->new_virtual_dims[1];
+
+    return true;
+}
+
+#define MAX_FILES 100
+#define MAX_FILENAME_LENGTH 256
+
+void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int* count) {
+    DIR* dir = opendir(folder_path);
+    if (!dir) {
+        perror("Can't open folder");
+        return;
+    }
+
+    struct dirent* entry;
+    *count = 0;
+
+    while ((entry = readdir(dir)) != NULL && *count < MKSBMLI_MAX_PLAYBACK_HANDLES) {
+        // Nur reguläre Dateien mit .xml-Endung
+        if (entry->d_type == DT_REG) {
+            const char* name = entry->d_name;
+            const char* ext = strrchr(name, '.');
+            if (ext && strcmp(ext, ".xml") == 0) {
+                snprintf(filenames[*count], MKSBMLI_XML_FILENAME_MAX_LENGTH, "%s/%s", folder_path, name);
+                (*count)++;
+            }
+        }
+    }
+
+    closedir(dir);
 }

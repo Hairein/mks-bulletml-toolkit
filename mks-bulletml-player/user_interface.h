@@ -25,6 +25,9 @@ typedef struct {
     bool play_requested;
     bool play_frame_requested;
     bool pause_requested;
+
+    bool change_virtual_dims_requested;
+    int new_virtual_dims[2];
 } UserInterface;
 
 void init_user_interface(UserInterface* ui);
@@ -36,5 +39,8 @@ int count_loaded_xml_files(UserInterface* ui);
 bool CustomGuiImageButton(Rectangle bounds, Texture2D texture);
 
 void query_playback_controls(UserInterface* ui, bool* stop, bool* play, bool* play_frame, bool* pause);
+bool query_virtual_dims_change(UserInterface* ui, int* width, int* height);
+
+void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int* count);
 
 #endif // USER_INTERFACE_H

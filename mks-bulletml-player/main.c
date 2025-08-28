@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-#include "defines.h"
 #include "mks-bulletml-interpreter.h"
 #include "app.h"
 

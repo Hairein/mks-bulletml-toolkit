@@ -8,7 +8,6 @@ Color bg_color = {22, 22, 22, 255};
 Color playfield_bg_color = {8, 8, 8, 255};
 
 int init_app(App* app) {
-    //app->virtual_playfield_dims = (Vector2){240.0f, 320.0f};
     app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
 
@@ -17,13 +16,13 @@ int init_app(App* app) {
     }
 
     printf("\n");
-    const char test1_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/basic_bml.xml";
+    const char test1_xml_filename[] = "../bulletml_files/basic_bml.xml";
     int add_result1 = add_xml_file(app, test1_xml_filename);
     printf("add xml file %s result: %d\n", test1_xml_filename, (int)add_result1);
-    const char test2_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/inter_bml.xml";
+    const char test2_xml_filename[] = "../bulletml_files/inter_bml.xml";
     int add_result2 = add_xml_file(app, test2_xml_filename);
     printf("add xml file %s result: %d\n", test2_xml_filename, (int)add_result2);
-    const char test3_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/aimed_bml.xml";
+    const char test3_xml_filename[] = "../bulletml_files/aimed_bml.xml";
     int add_result3 = add_xml_file(app, test3_xml_filename);
     printf("add xml file %s result: %d\n", test3_xml_filename, (int)add_result3);
     printf("\n");
@@ -75,6 +74,11 @@ void post_update_app(App* app) {
         app->is_playing = false;
 
         printf("stopped playing\n");
+    }
+
+    int new_width, new_height;
+    if(query_virtual_dims_change(&app->ui, &new_width, &new_height)) {
+        app->virtual_playfield_dims = (Vector2){new_width, new_height};
     }
 }
 
