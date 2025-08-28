@@ -1,10 +1,7 @@
 #include <stdlib.h>
 
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
-
+#include "defines.h"
 #include "mks-bulletml-interpreter.h"
-#include "utility.h"
 #include "app.h"
 
 int main()
@@ -18,7 +15,6 @@ int main()
 
     App* app = calloc(1, sizeof(App));
     init_app(app);
-    set_playfield_dims(app, 240, 320);
 
     while (!WindowShouldClose())
     {

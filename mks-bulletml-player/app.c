@@ -8,7 +8,8 @@ Color bg_color = {22, 22, 22, 255};
 Color playfield_bg_color = {8, 8, 8, 255};
 
 int init_app(App* app) {
-    app->virtual_playfield_dims = (Vector2){240.0f, 320.0f};
+    //app->virtual_playfield_dims = (Vector2){240.0f, 320.0f};
+    app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
 
     for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
@@ -39,11 +40,14 @@ int init_app(App* app) {
     mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
     printf("start playing");
 
+    init_user_interface(&app->ui);
+
     return MKSBMLP_NO_ERROR;
 }
 
 void update_app(App* app) {
-    handle_input(app);
+    handle_app_input(app);
+    handle_ui_input(app);
 
     if(app->is_playing) {
         mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);
@@ -80,9 +84,11 @@ void render_app(App* app) {
     ClearBackground(bg_color);
 
     DrawRectangle(app->projected_playfield.x, app->projected_playfield.y, app->projected_playfield.width, app->projected_playfield.height, playfield_bg_color);
+
+    render_user_interface(&app->ui);
 }
 
-void handle_input(App* app)
+void handle_app_input(App* app)
 {
     if(IsKeyReleased(KEY_Q)) {
         printf("Key Q - Stop Playing\n");
@@ -111,4 +117,20 @@ void handle_input(App* app)
             app->pause_after_frame = true;
         }
     }
+}
+
+void handle_ui_input(App* app) {
+    bool stop_requested;
+    bool play_requested;
+    bool play_frame_requested;
+    bool pause_requested;
+    query_playback_controls(&app->ui, &stop_requested, &play_requested, &play_frame_requested, &pause_requested);
+
+    if(stop_requested) app->stop_playing = true;
+    if(play_requested && !app->is_playing) app->is_playing = true;
+    if(play_frame_requested && !app->pause_after_frame) {
+        app->is_playing = true;
+        app->pause_after_frame = true;
+    }
+    if(pause_requested && app->is_playing && !app->pause_after_frame) app->pause_after_frame = true;;
 }

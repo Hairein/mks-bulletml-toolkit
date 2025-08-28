@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "defines.h"
 #include "utility.h"
 
 void set_playfield_dims(App* app, int width, int height)
@@ -33,7 +34,7 @@ int add_xml_file(App* app, const char* xml_filename){
 
 void calculate_playfield(App* app) {
     float screen_width = GetScreenWidth();
-    float screen_height = GetScreenHeight();
+    float screen_height = GetScreenHeight() - TOP_BOTTOM_CUTOFF;
 
     float virtual_width_ratio = app->virtual_playfield_dims.x / app->virtual_playfield_dims.y;
 
@@ -47,7 +48,7 @@ void calculate_playfield(App* app) {
     }
 
     app->projected_playfield.x = screen_width / 2.0f - (virtual_width / 2.0f);
-    app->projected_playfield.y = screen_height / 2.0f - (virtual_height / 2.0f);
+    app->projected_playfield.y = screen_height / 2.0f - (virtual_height / 2.0f) + TOP_BOTTOM_CUTOFF_HALF;
     app->projected_playfield.width = virtual_width;
     app->projected_playfield.height = virtual_height;
 }

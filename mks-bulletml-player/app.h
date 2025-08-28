@@ -1,14 +1,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "raylib.h"
-
 #include "mks-bulletml-interpreter.h"
-
-#define MKSBMLP_NO_ERROR 0
-#define MKSBMLP_INVALID_PARAMETER -1
-#define MKSBMLP_UNSPECIFIED_ERROR -2
-#define MKSBMLP_TOO_MANY_XML_FILES -3
+#include "user_interface.h"
 
 typedef struct {
     Vector2 virtual_playfield_dims;
@@ -23,6 +17,8 @@ typedef struct {
     bool stop_playing;
 
     unsigned int frame_counter;
+
+    UserInterface ui;
 } App;
 
 int init_app(App* app);
@@ -30,6 +26,7 @@ void update_app(App* app);
 void post_update_app(App* app);
 void render_app(App* app);
 
-void handle_input(App* app);
+void handle_app_input(App* app);
+void handle_ui_input(App* app);
 
 #endif // APP_H
