@@ -9,5 +9,5 @@ void init_bullet_ref(BulletRef* bullet_ref, BulletmlBase* parent, const char* la
 }
 
 void dump_bullet_ref(BulletRef* bullet_ref) {
-    printf("BULLET_REF label(%s)\n", bullet_ref->label);
+    printf("BULLET_REF#label[%s]\n", bullet_ref->label);
 }

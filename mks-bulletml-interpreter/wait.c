@@ -8,5 +8,5 @@ void init_wait(Wait* wait, BulletmlBase* parent, const char* expression) {
 }
 
 void dump_wait(Wait* wait) {
-    printf("WAIT expression(%s)\n", wait->content.expression);
+    printf("WAIT#expression[%s]\n", wait->content.expression);
 }

@@ -9,5 +9,5 @@ void init_times(Times* times, BulletmlBase* parent, const char* number) {
 }
 
 void dump_times(Times* times) {
-    printf("TIMES contents(%s)\n", times->contents.expression);
+    printf("TIMES#contents[%s]\n", times->contents.expression);
 }

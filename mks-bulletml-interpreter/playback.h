@@ -23,8 +23,6 @@
 #include "action-ref.h"
 #include "fire-ref.h"
 #include "param.h"
-#include "bml-number.h"
-#include "bml-string.h"
 
 typedef struct {
     MKSBMLI_PLAYBACK_HANDLE handle;
@@ -36,6 +34,7 @@ typedef struct {
 
     unsigned int next_free_base_index;
     BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS];
+    unsigned int playhead_index;
 } Playback;
 
 int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE handle);
@@ -63,5 +62,19 @@ void parse_vanish(Playback* playback, xmlNode* node, BulletmlBase* parent, Vanis
 void parse_repeat(Playback* playback, xmlNode* node, BulletmlBase* parent, Repeat* repeat);
 void parse_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, Direction* direction);
 void parse_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, Speed* speed);
+void parse_horizontal(Playback* playback, xmlNode* node, BulletmlBase* parent, Horizontal* horizontal);
+void parse_vertical(Playback* playback, xmlNode* node, BulletmlBase* parent, Vertical* vertical);
+void parse_term(Playback* playback, xmlNode* node, BulletmlBase* parent, Term* term);
+void parse_times(Playback* playback, xmlNode* node, BulletmlBase* parent, Times* times);
+void parse_bullet_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, BulletRef* bullet_ref);
+void parse_action_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, ActionRef* action_ref);
+void parse_fire_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, FireRef* fire_ref);
+void parse_param(Playback* playback, xmlNode* node, BulletmlBase* parent, Param* param);
+
+
+
+
+
+
 
 #endif // PLAYBACK_H

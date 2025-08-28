@@ -3,7 +3,7 @@
 int extract_xml_property_text(xmlNode* node, char* name, char* text) {
     xmlChar *xml_text = xmlGetProp(node, (const xmlChar *)name);
     if (xml_text) {
-        strncpy(text, (const char*)xml_text, MKSBMLI_MAX_TEXT_LENGTH - 1);
+        copy_text(text, (const char*)xml_text);
         xmlFree(xml_text);
 
         return MKSBMLI_NO_ERROR;
@@ -13,7 +13,7 @@ int extract_xml_property_text(xmlNode* node, char* name, char* text) {
 }
 
 void extract_xml_property_label_text(xmlNode* node, char* text) {
-    strncpy(text, "", MKSBMLI_MAX_TEXT_LENGTH - 1);
+    copy_text(text, "");
 
     char entry[MKSBMLI_MAX_TEXT_LENGTH];
     if(extract_xml_property_text(node, "label", entry) == MKSBMLI_NO_ERROR) {
@@ -56,13 +56,19 @@ void extract_xml_text_content(xmlNode* node, char content[MKSBMLI_MAX_TEXT_LENGT
         xmlChar* child_content = node->children->content;
         if (child_content) {
             memset(content, 0, MKSBMLI_MAX_TEXT_LENGTH);
-            strncpy(content, (const char*)child_content, MKSBMLI_MAX_TEXT_LENGTH - 1);
+            copy_text(content, (const char*)child_content);
         }
     }
 }
 
+int copy_filename(char* target, const char* source) {
+    memset(target, 0, MKSBMLI_XML_FILENAME_MAX_LENGTH);
+    strncpy(target, source, MKSBMLI_XML_FILENAME_MAX_LENGTH - 1);
+}
+
 int copy_text(char* target, const char* source) {
-    strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH);
+    memset(target, 0, MKSBMLI_MAX_TEXT_LENGTH);
+    strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH - 1);
 }
 
 int compare_texts(const char* text1, const char* text2) {

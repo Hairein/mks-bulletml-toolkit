@@ -5,5 +5,5 @@ void init_bml_string(BmlString* bml_string, const char* text) {
 }
 
 void dump_bml_string(BmlString* bml_string) {
-    printf("BML_NUMBER text(%s)\n", bml_string->text);
+    printf("BML_NUMBER#text[%s]\n", bml_string->text);
 }

@@ -1,6 +1,8 @@
 #ifndef VIRTUAL_BULLET_H
 #define VIRTUAL_BULLET_H
 
+#include "raylib.h"
+
 #include "mks-bulletml-interpreter.h"
 
 typedef struct {

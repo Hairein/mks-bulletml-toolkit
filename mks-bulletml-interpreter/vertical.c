@@ -14,5 +14,5 @@ void dump_vertical(Vertical* vertical) {
     char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_ars_type_text(vertical->attribute, type);
 
-    printf("VERTICAL type(%s) contents(%s)\n", type, vertical->contents.expression);
+    printf("VERTICAL#type[%s]|contents[%s]\n", type, vertical->contents.expression);
 }

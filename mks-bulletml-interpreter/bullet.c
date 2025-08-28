@@ -9,5 +9,5 @@ void init_bullet(Bullet* bullet, BulletmlBase* parent, const char* label) {
 }
 
 void dump_bullet(Bullet* bullet) {
-    printf("BULLET label(%s)\n", bullet->label);
+    printf("BULLET#label[%s]\n", bullet->label);
 }

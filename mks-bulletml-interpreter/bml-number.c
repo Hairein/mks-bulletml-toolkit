@@ -6,7 +6,7 @@ void init_bml_number(BmlNumber* bml_number, const char* expression) {
 }
 
 void dump_bml_number(BmlNumber* bml_number) {
-    printf("BML_NUMBER expression(%s)\n", bml_number->expression);
+    printf("BML_NUMBER#expression[%s]\n", bml_number->expression);
 }
 
 int evaluate_bml_number_as_int(BmlNumber* bml_number) {

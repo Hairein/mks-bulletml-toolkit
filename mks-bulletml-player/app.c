@@ -14,17 +14,13 @@ int init_app(App* app) {
     printf("\n");
     const char test1_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/basic_bml.xml";
     int add_result1 = add_xml_file(app, test1_xml_filename);
-    printf("add xml file %s result: %d\n\n", test1_xml_filename, (int)add_result1);
-
-    printf("\n");
+    printf("add xml file %s result: %d\n", test1_xml_filename, (int)add_result1);
     const char test2_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/inter_bml.xml";
     int add_result2 = add_xml_file(app, test2_xml_filename);
-    printf("add xml file %s result: %d\n\n", test2_xml_filename, (int)add_result2);
-
-    printf("\n");
+    printf("add xml file %s result: %d\n", test2_xml_filename, (int)add_result2);
     const char test3_xml_filename[] = "/home/mkoleoso/GitHub/mks-bulletml-toolkit/bulletml_files/aimed_bml.xml";
     int add_result3 = add_xml_file(app, test3_xml_filename);
-    printf("add xml file %s result: %d\n\n", test3_xml_filename, (int)add_result3);
+    printf("add xml file %s result: %d\n", test3_xml_filename, (int)add_result3);
 
     return MKSBMLP_NO_ERROR;
 }

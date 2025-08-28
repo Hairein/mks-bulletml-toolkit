@@ -12,7 +12,7 @@ typedef struct {
     BmlNumber contents;
 } Term;
 
-void init_term(Term* term, BulletmlBase* parent, const char* number);
+void init_term(Term* term, BulletmlBase* parent, const char* frames);
 
 void dump_term(Term* term);
 

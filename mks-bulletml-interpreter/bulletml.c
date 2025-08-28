@@ -12,5 +12,5 @@ void dump_bulletml(Bulletml* bulletml) {
     char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_bulletml_attribute_type_text(bulletml->attribute, type);
 
-    printf("BULLETML type(%s)\n", type);
+    printf("BULLETML#type[%s]\n", type);
 }

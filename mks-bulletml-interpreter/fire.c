@@ -9,5 +9,5 @@ void init_fire(Fire* fire, BulletmlBase* parent, const char* label) {
 }
 
 void dump_fire(Fire* fire) {
-    printf("FIRE label(%s)\n", fire->label);
+    printf("FIRE#label[%s]\n", fire->label);
 }

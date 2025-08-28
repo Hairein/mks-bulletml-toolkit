@@ -51,20 +51,20 @@ int mksbmli_count_xmls() {
     return count_playbacks(&state);
 }
 
-int mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
-    return MKSBMLI_NO_ERROR;
+void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
+    set_state_playing(&state, true);
 }
 
-int mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
-    return MKSBMLI_NO_ERROR;
+void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
+    set_state_playing(&state, false);
 }
 
-int mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle) {
-    return MKSBMLI_NO_ERROR;
+bool mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle) {
+    return state.is_playing;
 }
 
-int mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {
-    return MKSBMLI_NO_ERROR;
+void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {
+    update_state(&state);
 }
 
 int mksbmli_get_bullets() {

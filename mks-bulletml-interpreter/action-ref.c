@@ -9,5 +9,5 @@ void init_action_ref(ActionRef* action_ref, BulletmlBase* parent, const char* la
 }
 
 void dump_action_ref(ActionRef* action_ref) {
-    printf("ACTION_REF label(%s)\n", action_ref->label);
+    printf("ACTION_REF#label[%s]\n", action_ref->label);
 }

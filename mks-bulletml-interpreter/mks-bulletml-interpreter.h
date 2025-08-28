@@ -14,14 +14,11 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "raylib.h"
-#include "raymath.h"
-
 typedef unsigned int MKSBMLI_PLAYBACK_HANDLE;
 typedef unsigned int MKSBMLI_BULLET_HANDLE;
 
-#define MKSBMLI_MAX_PLAYBACK_HANDLES 100
-#define MKSBMLI_XML_FILENAME_MAX_LENGTH 1024
+#define MKSBMLI_MAX_PLAYBACK_HANDLES 1000
+#define MKSBMLI_XML_FILENAME_MAX_LENGTH 2048
 #define MKSBMLI_MAX_BULLETS 5000
 #define MKSBMLI_MAX_ELEMENTS 500
 #define MKSBMLI_MAX_TEXT_LENGTH 128
@@ -91,10 +88,10 @@ EXPORT int mksbmli_load_xml(const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE* h
 EXPORT int mksbmli_unload_xml(MKSBMLI_PLAYBACK_HANDLE handle);
 EXPORT int mksbmli_count_xmls();
 
-EXPORT int mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle);
-EXPORT int mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle);
-EXPORT int mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle);
-EXPORT int mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);
+EXPORT void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle);
+EXPORT void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle);
+EXPORT bool mksbmli_is_playing(MKSBMLI_PLAYBACK_HANDLE handle);
+EXPORT void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);
 
 EXPORT int mksbmli_get_bullets();
 EXPORT int mksbmli_delete_bullets();

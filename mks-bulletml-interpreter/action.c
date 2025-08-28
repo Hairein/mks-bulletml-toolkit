@@ -9,5 +9,5 @@ void init_action(Action* action, BulletmlBase* parent, const char* label) {
 }
 
 void dump_action(Action* action) {
-    printf("ACTION label(%s)\n", action->label);
+    printf("ACTION#label[%s]\n", action->label);
 }

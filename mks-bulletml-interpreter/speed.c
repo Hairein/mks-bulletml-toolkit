@@ -14,5 +14,5 @@ void dump_speed(Speed* speed) {
     char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_ars_type_text(speed->attribute, type);
 
-    printf("SPEED type(%s) contents(%s)\n", type, speed->contents.expression);
+    printf("SPEED#type[%s]|contents[%s]\n", type, speed->contents.expression);
 }

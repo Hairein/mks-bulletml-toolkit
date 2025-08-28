@@ -14,5 +14,5 @@ void dump_direction(Direction* direction) {
     char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_aars_type_text(direction->attribute, type);
 
-    printf("DIRECTION type(%s) contents(%s)\n", type, direction->contents.expression);
+    printf("DIRECTION#type[%s]|contents[%s]\n", type, direction->contents.expression);
 }

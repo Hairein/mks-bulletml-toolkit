@@ -11,6 +11,7 @@ void extract_xml_property_aars_type(xmlNode* node, AARS_TYPE* type);
 void extract_xml_property_ars_type(xmlNode* node, ARS_TYPE* type);
 void extract_xml_text_content(xmlNode* node, char content[MKSBMLI_MAX_TEXT_LENGTH], const char* default_text);
 
+int copy_filename(char* target, const char* source);
 int copy_text(char* target, const char* source);
 int compare_texts(const char* text1, const char* text2);
 
