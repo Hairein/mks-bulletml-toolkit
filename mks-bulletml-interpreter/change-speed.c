@@ -1,4 +1,4 @@
-#include "change_speed.h"
+#include "change-speed.h"
 
 void init_change_speed(ChangeSpeed* change_speed, BulletmlBase* parent) {
     change_speed->type = BULLETML_ELEMENT_TYPE_CHANGE_SPEED;

@@ -1,5 +1,5 @@
-#ifndef WAIT_H
-#define WAIT_H
+#ifndef PARAM_H
+#define PARAM_H
 
 #include "mks-bulletml-interpreter.h"
 #include "bulletml-base.h"
@@ -7,10 +7,10 @@
 typedef struct {
     BULLETML_ELEMENT_TYPE type;
     BulletmlBase* parent;
-} Wait;
+} Param;
 
-void init_wait(Wait* wait, BulletmlBase* parent);
+void init_param(Param* param, BulletmlBase* parent);
 
-void dump_wait(Wait* wait);
+void dump_param(Param* param);
 
-#endif // WAIT_H
+#endif // PARAM_H

@@ -43,14 +43,14 @@ void shutdown_playback(Playback* playback) {
             else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_REPEAT) free((Repeat*)playback->bulletml_bases[index]);
             else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_DIRECTION) free((Direction*)playback->bulletml_bases[index]);
             else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_SPEED) free((Speed*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_HORIZONTAL) free((Horizontal*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_VERTICAL) free((Vertical*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_TERM) free((Term*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_TIMES) free((Times*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_BULLET_REF) free((BulletRef*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_ACTION_REF) free((ActionRef*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_FIRE_REF) free((FireRef*)playback->bulletml_bases[index]);
-            // else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_PARAM) free((Param*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_HORIZONTAL) free((Horizontal*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_VERTICAL) free((Vertical*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_TERM) free((Term*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_TIMES) free((Times*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_BULLET_REF) free((BulletRef*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_ACTION_REF) free((ActionRef*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_FIRE_REF) free((FireRef*)playback->bulletml_bases[index]);
+            else if(playback->bulletml_bases[index]->type == BULLETML_ELEMENT_TYPE_PARAM) free((Param*)playback->bulletml_bases[index]);
 
             playback->bulletml_bases[index] = NULL;
         }
@@ -202,33 +202,27 @@ void traverse_xml_file(Playback* playback, xmlNode *node, BulletmlBase* parent) 
 
 
 void parse_bulletml(Playback* playback, xmlNode* node, Bulletml* bulletml) {
-    BULLETML_ATTRIBUTE_TYPE type = BULLETML_ATTRIBUTE_TYPE_NONE;
-
-    char entry[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "type", entry) == MKSBMLI_NO_ERROR) {
-        if (compare_texts(entry, "vertical") == 0) {
-            type = BULLETML_ATTRIBUTE_TYPE_VERTICAL;
-        } else if (compare_texts(entry, "horizontal") == 0) {
-            type = BULLETML_ATTRIBUTE_TYPE_HORIZONTAL;
-        }
-    }
-
+    BULLETML_ATTRIBUTE_TYPE type;
+    extract_xml_property_bulletml_type(node, &type);
     init_bulletml(bulletml, NULL, type);
 }
 
 void parse_bullet(Playback* playback, xmlNode* node, BulletmlBase* parent, Bullet* bullet) {
     char label[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "label", label) == MKSBMLI_NO_ERROR) init_bullet(bullet, parent, label);
+    extract_xml_property_label_text(node, label);
+    init_bullet(bullet, parent, label);
 }
 
 void parse_action(Playback* playback, xmlNode* node, BulletmlBase* parent, Action* action) {
     char label[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "label", label) == MKSBMLI_NO_ERROR) init_action(action, parent, label);
+    extract_xml_property_label_text(node, label);
+    init_action(action, parent, label);
 }
 
 void parse_fire(Playback* playback, xmlNode* node, BulletmlBase* parent, Fire* fire) {
     char label[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "label", label) == MKSBMLI_NO_ERROR) init_fire(fire, parent, label);
+    extract_xml_property_label_text(node, label);
+    init_fire(fire, parent, label);
 }
 
 void parse_change_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, ChangeDirection* change_direction) {
@@ -256,33 +250,60 @@ void parse_repeat(Playback* playback, xmlNode* node, BulletmlBase* parent, Repea
 }
 
 void parse_direction(Playback* playback, xmlNode* node, BulletmlBase* parent, Direction* direction) {
-    DIRECTION_TYPE type = DIRECTION_TYPE_ABSOLUTE;
-
-    char entry[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "type", entry) == MKSBMLI_NO_ERROR) {
-        if (compare_texts(entry, "aim") == 0) {
-            type = DIRECTION_TYPE_AIM;
-        } else if (compare_texts(entry, "relative") == 0) {
-            type = DIRECTION_TYPE_RELATIVE;
-        } else if (compare_texts(entry, "sequence") == 0) {
-            type = DIRECTION_TYPE_SEQUENCE;
-        }
-    }
-
+    AARS_TYPE type = AARS_TYPE_ABSOLUTE;
+    extract_xml_property_aars_type(node, &type);
     init_direction(direction, parent, type);
 }
 
 void parse_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, Speed* speed) {
-    SPEED_TYPE type = SPEED_TYPE_ABSOLUTE;
-
-    char entry[MKSBMLI_MAX_TEXT_LENGTH];
-    if(extract_xml_property_text(node, "type", entry) == MKSBMLI_NO_ERROR) {
-        if (compare_texts(entry, "relative") == 0) {
-            type = SPEED_TYPE_RELATIVE;
-        } else if (compare_texts(entry, "sequence") == 0) {
-            type = SPEED_TYPE_SEQUENCE;
-        }
-    }
-
+    ARS_TYPE type = ARS_TYPE_ABSOLUTE;
+    extract_xml_property_ars_type(node, &type);
     init_speed(speed, parent, type);
 }
+
+void parse_horizontal(Playback* playback, xmlNode* node, BulletmlBase* parent, Horizontal* horizontal) {
+    ARS_TYPE type = ARS_TYPE_ABSOLUTE;
+    extract_xml_property_ars_type(node, &type);
+    init_horizontal(horizontal, parent, type);
+}
+
+void parse_vertical(Playback* playback, xmlNode* node, BulletmlBase* parent, Vertical* vertical) {
+    ARS_TYPE type = ARS_TYPE_ABSOLUTE;
+    extract_xml_property_ars_type(node, &type);
+    init_vertical(vertical, parent, type);
+}
+
+void parse_term(Playback* playback, xmlNode* node, BulletmlBase* parent, Term* term) {
+    ARS_TYPE type = ARS_TYPE_ABSOLUTE;
+    extract_xml_property_ars_type(node, &type);
+    init_term(term, parent);
+}
+
+void parse_times(Playback* playback, xmlNode* node, BulletmlBase* parent, Times* times) {
+    ARS_TYPE type = ARS_TYPE_ABSOLUTE;
+    extract_xml_property_ars_type(node, &type);
+    init_times(times, parent);
+}
+
+void parse_bullet_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, BulletRef* bullet_ref) {
+    char label[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_property_label_text(node, label);
+    init_bullet_ref(bullet_ref, parent, label);
+}
+
+void parse_action_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, ActionRef* action_ref) {
+    char label[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_property_label_text(node, label);
+    init_action_ref(action_ref, parent, label);
+}
+
+void parse_fire_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, FireRef* fire_ref) {
+    char label[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_property_label_text(node, label);
+    init_fire_ref(fire_ref, parent, label);
+}
+
+void parse_param(Playback* playback, xmlNode* node, BulletmlBase* parent, Param* param) {
+    init_param(param, parent);
+}
+

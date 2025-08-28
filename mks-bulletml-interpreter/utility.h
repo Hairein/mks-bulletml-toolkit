@@ -5,7 +5,21 @@
 
 int extract_xml_property_text(xmlNode* node, char*name, char* text);
 
+void extract_xml_property_label_text(xmlNode* node, char* text);
+void extract_xml_property_bulletml_type(xmlNode* node, BULLETML_ATTRIBUTE_TYPE* type);
+void extract_xml_property_aars_type(xmlNode* node, AARS_TYPE* type);
+void extract_xml_property_ars_type(xmlNode* node, ARS_TYPE* type);
+
 int copy_text(char* target, const char* source);
 int compare_texts(const char* text1, const char* text2);
+
+int get_bulletml_attribute_type(const char* text, BULLETML_ATTRIBUTE_TYPE* type);
+int get_bulletml_attribute_type_text(BULLETML_ATTRIBUTE_TYPE type, char* text);
+
+int get_aars_type(const char* text, AARS_TYPE* type);
+int get_aars_type_text(AARS_TYPE type, char* text);
+
+int get_ars_type(const char* text, ARS_TYPE* type);
+int get_ars_type_text(ARS_TYPE type, char* text);
 
 #endif // UTILITY_H

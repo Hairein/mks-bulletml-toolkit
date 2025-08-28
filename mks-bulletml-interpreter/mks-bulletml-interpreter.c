@@ -1,7 +1,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "platform_random.h"
+#include "platform-random.h"
 
 #include "mks-bulletml-interpreter.h"
 #include "state.h"

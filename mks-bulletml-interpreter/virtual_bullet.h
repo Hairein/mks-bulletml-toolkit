@@ -6,12 +6,12 @@
 typedef struct {
     bool handle;
 
-    Vector3 position;
-    Vector3 angles_degrees;
+    Vector2 position;
+    Vector2 angles_degrees;
     float speed;
 
-    Vector3 directional_velocity;
-    Vector3 angular_velocity;
+    Vector2 directional_velocity;
+    Vector2 angular_velocity;
 } VirtualBullet;
 
 void init_virtual_bullet(VirtualBullet* virtual_bullet, MKSBMLI_BULLET_HANDLE handle);

@@ -11,24 +11,34 @@ add_library(mks-bulletml-interpreter SHARED
     mks-bulletml-interpreter.c mks-bulletml-interpreter.h
     raylib.h raymath.h
     tinyexpr.c tinyexpr.h
-    platform_random.h
+    platform-random.h
     playback.c playback.h
     virtual_bullet.c virtual_bullet.h
     state.c state.h
     utility.c utility.h
-    bulletml_base.c bulletml_base.h
+    bulletml-base.c bulletml-base.h
     bulletml.c bulletml.h
     bullet.c bullet.h
     action.c action.h
     fire.c fire.h
-    change_direction.c change_direction.h
-    change_speed.c change_speed.h
+    change-direction.c change-direction.h
+    change-speed.c change-speed.h
     accel.c accel.h
     wait.c wait.h
     vanish.c vanish.h
     repeat.c repeat.h
     direction.c direction.h
     speed.c speed.h
+    horizontal.c horizontal.h
+    vertical.c vertical.h
+    term.c term.h
+    times.c times.h
+    bullet-ref.c bullet-ref.h
+    action-ref.c action-ref.h
+    fire-ref.c fire-ref.h
+    param.c param.h
+    bml-string.c bml-string.h
+    bml-number.c bml-number.h
 )
 
 # include headers

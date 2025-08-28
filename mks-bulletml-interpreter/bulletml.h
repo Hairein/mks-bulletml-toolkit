@@ -2,7 +2,7 @@
 #define BULLETML_H
 
 #include "mks-bulletml-interpreter.h"
-#include "bulletml_base.h"
+#include "bulletml-base.h"
 
 typedef struct {
     BULLETML_ELEMENT_TYPE type;

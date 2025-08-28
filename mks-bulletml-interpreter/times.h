@@ -1,5 +1,5 @@
-#ifndef WAIT_H
-#define WAIT_H
+#ifndef TIMES_H
+#define TIMES_H
 
 #include "mks-bulletml-interpreter.h"
 #include "bulletml-base.h"
@@ -7,10 +7,10 @@
 typedef struct {
     BULLETML_ELEMENT_TYPE type;
     BulletmlBase* parent;
-} Wait;
+} Times;
 
-void init_wait(Wait* wait, BulletmlBase* parent);
+void init_times(Times* times, BulletmlBase* parent);
 
-void dump_wait(Wait* wait);
+void dump_times(Times* times);
 
-#endif // WAIT_H
+#endif // TIMES_H

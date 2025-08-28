@@ -2,16 +2,16 @@
 #define SPEED_H
 
 #include "mks-bulletml-interpreter.h"
-#include "bulletml_base.h"
+#include "bulletml-base.h"
 
 typedef struct {
     BULLETML_ELEMENT_TYPE type;
     BulletmlBase* parent;
 
-    SPEED_TYPE attribute;
+    ARS_TYPE attribute;
 } Speed;
 
-void init_speed(Speed* speed, BulletmlBase* parent, SPEED_TYPE attribute);
+void init_speed(Speed* speed, BulletmlBase* parent, ARS_TYPE attribute);
 
 void dump_speed(Speed* speed);
 
