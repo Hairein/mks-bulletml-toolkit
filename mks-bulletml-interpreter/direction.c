@@ -9,7 +9,7 @@ void init_direction(Direction* direction, BulletmlBase* parent, AARS_TYPE attrib
 }
 
 void dump_direction(Direction* direction) {
-    char type[MKSBMLI_MAX_TEXT_LENGTH] = "absolute";
+    char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_aars_type_text(direction->attribute, type);
 
     printf("DIRECTION type(%s)\n", type);

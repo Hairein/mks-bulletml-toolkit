@@ -9,7 +9,7 @@ void init_speed(Speed* speed, BulletmlBase* parent, ARS_TYPE attribute) {
 }
 
 void dump_speed(Speed* speed) {
-    char type[MKSBMLI_MAX_TEXT_LENGTH] = "absolute";
+    char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_ars_type_text(speed->attribute, type);
 
     printf("SPEED type(%s)\n", type);

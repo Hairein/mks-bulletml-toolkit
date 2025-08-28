@@ -9,7 +9,7 @@ void init_vertical(Vertical* vertical, BulletmlBase* parent, ARS_TYPE attribute)
 }
 
 void dump_vertical(Vertical* vertical) {
-    char type[MKSBMLI_MAX_TEXT_LENGTH] = "absolute";
+    char type[MKSBMLI_MAX_TEXT_LENGTH];
     get_ars_type_text(vertical->attribute, type);
 
     printf("VERTICAL type(%s)\n", type);

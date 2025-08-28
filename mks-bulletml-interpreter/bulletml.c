@@ -9,12 +9,8 @@ void init_bulletml(Bulletml* bulletml, BulletmlBase* parent, BULLETML_ATTRIBUTE_
 }
 
 void dump_bulletml(Bulletml* bulletml) {
-    char type[MKSBMLI_MAX_TEXT_LENGTH] = "none";
-    switch(bulletml->attribute) {
-    case BULLETML_ATTRIBUTE_TYPE_VERTICAL: copy_text(type, "vertical"); break;
-    case BULLETML_ATTRIBUTE_TYPE_HORIZONTAL: copy_text(type, "horizontal"); break;
-    default: break;
-    }
+    char type[MKSBMLI_MAX_TEXT_LENGTH];
+    get_bulletml_attribute_type_text(bulletml->attribute, type);
 
     printf("BULLETML type(%s)\n", type);
 }
