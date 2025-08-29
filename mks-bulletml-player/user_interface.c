@@ -73,7 +73,7 @@ void extract_xml_shortnames(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PL
         if (filename[0] == '\0') continue;
 
         const char* shortname = strrchr(filename, '/');
-        if (!shortname) shortname = strrchr(filename, '\\');  // Windows-Pfad
+        if (!shortname) shortname = strrchr(filename, '\\');
         if (shortname) shortname++; else shortname = filename;
 
         if (ui->loaded_xml_file_list[0] != '\0') {
