@@ -76,8 +76,13 @@ typedef enum {
     ARS_TYPE_SEQUENCE,
 } ARS_TYPE;
 
+#define MKSBMLI_MAJOR_VERSION 0
+#define MKSBMLI_MINOR_VERSION 1
+#define MKSBMLI_PATCH_VERSION 0
+
 EXPORT int mksbmli_init();
 EXPORT int mksbmli_shutdown();
+EXPORT int mksbmli_get_version(int* major, int* minor, int* patch);
 
 EXPORT int mksbmli_set_random_seed(int seed);
 

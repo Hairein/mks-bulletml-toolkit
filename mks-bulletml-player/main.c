@@ -5,10 +5,13 @@
 
 int main()
 {
+    char title[MKSBMLI_MAX_TEXT_LENGTH];
+    sprintf(title, "MKS BulletML Player v%d.%d.%d startup.", MKSBMLP_MAJOR_VERSION, MKSBMLP_MINOR_VERSION, MKSBMLP_PATCH_VERSION);
+
     mksbmli_init();
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(800, 600, "MKS BulletML Player v0.0.1preAlpha");
+    InitWindow(800, 600, title);
     SetTargetFPS(60);
     SetWindowMinSize(64, 64);
 

@@ -10,7 +10,9 @@ State state;
 
 int mksbmli_init()
 {
-    printf("MKS BulletML Interpreter Library v0.0.1 startup.\n");
+    char title[MKSBMLI_MAX_TEXT_LENGTH];
+    sprintf(title, "MKS BulletML Interpreter Library v%d.%d.%d startup.\n", MKSBMLI_MAJOR_VERSION, MKSBMLI_MINOR_VERSION, MKSBMLI_PATCH_VERSION);
+    printf(title);
 
     xmlInitParser();
 
@@ -30,6 +32,12 @@ int mksbmli_shutdown()
     printf("MKS BulletML Interpreter Library shutdown.\n");
 
     return MKSBMLI_NO_ERROR;
+}
+
+int mksbmli_get_version(int* major, int* minor, int* patch) {
+    *major = MKSBMLI_MAJOR_VERSION;
+    *minor = MKSBMLI_MINOR_VERSION;
+    *patch = MKSBMLI_PATCH_VERSION;
 }
 
 int mksbmli_set_random_seed(int seed)
