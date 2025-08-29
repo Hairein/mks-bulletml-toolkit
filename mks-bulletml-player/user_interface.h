@@ -12,6 +12,7 @@ typedef struct {
     char loaded_xml_file_list[MKSBMLP_MAX_LINE_LENGTH];
     int nos_loaded_xmls_files;
     int active_xml_file;
+    int active_xml_file_change_requested;
     bool active_xml_file_edit_mode;
 
     Texture2D stop_button_texture;
@@ -43,6 +44,7 @@ bool CustomGuiImageButton(Rectangle bounds, Texture2D texture);
 
 void query_playback_controls(UserInterface* ui, bool* stop, bool* play, bool* play_frame, bool* pause);
 bool query_virtual_dims_change(UserInterface* ui, int* width, int* height);
+bool query_xml_index_changed(UserInterface* ui, int* index);
 
 void validate_width(UserInterface* ui);
 void validate_height(UserInterface* ui);

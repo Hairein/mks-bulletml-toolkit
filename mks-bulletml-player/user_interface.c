@@ -42,6 +42,10 @@ void render_user_interface(UserInterface* ui) {
         if (GuiDropdownBox((Rectangle){ 0, 0, 256, 30 }, ui->loaded_xml_file_list, &ui->active_xml_file, ui->active_xml_file_edit_mode))
         {
             ui->active_xml_file_edit_mode = !ui->active_xml_file_edit_mode;
+
+            if(!ui->active_xml_file_edit_mode) {
+                ui->active_xml_file_change_requested = true;
+            }
         }
 
         GuiLabel((Rectangle){ 264, 0, 146, 30 }, "Playfield Dimensions (WxHpx):");
@@ -108,6 +112,16 @@ bool query_virtual_dims_change(UserInterface* ui, int* width, int* height) {
 
     *width = ui->new_virtual_dims[0];
     *height = ui->new_virtual_dims[1];
+
+    return true;
+}
+
+bool query_xml_index_changed(UserInterface* ui, int* index) {
+    if(!ui->active_xml_file_change_requested) return false;
+
+    ui->active_xml_file_change_requested = false;
+
+    *index = ui->active_xml_file;
 
     return true;
 }

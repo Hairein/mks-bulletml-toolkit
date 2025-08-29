@@ -88,6 +88,19 @@ void post_update_app(App* app) {
         printf("stopped playing\n");
     }
 
+    int xml_index;
+    if(query_xml_index_changed(&app->ui, &xml_index)) {
+        mksbmli_stop_playback(app->playback_handles[app->current_active_playback_index]);
+        app->frame_counter = 0;
+
+        app->is_playing = false;
+
+        printf("stopped playing xml file index: %d\n", app->current_active_playback_index);
+
+        app->current_active_playback_index = xml_index;
+        printf("selected xml file index: %d\n", app->current_active_playback_index);
+    }
+
     int new_width, new_height;
     if(query_virtual_dims_change(&app->ui, &new_width, &new_height)) {
         app->virtual_playfield_dims = (Vector2){new_width, new_height};
