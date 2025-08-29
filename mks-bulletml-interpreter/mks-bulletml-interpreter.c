@@ -11,8 +11,8 @@ State state;
 int mksbmli_init()
 {
     char title[MKSBMLI_MAX_TEXT_LENGTH];
-    sprintf(title, "MKS BulletML Interpreter Library v%d.%d.%d startup.\n", MKSBMLI_MAJOR_VERSION, MKSBMLI_MINOR_VERSION, MKSBMLI_PATCH_VERSION);
-    printf(title);
+    snprintf(title, sizeof(title), "MKS BulletML Interpreter Library v%d.%d.%d startup.\n", MKSBMLI_MAJOR_VERSION, MKSBMLI_MINOR_VERSION, MKSBMLI_PATCH_VERSION);
+    printf("%s", title);
 
     xmlInitParser();
 
@@ -34,7 +34,7 @@ int mksbmli_shutdown()
     return MKSBMLI_NO_ERROR;
 }
 
-int mksbmli_get_version(int* major, int* minor, int* patch) {
+void mksbmli_get_version(int* major, int* minor, int* patch) {
     *major = MKSBMLI_MAJOR_VERSION;
     *minor = MKSBMLI_MINOR_VERSION;
     *patch = MKSBMLI_PATCH_VERSION;
@@ -71,11 +71,27 @@ void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {
     update_state(&state);
 }
 
-int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, VirtualBullet** bullets, int max_bullets, int* nos_bullets) {
-    return MKSBMLI_NO_ERROR;
+int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, VirtualBullet** bullets, int* nos_bullets) {
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            get_bullets(&state.playbacks[index], max_bullets, bullets, nos_bullets);
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
 }
 
 int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles) {
-    return MKSBMLI_NO_ERROR;
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            destroy_bullets(&state.playbacks[index], bullet_handles, nos_bullet_handles);
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
 }
 

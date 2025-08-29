@@ -1,7 +1,10 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include "mks-bulletml-interpreter.h"
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+#include "mksbmli-defines.h"
 
 int extract_xml_property_text(xmlNode* node, char*name, char* text);
 

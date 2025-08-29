@@ -1,7 +1,7 @@
 #ifndef BML_STRING_H
 #define BML_STRING_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 
 typedef struct {
     char text[MKSBMLI_MAX_TEXT_LENGTH];

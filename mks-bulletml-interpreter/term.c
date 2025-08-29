@@ -1,4 +1,5 @@
-#include "utility.h"
+#include <stdio.h>
+
 #include "term.h"
 
 void init_term(Term* term, BulletmlBase* parent, const char* frames) {

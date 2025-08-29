@@ -1,4 +1,5 @@
-#include "utility.h"
+#include <stdio.h>
+
 #include "times.h"
 
 void init_times(Times* times, BulletmlBase* parent, const char* number) {

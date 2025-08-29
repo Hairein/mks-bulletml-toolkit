@@ -1,4 +1,5 @@
-#include "utility.h"
+#include <stdio.h>
+
 #include "param.h"
 
 void init_param(Param* param, BulletmlBase* parent) {

@@ -1,4 +1,5 @@
-#include "utility.h"
+#include <stdio.h>
+
 #include "change-direction.h"
 
 void init_change_direction(ChangeDirection* change_direction, BulletmlBase* parent) {

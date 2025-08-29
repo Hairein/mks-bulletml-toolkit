@@ -1,7 +1,7 @@
 #ifndef FIRE_REF_H
 #define FIRE_REF_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 
 typedef struct {

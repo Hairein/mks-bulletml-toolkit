@@ -1,7 +1,7 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 #include "bml-number.h"
 

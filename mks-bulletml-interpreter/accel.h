@@ -1,7 +1,7 @@
 #ifndef ACCEL_H
 #define ACCEL_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 
 typedef struct {

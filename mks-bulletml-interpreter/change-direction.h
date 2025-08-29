@@ -1,7 +1,7 @@
 #ifndef CHANGE_DIRECTION_H
 #define CHANGE_DIRECTION_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 
 typedef struct {

@@ -1,7 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "playback.h"
 
 typedef struct {

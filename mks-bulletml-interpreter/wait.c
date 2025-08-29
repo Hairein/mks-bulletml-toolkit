@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "wait.h"
 
 void init_wait(Wait* wait, BulletmlBase* parent, const char* expression) {

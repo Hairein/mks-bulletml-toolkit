@@ -1,7 +1,7 @@
 #ifndef SPEED_H
 #define SPEED_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 #include "bml-number.h"
 

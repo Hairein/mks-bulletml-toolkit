@@ -1,7 +1,10 @@
 #ifndef PLAYBACK_H
 #define PLAYBACK_H
 
-#include "mks-bulletml-interpreter.h"
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+#include "mksbmli-defines.h"
 #include "virtual_bullet.h"
 #include "bulletml.h"
 #include "bullet.h"
@@ -44,8 +47,8 @@ void update_playback(Playback* playback);
 void reset_playback(Playback* playback);
 void set_playing(Playback* playback, bool flag);
 
-int get_bullets(Playback* playback, size_t max_bullets, VirtualBullet* bullets, size_t* nos_bullets);
-int destroy_bullets(Playback* playback, size_t nos_bullet_handles, MKSBMLI_BULLET_HANDLE* handles);
+int get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
+int destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 
 int parse_xml_file(Playback* playback, const char* xml_filename);
 void traverse_xml_file(Playback* playback, xmlNode* node, BulletmlBase* parent);
@@ -70,11 +73,5 @@ void parse_bullet_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, B
 void parse_action_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, ActionRef* action_ref);
 void parse_fire_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, FireRef* fire_ref);
 void parse_param(Playback* playback, xmlNode* node, BulletmlBase* parent, Param* param);
-
-
-
-
-
-
 
 #endif // PLAYBACK_H

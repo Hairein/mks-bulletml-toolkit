@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "accel.h"
 
 void init_accel(Accel* accel, BulletmlBase* parent) {

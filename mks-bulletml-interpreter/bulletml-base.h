@@ -1,7 +1,7 @@
 #ifndef BULLETML_BASE_H
 #define BULLETML_BASE_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 
 typedef struct BulletmlBase BulletmlBase;
 

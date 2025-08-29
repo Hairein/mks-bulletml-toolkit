@@ -1,7 +1,7 @@
 #ifndef PARAM_H
 #define PARAM_H
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 #include "bulletml-base.h"
 
 typedef struct {

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "vanish.h"
 
 void init_vanish(Vanish* vanish, BulletmlBase* parent) {

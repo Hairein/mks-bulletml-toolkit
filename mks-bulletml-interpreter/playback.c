@@ -9,7 +9,7 @@ int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK
     size_t filename_length = strlen(xml_filename);
     if(filename_length == 0 || filename_length >= MKSBMLI_XML_FILENAME_MAX_LENGTH) return MKSBMLI_INVALID_XML_FILENAME;
 
-    memset((void*) playback, 0, sizeof(Playback));
+    memset(playback, 0, sizeof(*playback));
 
     playback->handle = handle;
     playback->is_playing = false;
@@ -75,12 +75,14 @@ void set_playing(Playback* playback, bool flag) {
     reset_playback(playback);
 }
 
-int get_bullets(Playback* playback, size_t max_bullets, VirtualBullet* bullets, size_t* nos_bullets)
+int get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets)
 {
+    *nos_bullets = 0;
+
     return MKSBMLI_NO_ERROR;
 }
 
-int destroy_bullets(Playback* playback, size_t nos_bullet_handles, MKSBMLI_BULLET_HANDLE* handles) {
+int destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles) {
     return MKSBMLI_NO_ERROR;
 }
 

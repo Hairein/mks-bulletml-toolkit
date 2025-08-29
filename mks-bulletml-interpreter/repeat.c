@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "repeat.h"
 
 void init_repeat(Repeat* repeat, BulletmlBase* parent) {

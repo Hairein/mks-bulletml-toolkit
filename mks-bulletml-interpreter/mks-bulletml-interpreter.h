@@ -2,8 +2,6 @@
 #define MKSBULLETMLINTERPRETER_H
 
 #include <stdbool.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
 #include "mksbmli-defines.h"
 #include "virtual_bullet.h"
@@ -20,7 +18,7 @@
 
 EXPORT int mksbmli_init();
 EXPORT int mksbmli_shutdown();
-EXPORT int mksbmli_get_version(int* major, int* minor, int* patch);
+EXPORT void mksbmli_get_version(int* major, int* minor, int* patch);
 
 EXPORT int mksbmli_set_random_seed(int seed);
 
@@ -32,7 +30,7 @@ EXPORT void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle);
 EXPORT void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle);
 EXPORT void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);
 
-EXPORT int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, VirtualBullet** bullets, int max_bullets, int* nos_bullets);
+EXPORT int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
 EXPORT int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 
 #endif // MKSBULLETMLINTERPRETER_H
