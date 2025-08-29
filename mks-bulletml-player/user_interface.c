@@ -40,8 +40,11 @@ void init_user_interface(UserInterface* ui) {
     ui->play_frame_requested = false;
     ui->pause_requested = false;
 
+    strncpy(ui->width_buffer, "320", 7);
+    ui->width_buffer_edit = false;
+    strncpy(ui->height_buffer, "240", 7);
+    ui->height_buffer_edit = false;
     ui->change_virtual_dims_requested = false;
-    int new_virtual_dims[2] = {0, 0};
 }
 
 void render_user_interface(UserInterface* ui) {
@@ -50,6 +53,18 @@ void render_user_interface(UserInterface* ui) {
         {
             ui->active_xml_file_edit_mode = !ui->active_xml_file_edit_mode;
         }
+
+        GuiLabel((Rectangle){ 264, 0, 136, 30 }, "Playfield Dimensions (WxH):");
+
+        Rectangle width_rect = (Rectangle){ 408, 0, 48, 30 };
+        if(!ui->width_buffer_edit && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), width_rect)) ui->width_buffer_edit = true;
+        if(GuiTextBox(width_rect, ui->width_buffer, 8, ui->width_buffer_edit)) validate_width(ui);
+
+        Rectangle height_rect = (Rectangle){ 456, 0, 48, 30 };
+        if(!ui->height_buffer_edit && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), height_rect)) ui->height_buffer_edit = true;
+        if(GuiTextBox(height_rect,  ui->height_buffer, 8, ui->height_buffer_edit)) validate_height(ui) ;
+
+        if(GuiButton((Rectangle){ 504, 0, 48, 30 }, "Set")) update_dims(ui);
 
         int panel_start_y = GetScreenHeight() - (int)TOP_BOTTOM_CUTOFF_HALF;
         if(CustomGuiImageButton((Rectangle){ 0, panel_start_y, 30, 30 }, ui->stop_button_texture)) ui->stop_requested |= true;
@@ -113,11 +128,6 @@ bool query_virtual_dims_change(UserInterface* ui, int* width, int* height) {
 
     ui->change_virtual_dims_requested = false;
 
-    if(ui->new_virtual_dims[0] < 64) ui->new_virtual_dims[0] = 64;
-    if(ui->new_virtual_dims[0] > 4096) ui->new_virtual_dims[0] = 4096;
-    if(ui->new_virtual_dims[1] < 64) ui->new_virtual_dims[1] = 64;
-    if(ui->new_virtual_dims[1] > 4096) ui->new_virtual_dims[1] = 4096;
-
     *width = ui->new_virtual_dims[0];
     *height = ui->new_virtual_dims[1];
 
@@ -146,4 +156,34 @@ void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAY
     }
 
     closedir(dir);
+}
+
+void validate_width(UserInterface* ui) {
+    ui->width_buffer_edit = false;
+
+    int width = atoi(ui->width_buffer);
+    if(width < 64) width = 64;
+    else if(width > 4096) width = 4096;
+
+    sprintf(ui->width_buffer, "%d", width);
+}
+
+void validate_height(UserInterface* ui) {
+    ui->height_buffer_edit = false;
+
+    int height = atoi(ui->height_buffer);
+    if(height < 64) height = 64;
+    else if(height > 4096) height = 4096;
+
+    sprintf(ui->height_buffer, "%d", height);
+}
+
+void update_dims(UserInterface* ui) {
+    ui->change_virtual_dims_requested = true;
+
+    int width = atoi(ui->width_buffer);
+    int height = atoi(ui->height_buffer);
+
+    ui->new_virtual_dims[0] = width;
+    ui->new_virtual_dims[1] = height;
 }

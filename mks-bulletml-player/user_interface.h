@@ -28,6 +28,11 @@ typedef struct {
 
     bool change_virtual_dims_requested;
     int new_virtual_dims[2];
+
+    char width_buffer[8];
+    bool width_buffer_edit;
+    char height_buffer[8];
+    bool height_buffer_edit;
 } UserInterface;
 
 void init_user_interface(UserInterface* ui);
@@ -42,5 +47,9 @@ void query_playback_controls(UserInterface* ui, bool* stop, bool* play, bool* pl
 bool query_virtual_dims_change(UserInterface* ui, int* width, int* height);
 
 void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int* count);
+
+void validate_width(UserInterface* ui);
+void validate_height(UserInterface* ui);
+void update_dims(UserInterface* ui);
 
 #endif // USER_INTERFACE_H
