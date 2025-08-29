@@ -26,6 +26,7 @@
 #include "action-ref.h"
 #include "fire-ref.h"
 #include "param.h"
+#include "interpreter.h"
 
 typedef struct {
     MKSBMLI_PLAYBACK_HANDLE handle;
@@ -37,7 +38,8 @@ typedef struct {
 
     unsigned int next_free_base_index;
     BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS];
-    unsigned int playhead_index;
+
+    Interpreter interpreter;
 } Playback;
 
 int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE handle);
@@ -47,8 +49,8 @@ void update_playback(Playback* playback);
 void reset_playback(Playback* playback);
 void set_playing(Playback* playback, bool flag);
 
-int get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
-int destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
+void get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
+void destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 
 int parse_xml_file(Playback* playback, const char* xml_filename);
 void traverse_xml_file(Playback* playback, xmlNode* node, BulletmlBase* parent);

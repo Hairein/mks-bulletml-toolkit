@@ -21,6 +21,6 @@ int remove_playback(State* state, MKSBMLI_PLAYBACK_HANDLE handle);
 int count_playbacks(State* state);
 int find_playback(State* state, MKSBMLI_PLAYBACK_HANDLE handle, Playback* playback);
 
-void set_state_playing(State* state, bool flag);
+void set_state_playing(State* state, MKSBMLI_PLAYBACK_HANDLE handle, bool flag);
 
 #endif // STATE_H

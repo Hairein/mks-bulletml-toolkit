@@ -60,11 +60,11 @@ int mksbmli_count_xmls() {
 }
 
 void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
-    set_state_playing(&state, true);
+    set_state_playing(&state, handle, true);
 }
 
 void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle) {
-    set_state_playing(&state, false);
+    set_state_playing(&state, handle, false);
 }
 
 void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {

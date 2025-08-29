@@ -37,9 +37,9 @@ add_library(mks-bulletml-interpreter SHARED
     action-ref.c action-ref.h
     fire-ref.c fire-ref.h
     param.c param.h
-    bml-string.c bml-string.h
     bml-number.c bml-number.h
     mksbmli-defines.h
+    interpreter.c interpreter.h
 )
 
 # include headers

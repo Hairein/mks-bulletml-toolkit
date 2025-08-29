@@ -78,11 +78,11 @@ int find_playback(State* state, MKSBMLI_PLAYBACK_HANDLE handle, Playback* playba
     return MKSBMLI_INVALID_HANDLE;
 }
 
-void set_state_playing(State* state, bool flag) {
+void set_state_playing(State* state, MKSBMLI_PLAYBACK_HANDLE handle, bool flag) {
     state->is_playing = flag;
 
     for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
-        if(state->playbacks[index].handle == 0) continue;
+        if(state->playbacks[index].handle != handle) continue;
 
         set_playing(&state->playbacks[index], flag);
     }

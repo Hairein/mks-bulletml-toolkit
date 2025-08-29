@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "mks-bulletml-interpreter.h"
 #include "utility.h"
@@ -53,7 +54,7 @@ void update_app(App* app) {
         app->start_playing = false;
 
         mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
-        printf("start playing");
+        printf("start playing\n");
 
         app->is_playing = true;
     }
@@ -131,7 +132,7 @@ void handle_app_input(App* app)
     }
     else if(IsKeyDown(KEY_E)) {
         if(!app->pause_after_frame) {
-            app->is_playing = true;
+            app->start_playing = true;
             app->pause_after_frame = true;
         }
     }
@@ -152,7 +153,7 @@ void handle_ui_input(App* app) {
     if(stop_requested) app->stop_playing = true;
     if(play_requested && !app->is_playing) app->start_playing = true;
     if(play_frame_requested && !app->pause_after_frame) {
-        app->is_playing = true;
+        app->start_playing = true;
         app->pause_after_frame = true;
     }
     if(pause_requested && app->is_playing && !app->pause_after_frame) app->pause_after_frame = true;

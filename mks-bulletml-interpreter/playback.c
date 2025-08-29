@@ -63,10 +63,12 @@ void shutdown_playback(Playback* playback) {
 
 void update_playback(Playback* playback) {
     if(!playback->is_playing) return;
+
+    play_frame(&playback->interpreter, playback->bulletml_bases);
 }
 
 void reset_playback(Playback* playback) {
-    playback->playhead_index = 0;
+    reset_playhead(&playback->interpreter, playback->bulletml_bases);
 }
 
 void set_playing(Playback* playback, bool flag) {
@@ -75,15 +77,31 @@ void set_playing(Playback* playback, bool flag) {
     reset_playback(playback);
 }
 
-int get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets)
+void get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets)
 {
     *nos_bullets = 0;
+    int bullet_index = 0;
 
-    return MKSBMLI_NO_ERROR;
+    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+        if(playback->bullets[index].handle == 0) continue;
+
+        *nos_bullets = *nos_bullets + 1;
+
+        bullets[bullet_index++] = &playback->bullets[index];
+    }
 }
 
-int destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles) {
-    return MKSBMLI_NO_ERROR;
+void destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles) {
+    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+        if(playback->bullets[index].handle == 0) continue;
+
+        for(int delete_index = 0; delete_index < nos_bullet_handles; delete_index++) {
+            if(playback->bullets[index].handle == bullet_handles[delete_index]) {
+                playback->bullets[index].handle = 0;
+                break;
+            }
+        }
+    }
 }
 
 int parse_xml_file(Playback* playback, const char* xml_filename) {
