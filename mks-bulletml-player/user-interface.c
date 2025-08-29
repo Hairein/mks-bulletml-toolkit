@@ -7,7 +7,7 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-#include "user_interface.h"
+#include "user-interface.h"
 
 void init_user_interface(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int xml_count,
     int v_width, int v_height) {

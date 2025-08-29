@@ -2,7 +2,7 @@
 #define APP_H
 
 #include "mks-bulletml-interpreter.h"
-#include "user_interface.h"
+#include "user-interface.h"
 
 typedef struct {
     Vector2 virtual_playfield_dims;

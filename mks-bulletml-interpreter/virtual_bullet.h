@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 
-#include "mks-bulletml-interpreter.h"
+#include "mksbmli-defines.h"
 
 typedef struct {
     bool handle;

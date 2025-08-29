@@ -122,29 +122,21 @@ void render_app(App* app) {
 void handle_app_input(App* app)
 {
     if(IsKeyReleased(KEY_Q)) {
-        printf("Key Q - Stop Playing\n");
-
         app->stop_playing = true;
     }
     else if(IsKeyReleased(KEY_W)) {
         if(!app->is_playing) {
-            printf("Key W - Play\n");
-
             app->start_playing = true;
         }
     }
     else if(IsKeyDown(KEY_E)) {
         if(!app->pause_after_frame) {
-            printf("Key E - Play Frame\n");
-
             app->is_playing = true;
             app->pause_after_frame = true;
         }
     }
     else if(IsKeyReleased(KEY_R)) {
         if(app->is_playing && !app->pause_after_frame) {
-            printf("Key R - Pause Playing\n");
-
             app->pause_after_frame = true;
         }
     }

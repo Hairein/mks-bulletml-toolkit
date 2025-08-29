@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "tinyexpr.h"
 #include "bml-number.h"
 

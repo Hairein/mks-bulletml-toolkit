@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-#include "defines.h"
+#include "mksbmlp-defines.h"
 #include "utility.h"
 
 void set_playfield_dims(App* app, int width, int height)

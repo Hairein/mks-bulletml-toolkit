@@ -5,7 +5,7 @@
 
 #include "raylib.h"
 
-#include "defines.h"
+#include "mksbmlp-defines.h"
 #include "mks-bulletml-interpreter.h"
 
 typedef struct {

@@ -71,11 +71,11 @@ void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle) {
     update_state(&state);
 }
 
-int mksbmli_get_bullets() {
+int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, VirtualBullet** bullets, int max_bullets, int* nos_bullets) {
     return MKSBMLI_NO_ERROR;
 }
 
-int mksbmli_delete_bullets() {
+int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles) {
     return MKSBMLI_NO_ERROR;
 }
 

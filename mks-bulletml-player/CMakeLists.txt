@@ -24,11 +24,11 @@ link_directories(${INTERPRETER_LIB_DIR})
 # create executable
 add_executable(mks-bulletml-player
     main.c
-    defines.h
+    mksbmlp-defines.h
     raylib.h raygui.h raymath.h
     app.c app.h
     utility.c utility.h
-    user_interface.c user_interface.h
+    user-interface.c user-interface.h
 )
 
 # link shared library

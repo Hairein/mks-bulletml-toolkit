@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "bml-string.h"
 
 void init_bml_string(BmlString* bml_string, const char* text) {
