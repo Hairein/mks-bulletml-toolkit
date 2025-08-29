@@ -1,16 +1,30 @@
+#include "raylib.h"
+
 #include "virtual_bullet.h"
 
-void init_virtual_bullet(VirtualBullet* virtual_bullet, MKSBMLI_BULLET_HANDLE handle) {
-    virtual_bullet->handle = handle;
+void init_vb(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, Vector2 position, Vector2 angle_degrees, float speed) {
+    vb->handle = handle;
 
-    virtual_bullet->position = (Vector2){0.0f, 0.0f};
-    virtual_bullet->angles_degrees = (Vector2){0.0f, 0.0f};
-    virtual_bullet->speed = 0.0f;
+    vb->position = position;
+    vb->angle_degrees = angle_degrees;
+    vb->speed = speed;
 
-    virtual_bullet->directional_velocity = (Vector2){0.0f, 0.0f};
-    virtual_bullet->angular_velocity = 0.0f;
+    vb->velocity = (Vector2){0.0f, 0.0f};
+
+    vb->acceleration_vector = (Vector2){0.0f, 0.0f};
+    vb->acceleration_frames = 0;
+
+    vb->changing_direction_interval = 0.0f;
+    vb->changing_direction_frames = 0;
+
+    vb->changing_speed_interval = 0.0f;
+    vb->changing_speed_frames = 0;
 }
 
-int update_virtual_bullet(VirtualBullet* virtual_bullet) {
-    return MKSBMLI_NO_ERROR;
+void update_vb(VirtualBullet* vb) {
+    if(vb->handle == 0) return;
+}
+
+void calculate_vb_velocity(VirtualBullet* vb) {
+    if(vb->handle == 0) return;
 }

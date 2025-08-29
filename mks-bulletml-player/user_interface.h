@@ -9,8 +9,6 @@
 #include "mks-bulletml-interpreter.h"
 
 typedef struct {
-    char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
-
     char loaded_xml_file_list[MKSBMLP_MAX_LINE_LENGTH];
     int nos_loaded_xmls_files;
     int active_xml_file;
@@ -35,10 +33,10 @@ typedef struct {
     bool height_buffer_edit;
 } UserInterface;
 
-void init_user_interface(UserInterface* ui);
+void init_user_interface(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int xml_count,
+    int v_width, int v_height);
 void render_user_interface(UserInterface* ui);
 
-void extract_xml_shortnames(UserInterface* ui);
 int count_loaded_xml_files(UserInterface* ui);
 
 bool CustomGuiImageButton(Rectangle bounds, Texture2D texture);
@@ -46,10 +44,10 @@ bool CustomGuiImageButton(Rectangle bounds, Texture2D texture);
 void query_playback_controls(UserInterface* ui, bool* stop, bool* play, bool* play_frame, bool* pause);
 bool query_virtual_dims_change(UserInterface* ui, int* width, int* height);
 
-void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int* count);
-
 void validate_width(UserInterface* ui);
 void validate_height(UserInterface* ui);
 void update_dims(UserInterface* ui);
+
+void extract_xml_shortnames(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH]);
 
 #endif // USER_INTERFACE_H

@@ -1,4 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/types.h>
 
 #include "defines.h"
 #include "utility.h"
@@ -22,8 +26,6 @@ int add_xml_file(App* app, const char* xml_filename){
     for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
         if(app->playback_handles[index] != 0) continue;
 
-        memset((void*)&app->xml_filenames[index], 0, MKSBMLI_XML_FILENAME_MAX_LENGTH);
-        strncpy((char*)&app->xml_filenames[index], xml_filename, MKSBMLI_XML_FILENAME_MAX_LENGTH);
         app->playback_handles[index] = handle;
 
         return MKSBMLP_NO_ERROR;
@@ -51,4 +53,28 @@ void calculate_playfield(App* app) {
     app->projected_playfield.y = screen_height / 2.0f - (virtual_height / 2.0f) + TOP_BOTTOM_CUTOFF_HALF;
     app->projected_playfield.width = virtual_width;
     app->projected_playfield.height = virtual_height;
+}
+
+void load_xml_filenames(const char* folder_path, char filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int* count) {
+    DIR* dir = opendir(folder_path);
+    if (!dir) {
+        perror("Can't open folder");
+        return;
+    }
+
+    struct dirent* entry;
+    *count = 0;
+
+    while ((entry = readdir(dir)) != NULL && *count < MKSBMLI_MAX_PLAYBACK_HANDLES) {
+        if (entry->d_type == DT_REG) {
+            const char* name = entry->d_name;
+            const char* ext = strrchr(name, '.');
+            if (ext && strcmp(ext, ".xml") == 0) {
+                snprintf(filenames[*count], MKSBMLI_XML_FILENAME_MAX_LENGTH, "%s/%s", folder_path, name);
+                (*count)++;
+            }
+        }
+    }
+
+    closedir(dir);
 }

@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <string.h>
 
 #include "mks-bulletml-interpreter.h"
 #include "utility.h"
@@ -8,45 +9,54 @@ Color bg_color = {22, 22, 22, 255};
 Color playfield_bg_color = {8, 8, 8, 255};
 
 int init_app(App* app) {
+    memset(app, 0, sizeof(App));
+
+    app->xml_count = 0;
+    load_xml_filenames("../bulletml_files", app->xml_filenames, &app->xml_count);
+    if(app->xml_count > 0) {
+        printf("\n");
+        for (int i = 0; i < app->xml_count; i++) {
+            int add_result = add_xml_file(app, app->xml_filenames[i]);
+            printf("add xml file %s result: %d\n", app->xml_filenames[i], (int)add_result);
+        }
+        printf("\n");
+    }
+
     app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
 
-    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
-        app->playback_handles[index] = 0;
-    }
-
-    printf("\n");
-    const char test1_xml_filename[] = "../bulletml_files/basic_bml.xml";
-    int add_result1 = add_xml_file(app, test1_xml_filename);
-    printf("add xml file %s result: %d\n", test1_xml_filename, (int)add_result1);
-    const char test2_xml_filename[] = "../bulletml_files/inter_bml.xml";
-    int add_result2 = add_xml_file(app, test2_xml_filename);
-    printf("add xml file %s result: %d\n", test2_xml_filename, (int)add_result2);
-    const char test3_xml_filename[] = "../bulletml_files/aimed_bml.xml";
-    int add_result3 = add_xml_file(app, test3_xml_filename);
-    printf("add xml file %s result: %d\n", test3_xml_filename, (int)add_result3);
-    printf("\n");
-
     app->is_playing = false;
     app->pause_after_frame = false;
+    app->start_playing = false;
     app->stop_playing = false;
 
     app->frame_counter = 0;
 
     mksbmli_set_random_seed(1337);
 
-    app->current_active_playback_index = 0;
-    mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
-    printf("start playing");
+    if(app->xml_count > 0) {
+        init_user_interface(&app->ui, app->xml_filenames, app->xml_count,app->virtual_playfield_dims.x, app->virtual_playfield_dims.y);
 
-    init_user_interface(&app->ui);
+        app->current_active_playback_index = 0;
+    }
 
     return MKSBMLP_NO_ERROR;
 }
 
 void update_app(App* app) {
+    if(app->xml_count == 0) return;
+
     handle_app_input(app);
     handle_ui_input(app);
+
+    if(app->start_playing) {
+        app->start_playing = false;
+
+        mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
+        printf("start playing");
+
+        app->is_playing = true;
+    }
 
     if(app->is_playing) {
         mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);
@@ -57,6 +67,8 @@ void update_app(App* app) {
 }
 
 void post_update_app(App* app) {
+    if(app->xml_count == 0) return;
+
     if(app->pause_after_frame) {
         app->pause_after_frame = false;
 
@@ -83,6 +95,8 @@ void post_update_app(App* app) {
 }
 
 void render_app(App* app) {
+    if(app->xml_count == 0) return;
+
     calculate_playfield(app);
 
     ClearBackground(bg_color);
@@ -103,7 +117,7 @@ void handle_app_input(App* app)
         if(!app->is_playing) {
             printf("Key W - Play\n");
 
-            app->is_playing = true;
+            app->start_playing = true;
         }
     }
     else if(IsKeyDown(KEY_E)) {
@@ -131,10 +145,10 @@ void handle_ui_input(App* app) {
     query_playback_controls(&app->ui, &stop_requested, &play_requested, &play_frame_requested, &pause_requested);
 
     if(stop_requested) app->stop_playing = true;
-    if(play_requested && !app->is_playing) app->is_playing = true;
+    if(play_requested && !app->is_playing) app->start_playing = true;
     if(play_frame_requested && !app->pause_after_frame) {
         app->is_playing = true;
         app->pause_after_frame = true;
     }
-    if(pause_requested && app->is_playing && !app->pause_after_frame) app->pause_after_frame = true;;
+    if(pause_requested && app->is_playing && !app->pause_after_frame) app->pause_after_frame = true;
 }
