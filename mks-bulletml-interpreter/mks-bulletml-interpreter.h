@@ -32,5 +32,6 @@ EXPORT void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);
 
 EXPORT int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
 EXPORT int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
+EXPORT int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);
 
 #endif // MKSBULLETMLINTERPRETER_H

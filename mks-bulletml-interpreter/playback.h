@@ -5,7 +5,6 @@
 #include <libxml/tree.h>
 
 #include "mksbmli-defines.h"
-#include "virtual_bullet.h"
 #include "bulletml.h"
 #include "bullet.h"
 #include "action.h"
@@ -27,19 +26,18 @@
 #include "fire-ref.h"
 #include "param.h"
 #include "interpreter.h"
+#include "virtual_bullet_manager.h"
 
 typedef struct {
     MKSBMLI_PLAYBACK_HANDLE handle;
     bool is_playing;
     char xml_filename[MKSBMLI_XML_FILENAME_MAX_LENGTH];
 
-    MKSBMLI_BULLET_HANDLE next_free_bullet_handle;
-    VirtualBullet bullets[MKSBMLI_MAX_BULLETS];
-
     unsigned int next_free_base_index;
     BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS];
 
     Interpreter interpreter;
+    VirtualBulletManager virtual_bullet_manager;
 } Playback;
 
 int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE handle);
@@ -51,6 +49,7 @@ void set_playing(Playback* playback, bool flag);
 
 void get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, int* nos_bullets);
 void destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
+void clear_bullets(Playback* playback);
 
 int parse_xml_file(Playback* playback, const char* xml_filename);
 void traverse_xml_file(Playback* playback, xmlNode* node, BulletmlBase* parent);

@@ -95,3 +95,15 @@ int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE
     return MKSBMLI_INVALID_HANDLE;
 }
 
+int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle) {
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            clear_bullets(&state.playbacks[index]);
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
+}
+

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "mks-bulletml-interpreter.h"
 #include "app.h"

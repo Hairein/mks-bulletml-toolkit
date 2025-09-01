@@ -23,6 +23,8 @@ int init_app(App* app) {
         printf("\n");
     }
 
+    app->bullet_texture = LoadTexture("../assets/textures/8x8_default_bullet.png");
+
     app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
 
@@ -116,6 +118,53 @@ void render_app(App* app) {
     ClearBackground(bg_color);
 
     DrawRectangle(app->projected_playfield.x, app->projected_playfield.y, app->projected_playfield.width, app->projected_playfield.height, playfield_bg_color);
+
+    VirtualBullet* bullets[MKSBMLI_MAX_BULLETS];
+    int nos_bullets = 0;
+    MKSBMLI_BULLET_HANDLE delete_bullets[MKSBMLI_MAX_BULLETS];
+    int nos_delete_bullets = 0;
+    mksbmli_get_bullets(app->playback_handles[app->current_active_playback_index], MKSBMLI_MAX_BULLETS, bullets, &nos_bullets);
+    if(nos_bullets > 0) {
+        Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+        Vector2 texture_half = (Vector2){app->bullet_texture.width / 2.0f, app->bullet_texture.height / 2.0f};
+        Vector2 bullet_offset = (Vector2){screen_half.x - texture_half.x, screen_half.y - texture_half.y};
+
+        Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
+
+        int projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+
+        Vector2 min_edges = (Vector2){
+            screen_half.x - (virtual_half.x * projected_scale),
+            screen_half.y - (virtual_half.y * projected_scale)
+        };
+        Vector2 max_edges = (Vector2){
+            screen_half.x + (virtual_half.x * projected_scale),
+            screen_half.y + (virtual_half.y * projected_scale)
+        };
+
+        for(int index = 0; index < nos_bullets; index++) {
+            VirtualBullet* bullet = bullets[index];
+
+            Vector2 position = (Vector2){
+                bullet_offset.x + (bullet->position.x * projected_scale),
+                bullet_offset.y + (bullet->position.y * projected_scale)
+            };
+
+            DrawTexture(app->bullet_texture, (int)position.x, (int)position.y, WHITE);
+
+            if(position.x <  min_edges.x || position.x > max_edges.x
+                || position.y < min_edges.y || position.y > max_edges.y) {
+                delete_bullets[nos_delete_bullets++] = bullet->handle;
+            }
+        }
+    }
+    char nos_bullets_text[128];
+    snprintf(nos_bullets_text, 128, "Nos Bullets: %d", nos_bullets);
+    DrawText(nos_bullets_text, 8, 34, 12, DARKGRAY);
+
+    if(nos_delete_bullets > 0) {
+        mksbmli_delete_bullets(app->playback_handles[app->current_active_playback_index], delete_bullets, nos_delete_bullets);
+    }
 
     render_user_interface(&app->ui);
 }

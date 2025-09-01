@@ -22,6 +22,8 @@ typedef struct {
 
     char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
     int xml_count;
+
+    Texture2D bullet_texture;
 } App;
 
 int init_app(App* app);

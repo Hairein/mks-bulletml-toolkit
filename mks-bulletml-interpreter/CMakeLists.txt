@@ -40,6 +40,7 @@ add_library(mks-bulletml-interpreter SHARED
     bml-number.c bml-number.h
     mksbmli-defines.h
     interpreter.c interpreter.h
+    virtual_bullet_manager.c virtual_bullet_manager.h    
 )
 
 # include headers

@@ -6,10 +6,12 @@
 #include "mksbmli-defines.h"
 
 typedef struct {
-    bool handle;
+    MKSBMLI_BULLET_HANDLE handle;
+
+    BULLETML_ATTRIBUTE_TYPE bulletml_attribute;
 
     Vector2 position;
-    Vector2 angle_degrees;
+    float angle_degrees;
     float speed;
 
     Vector2 velocity;
@@ -24,7 +26,7 @@ typedef struct {
     unsigned int changing_speed_frames;
 } VirtualBullet;
 
-void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, Vector2 position, Vector2 angle_degrees, float speed);
+void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, BULLETML_ATTRIBUTE_TYPE bulletml_attribute, Vector2 position, float angle_degrees, float speed);
 void update_virtual_bullet(VirtualBullet* vb);
 
 void calculate_vb_velocity(VirtualBullet* vb);
