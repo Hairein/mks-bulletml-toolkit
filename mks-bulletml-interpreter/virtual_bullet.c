@@ -3,8 +3,10 @@
 
 #include "virtual_bullet.h"
 
-void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, BULLETML_ATTRIBUTE_TYPE bulletml_attribute, Vector2 position, float angle_degrees, float speed) {
+void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, int action_index, BULLETML_ATTRIBUTE_TYPE bulletml_attribute, Vector2 position, float angle_degrees, float speed) {
     vb->handle = handle;
+
+    vb->action_index = action_index;
 
     vb->bulletml_attribute = bulletml_attribute;
 
@@ -64,4 +66,19 @@ void calculate_vb_velocity(VirtualBullet* vb) {
     Vector2 direction_vector = Vector2Normalize(Vector2Rotate(unit_direction_vector, radians));
 
     vb->velocity = Vector2Scale(direction_vector, vb->speed);
+}
+
+void set_virtual_bullet_acceleration(VirtualBullet* vb, Vector2 acceleration_vector, unsigned int frames) {
+    vb->acceleration_vector = acceleration_vector;
+    vb->acceleration_frames = frames;
+}
+
+void set_virtual_bullet_changing_direction(VirtualBullet* vb, float new_direction_degrees, unsigned int frames) {
+    vb->changing_direction_interval = (new_direction_degrees - vb->angle_degrees) / frames;
+    vb->changing_direction_frames = frames;
+}
+
+void set_virtual_bullet_changing_speed(VirtualBullet* vb, float new_speed, unsigned int frames) {
+    vb->changing_speed_interval = (new_speed - vb->speed) / frames;
+    vb->changing_speed_frames = frames;
 }

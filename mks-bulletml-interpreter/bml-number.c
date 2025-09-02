@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "tinyexpr.h"
+#include "utility.h"
 #include "bml-number.h"
 
 void init_bml_number(BmlNumber* bml_number, const char* expression) {
@@ -33,8 +34,11 @@ unsigned int evaluate_bml_number_as_unsigned_int(BmlNumber* bml_number) {
 }
 
 float evaluate_bml_number_as_float(BmlNumber* bml_number) {
+    char temp[MKSBMLI_MAX_TEXT_LENGTH];
+    replace_rand_keyword(temp, bml_number->expression);
+
     int error;
-    double result = te_interp(bml_number->expression, &error);
+    double result = te_interp(temp, &error);
     if(error == 0) {
         return (float)result;
     }

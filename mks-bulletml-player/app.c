@@ -62,6 +62,29 @@ void update_app(App* app) {
     }
 
     if(app->is_playing) {
+        Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+        Vector2 mouse_position = GetMousePosition();
+        Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
+        int projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+        Vector2 min_edges = (Vector2){
+            screen_half.x - (virtual_half.x * projected_scale),
+            screen_half.y - (virtual_half.y * projected_scale)
+        };
+        Vector2 max_edges = (Vector2){
+            screen_half.x + (virtual_half.x * projected_scale),
+            screen_half.y + (virtual_half.y * projected_scale)
+        };
+
+        Vector2 player_position = (Vector2){0.0f, - virtual_half.y + (virtual_half.y * 0.33f)};
+        if(mouse_position.x >= min_edges.x && mouse_position.y <= max_edges.x
+            && mouse_position.y >= min_edges.y && mouse_position.y <= max_edges.y) {
+            player_position = (Vector2){
+                (mouse_position.x - screen_half.x) / projected_scale,
+                (mouse_position.y - screen_half.y) / projected_scale,
+            };
+        }
+        mksbmli_set_player_position(app->playback_handles[app->current_active_playback_index], player_position);
+
         mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);
 
         printf("playing frame %d...\n", app->frame_counter++);
@@ -128,9 +151,7 @@ void render_app(App* app) {
         Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
         Vector2 texture_half = (Vector2){app->bullet_texture.width / 2.0f, app->bullet_texture.height / 2.0f};
         Vector2 bullet_offset = (Vector2){screen_half.x - texture_half.x, screen_half.y - texture_half.y};
-
         Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
-
         int projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
 
         Vector2 min_edges = (Vector2){
@@ -152,8 +173,8 @@ void render_app(App* app) {
 
             DrawTexture(app->bullet_texture, (int)position.x, (int)position.y, WHITE);
 
-            if(position.x <  min_edges.x || position.x > max_edges.x
-                || position.y < min_edges.y || position.y > max_edges.y) {
+            if(position.x <=  min_edges.x || position.x >= max_edges.x
+                || position.y <= min_edges.y || position.y >= max_edges.y) {
                 delete_bullets[nos_delete_bullets++] = bullet->handle;
             }
         }

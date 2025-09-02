@@ -107,3 +107,14 @@ int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle) {
     return MKSBMLI_INVALID_HANDLE;
 }
 
+int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, Vector2 player_position) {
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            set_player_position(&state.playbacks[index], player_position);
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
+}

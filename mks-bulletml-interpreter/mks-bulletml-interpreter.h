@@ -34,4 +34,6 @@ EXPORT int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, 
 EXPORT int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 EXPORT int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);
 
+EXPORT int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, Vector2 player_position);
+
 #endif // MKSBULLETMLINTERPRETER_H

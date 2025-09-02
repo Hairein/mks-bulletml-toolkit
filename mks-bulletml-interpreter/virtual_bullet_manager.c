@@ -40,6 +40,17 @@ void destroy_vbm_bullets(VirtualBulletManager* vbm, MKSBMLI_BULLET_HANDLE* bulle
     }
 }
 
+void destroy_vbm_bullet(VirtualBulletManager* vbm, MKSBMLI_BULLET_HANDLE bullet_handle) {
+    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+        if(vbm->bullets[index].handle == 0) continue;
+
+        if(vbm->bullets[index].handle == bullet_handle) {
+            vbm->bullets[index].handle = 0;
+            break;
+        }
+    }
+}
+
 void clear_vbm_bullets(VirtualBulletManager* vbm) {
     vbm->next_free_bullet_handle = 1;
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
@@ -47,18 +58,33 @@ void clear_vbm_bullets(VirtualBulletManager* vbm) {
     }
 }
 
-MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, BULLETML_ATTRIBUTE_TYPE type, Vector2 position, float angle_degrees, float speed) {
+MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2 position, float angle_degrees, float speed) {
     MKSBMLI_BULLET_HANDLE new_handle = (MKSBMLI_BULLET_HANDLE)0;
 
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
         if(vbm->bullets[index].handle != (MKSBMLI_BULLET_HANDLE)0) continue;
 
         new_handle = vbm->next_free_bullet_handle++;
-        init_virtual_bullet(&vbm->bullets[index], new_handle, type, position, angle_degrees, speed);
+        init_virtual_bullet(&vbm->bullets[index], new_handle, action_index, type, position, angle_degrees, speed);
 
         printf("New vbullet spawned: %d", new_handle);
         break;
     }
 
     return new_handle;
+}
+
+VirtualBullet* get_virtual_bullet_by_action_index(VirtualBulletManager* vbm, int action_index) {
+    VirtualBullet* result = NULL;
+
+    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+        if(vbm->bullets[index].handle != (MKSBMLI_BULLET_HANDLE)0) continue;
+
+        if(vbm->bullets[index].action_index != action_index) continue;
+
+        result = &vbm->bullets[index];
+        break;
+    }
+
+    return result;
 }

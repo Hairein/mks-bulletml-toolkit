@@ -144,3 +144,47 @@ int get_ars_type_text(ARS_TYPE type, char* text) {
 float get_random_unit_float() {
     return (float)(float)GET_RANDOM() / (float)RAND_MAX;
 }
+
+float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2 source, Vector2 target) {
+    Vector2 unit_reference_vector = (Vector2){1.0f, 0.0f};
+    if(type == BULLETML_ATTRIBUTE_TYPE_VERTICAL) {
+        unit_reference_vector = (Vector2){0.0f, 1.0f};
+    }
+    Vector2 unit_direction_vector = Vector2Normalize(Vector2Subtract(target, source));
+
+    return Vector2LineAngle(unit_reference_vector, unit_direction_vector);
+}
+
+bool string_contained(char* source, char* text) {
+    return strstr(source, text) != NULL;
+}
+
+void replace_keyword(char* target_text, char *source_text, const char *old_text, const char *new_text) {
+    char *pos;
+
+    pos = strstr(source_text, old_text);
+    if (pos == NULL) return;
+
+    int index = pos - source_text;
+    strncpy(target_text, source_text, index);
+    target_text[index] = '\0';
+
+    strcat(target_text, new_text);
+
+    strcat(target_text, pos + strlen(old_text));
+}
+
+void replace_rand_keyword(char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]) {
+    char rand_keyword[] = "$rand";
+
+    if(!string_contained(source, rand_keyword)) {
+        strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH);
+        return;
+    }
+
+    char random_value_text[MKSBMLI_MAX_NUMBER_TEXT_LENGTH];
+    memset(random_value_text, 0, MKSBMLI_MAX_NUMBER_TEXT_LENGTH);
+    snprintf(random_value_text, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "%f", get_random_unit_float());
+
+    replace_keyword(target, source, rand_keyword, random_value_text);
+}
