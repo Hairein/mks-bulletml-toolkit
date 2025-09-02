@@ -19,6 +19,6 @@ void clear_vbm_bullets(VirtualBulletManager* vbm);
 
 MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2 position, float angle_degrees, float speed);
 
-VirtualBullet* get_virtual_bullet_by_action_index(VirtualBulletManager* vbm, int action_index);
+VirtualBullet* get_virtual_bullet_by_action_id(VirtualBulletManager* vbm, unsigned int action_id);
 
 #endif // VIRTUAL_BULLET_MANAGER_H

@@ -31,12 +31,15 @@ void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm) {
     interpreter->vbm = vbm;
 
     interpreter->player_position = (Vector2){0};
+
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) clear_action_info_block(&interpreter->active_actions[index]);
+
+    interpreter->next_free_action_id = 1;
 }
 
 void reset_playhead(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     interpreter->can_play_frame = true;
     interpreter->top_action_index = 0;
-    interpreter->play_frame_finished = false;
 
     interpreter->bulletml_attribute = BULLETML_ATTRIBUTE_TYPE_HORIZONTAL;
     BULLETML_ELEMENT_TYPE element_type = bulletml_bases[0]->type;
@@ -49,14 +52,58 @@ void reset_playhead(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBM
     interpreter->bulletml_attribute = bulletml->attribute;
 
     interpreter->can_play_frame = find_top_action_index(interpreter, bulletml_bases);
+
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) clear_action_info_block(&interpreter->active_actions[index]);
+
+    interpreter->first_frame = true;
 }
 
 void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     if(!interpreter->can_play_frame) return;
 
-    if(interpreter->play_frame_finished) reset_playhead(interpreter, bulletml_bases);
+    if(check_actions_playback_finished(interpreter)) {
+        reset_playhead(interpreter, bulletml_bases);
+    }
 
-    play_action(interpreter, 0, interpreter->top_action_index, 0, bulletml_bases);
+    if(interpreter->first_frame == true) {
+        interpreter->first_frame = false;
+
+        insert_action_for_playback(interpreter, 0, interpreter->top_action_index);
+    }
+
+    for(int action_array_index = 0; action_array_index < MKSBMLI_MAX_ELEMENTS; action_array_index++) {
+        ActionInfoBlock* block = &interpreter->active_actions[action_array_index];
+
+        if(block->action_index == 0) continue;
+
+        play_action(interpreter, block->parent_action_index, block->action_index, block->action_index, 0, block, bulletml_bases);
+    }
+}
+
+void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index) {
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) {
+        if(interpreter->active_actions[index].action_index == 0) {
+            init_action_info_block(&interpreter->active_actions[index], parent_action_index, action_index, 0);
+            break;
+        }
+    }
+}
+
+void remove_action_from_playback(Interpreter* interpreter, int action_index) {
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) {
+        if(interpreter->active_actions[index].action_index == action_index) {
+            interpreter->active_actions[index].action_index = 0;
+            break;
+        }
+    }
+}
+
+bool check_actions_playback_finished(Interpreter* interpreter) {
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) {
+        if(interpreter->active_actions[index].action_index != 0) return false;
+    }
+
+    return true;
 }
 
 bool find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
@@ -71,135 +118,148 @@ bool find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_base
     return false;
 }
 
-void play_action(Interpreter* interpreter, int parent_action_index, int index, unsigned int offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    printf("current: Action\n");
+void play_action(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, unsigned int offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    BulletmlBase* current_element = bulletml_bases[element_index];
+    Action* current_action = (Action*)current_element;
 
-    int start_child_index = interpreter->top_action_index + 1;
+    printf("play current: Action(%s)\n", current_action->label);
 
-    if(interpreter->is_waiting && interpreter->waiting_action_index == index) {
-        printf("waiting: %d\n", interpreter->wait_frames);
+    int start_child_index = element_index + 1;
 
-        interpreter->wait_frames--;
-        if(interpreter->wait_frames > 0) return;
+    if(action_info_block->is_waiting) {
+        printf("waiting: %d\n", action_info_block->wait_frames);
 
-        interpreter->is_waiting = false;
+        action_info_block->wait_frames--;
+        if(action_info_block->wait_frames > 0) return;
 
-        start_child_index = interpreter->waiting_index + 1;
+        clear_waiting(action_info_block);
+
+        start_child_index = action_info_block->wait_index + 1;
     }
 
     for(int child_index = start_child_index; child_index < MKSBMLI_MAX_ELEMENTS; child_index++) {
-        if(bulletml_bases[child_index] == NULL) continue;
+        BulletmlBase* child_element = bulletml_bases[child_index];
 
-        BULLETML_ELEMENT_TYPE element_type = bulletml_bases[child_index]->type;
+        if(child_element == NULL) continue;
+        if(child_element->parent != current_element) continue;
 
-        if(parent_action_index != 0 && bulletml_bases[child_index]->parent != bulletml_bases[index]) continue;
-
-        switch(element_type) {
+        BULLETML_ELEMENT_TYPE child_element_type = child_element->type;
+        switch(child_element_type) {
         case BULLETML_ELEMENT_TYPE_REPEAT: {
-            printf("child: Repeat\n");
+            printf("play child: Repeat\n");
 
-            play_repeat(interpreter, index, child_index, bulletml_bases);
+            play_repeat(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE: {
-            printf("child: Fire\n");
+            printf("play child: Fire\n");
 
-            play_fire(interpreter, index, child_index, offset, bulletml_bases);
+            play_fire(interpreter, parent_action_index, action_index, child_index, offset, action_info_block,bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE_REF: {
-            printf("child: FireRef\n");
+            printf("play child: FireRef\n");
 
-            play_fire_ref(interpreter, index, child_index, offset, bulletml_bases);
+            play_fire_ref(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_SPEED: {
-            printf("child: Speed\n");
+            printf("play child: Speed\n");
 
-            play_change_speed(interpreter, index, child_index, offset, bulletml_bases);
+            play_change_speed(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_DIRECTION: {
-            printf("child: Direction\n");
+            printf("play child: Direction\n");
 
-            play_change_direction(interpreter, index, child_index, offset, bulletml_bases);
+            play_change_direction(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACCEL: {
-            printf("child: Accel\n");
+            printf("play child: Accel\n");
 
-            play_accel(interpreter, index, child_index, offset, bulletml_bases);
+            play_accel(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_WAIT: {
-            printf("child: Wait\n");
+            printf("play child: Wait\n");
 
-            play_wait(interpreter, index, child_index, bulletml_bases);
+            play_wait(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
+            return;
         };
             break;
         case BULLETML_ELEMENT_TYPE_VANISH: {
-            printf("child: Vanish\n");
+            printf("play child: Vanish\n");
 
-            play_vanish(interpreter, index, child_index, bulletml_bases);
+            play_vanish(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION: {
-            printf("child: Action\n");
+            printf("play child: Action\n");
 
-            play_action(interpreter, index, child_index, offset, bulletml_bases);
+            play_action(interpreter, element_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION_REF: {
-            printf("child: ActionRef\n");
+            printf("play child: ActionRef\n");
 
-            play_action_ref(interpreter, index, child_index, offset, bulletml_bases);
+            play_action_ref(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         default: break;
         }
     }
 
-    interpreter->play_frame_finished = true;
+    if(!action_info_block->is_waiting) remove_action_from_playback(interpreter, action_index);
 }
 
-void play_repeat(Interpreter* interpreter, int parent_action_index, int index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    Repeat* repeat = (Repeat*)bulletml_bases[index];
-    int times = get_times_value(interpreter, index, bulletml_bases);
+void play_repeat(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    Repeat* repeat = (Repeat*)bulletml_bases[element_index];
+    int times = get_times_value(interpreter, element_index, bulletml_bases);
 
-    int action_index, action_ref_index;
-    bool has_action = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_ACTION, bulletml_bases, &action_index);
-    bool has_action_ref = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_ACTION, bulletml_bases, &action_ref_index);
+    int found_action_index, found_action_ref_index;
+    bool has_action = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_ACTION, bulletml_bases, &found_action_index);
+    bool has_action_ref = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_ACTION_REF, bulletml_bases, &found_action_ref_index);
 
-    for(int index = 0; index < times; index++) {
-        if(has_action) play_action(interpreter, parent_action_index, action_index, (unsigned int) index, bulletml_bases);
-        else if(has_action_ref) play_action_ref(interpreter, parent_action_index, action_ref_index, (unsigned int) index, bulletml_bases);
+    for(int loop_index = 0; loop_index < times; loop_index++) {
+        if(has_action) play_action(interpreter, parent_action_index, action_index, found_action_index, (unsigned int) loop_index, action_info_block, bulletml_bases);
+        else if(has_action_ref) play_action_ref(interpreter, parent_action_index, action_index, found_action_ref_index, (unsigned int) loop_index, action_info_block, bulletml_bases);
     }
 }
 
-void play_action_ref(Interpreter* interpreter, int parent_action_index, int index, unsigned int offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    ActionRef* action_ref= (ActionRef*)bulletml_bases[index];
+void play_action_ref(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, unsigned int offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    ActionRef* action_ref= (ActionRef*)bulletml_bases[element_index];
 
-    int action_index;
-    if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, action_ref->label, bulletml_bases, &action_index)) {
-        play_action(interpreter, parent_action_index, action_index, offset, bulletml_bases);
+    int found_action_index;
+    if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, action_ref->label, bulletml_bases, &found_action_index)) {
+        play_action(interpreter, parent_action_index, found_action_index, found_action_index, offset, action_info_block, bulletml_bases);
     }
 }
 
-void play_fire(Interpreter* interpreter, int parent_action_index, int index, int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+void play_fire(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     Vector2 position = (Vector2){0};
     float angle_degrees = 0.0f;
     float speed = 0.0f;
 
-    VirtualBullet* parent_action_bullet = get_virtual_bullet_by_action_index(interpreter->vbm, parent_action_index);
-    if(parent_action_bullet != NULL) {
-        position = parent_action_bullet->position;
-        angle_degrees = parent_action_bullet->angle_degrees;
-        speed = parent_action_bullet->speed;
+    if(parent_action_index != 0) {
+        for(int parent_info_index = 0; parent_info_index < MKSBMLI_MAX_ELEMENTS; parent_info_index++) {
+            ActionInfoBlock* block = &interpreter->active_actions[parent_info_index];
+            if(block->action_index != 0 && block->action_index == parent_action_index) {
+                VirtualBullet* parent_action_bullet = get_virtual_bullet_by_action_id(interpreter->vbm, block->action_id);
+                if(parent_action_bullet != NULL) {
+                    position = parent_action_bullet->position;
+                    angle_degrees = parent_action_bullet->angle_degrees;
+                    speed = parent_action_bullet->speed;
+                }
+                break;
+            }
+        }
     }
 
-    int bullet_index, bullet_ref_index;
-    bool has_bullet = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_BULLET, bulletml_bases, &bullet_index);
-    bool has_bullet_ref = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_BULLET_REF, bulletml_bases, &bullet_ref_index);
+
+    int bullet_index = 0, bullet_ref_index = 0;
+    bool has_bullet = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_BULLET, bulletml_bases, &bullet_index);
+    bool has_bullet_ref = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_BULLET_REF, bulletml_bases, &bullet_ref_index);
 
     Bullet* bullet = NULL;
     int found_bullet_index;
@@ -247,10 +307,10 @@ void play_fire(Interpreter* interpreter, int parent_action_index, int index, int
     default: break;
     }
 
-    Fire* fire = (Fire*)bulletml_bases[index];
+    Fire* fire = (Fire*)bulletml_bases[element_index];
 
     AARS_TYPE fire_direction_type;
-    float fire_direction = get_direction(interpreter, index, bulletml_bases, &fire_direction_type);
+    float fire_direction = get_direction(interpreter, element_index, bulletml_bases, &fire_direction_type);
     switch(fire_direction_type) {
     case AARS_TYPE_AIM: {
         angle_degrees = calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
@@ -268,7 +328,7 @@ void play_fire(Interpreter* interpreter, int parent_action_index, int index, int
     }
 
     ARS_TYPE fire_speed_type;
-    float fire_speed = get_speed(interpreter, index, bulletml_bases, &fire_speed_type);
+    float fire_speed = get_speed(interpreter, element_index, bulletml_bases, &fire_speed_type);
     switch(fire_speed_type) {
     case ARS_TYPE_ABSOLUTE: {
         speed = fire_speed;
@@ -282,47 +342,61 @@ void play_fire(Interpreter* interpreter, int parent_action_index, int index, int
     default: break;
     }
 
-    spawn_virtual_bullet(interpreter->vbm, parent_action_index, interpreter->bulletml_attribute, position, angle_degrees, speed);
+    unsigned int new_action_id = interpreter->next_free_action_id++;
+    spawn_virtual_bullet(interpreter->vbm, new_action_id, interpreter->bulletml_attribute, position, angle_degrees, speed);
+    action_info_block->action_id = new_action_id;
+
+    for(int bullet_child_action_index = found_bullet_index + 1; bullet_child_action_index < MKSBMLI_MAX_ELEMENTS; bullet_child_action_index++) {
+        BulletmlBase* bullet_child =  bulletml_bases[bullet_child_action_index];
+        if(bullet_child == NULL || bullet_child->parent != bulletml_bases[found_bullet_index]) continue;
+
+        if(bullet_child->type == BULLETML_ELEMENT_TYPE_ACTION) {
+            insert_action_for_playback(interpreter, action_index, bullet_child_action_index);
+
+        } else if(bullet_child->type == BULLETML_ELEMENT_TYPE_ACTION_REF) {
+            ActionRef* bullet_child_action_ref = (ActionRef*)bullet_child;
+            int found_bullet_child_index = 0;
+            if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, bullet_child_action_ref->label, bulletml_bases, &found_bullet_child_index))
+                insert_action_for_playback(interpreter, action_index, found_bullet_child_index);
+        }
+    }
 }
 
-void play_fire_ref(Interpreter* interpreter, int parent_action_index, int index, int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    FireRef* fire_ref= (FireRef*)bulletml_bases[index];
+void play_fire_ref(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    FireRef* fire_ref= (FireRef*)bulletml_bases[element_index];
 
     int fire_index;
     if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_FIRE, fire_ref->label, bulletml_bases, &fire_index)) {
-        play_fire(interpreter, parent_action_index, fire_index, action_offset, bulletml_bases);
+        play_fire(interpreter, parent_action_index, action_index, fire_index, action_offset, action_info_block, bulletml_bases);
     }
 }
 
-void play_wait(Interpreter* interpreter, int parent_action_index, int index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    Wait* wait = (Wait*)bulletml_bases[index];
+void play_wait(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    Wait* wait = (Wait*)bulletml_bases[element_index];
 
     unsigned int frames = evaluate_bml_number_as_unsigned_int(&wait->content);
 
-    interpreter->is_waiting = true;
-    interpreter->waiting_index = index;
-    interpreter->waiting_action_index = parent_action_index;
-    interpreter->wait_frames = frames;
+    set_waiting(action_info_block, frames, element_index);
 
-    printf("start wait: %d\n", interpreter->wait_frames);
+    printf("start wait: %d\n", action_info_block->wait_frames);
 }
 
-void play_change_speed(Interpreter* interpreter, int parent_action_index, int index, int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    ChangeSpeed* change_speed = (ChangeSpeed*)bulletml_bases[index];
+void play_change_speed(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    ChangeSpeed* change_speed = (ChangeSpeed*)bulletml_bases[element_index];
 
     int new_speed_index;
-    if(!find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &new_speed_index)) return;
+    if(!find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &new_speed_index)) return;
     ARS_TYPE speed_type;
-    float new_speed = get_speed(interpreter, index, bulletml_bases, &speed_type);
+    float new_speed = get_speed(interpreter, element_index, bulletml_bases, &speed_type);
 
     int frames_index;
     unsigned int frames = 1;
-    bool has_frames = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
+    bool has_frames = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
     if(has_frames) {
-        frames = get_term_value(interpreter, index, bulletml_bases);
+        frames = get_term_value(interpreter, element_index, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_action_index(interpreter->vbm, index);
+    VirtualBullet* vb = get_virtual_bullet_by_action_id(interpreter->vbm, action_info_block->action_id);
     if(vb != NULL) {
         switch(speed_type) {
         case ARS_TYPE_RELATIVE: {
@@ -339,22 +413,22 @@ void play_change_speed(Interpreter* interpreter, int parent_action_index, int in
     }
 }
 
-void play_change_direction(Interpreter* interpreter, int parent_action_index, int index, int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
-    ChangeDirection* change_speed = (ChangeDirection*)bulletml_bases[index];
+void play_change_direction(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
+    ChangeDirection* change_speed = (ChangeDirection*)bulletml_bases[element_index];
 
     int new_direction_index;
-    if(!find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &new_direction_index)) return;
+    if(!find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &new_direction_index)) return;
     AARS_TYPE direction_type;
-    float new_direction = get_direction(interpreter, index, bulletml_bases, &direction_type);
+    float new_direction = get_direction(interpreter, element_index, bulletml_bases, &direction_type);
 
     int frames_index;
     unsigned int frames = 1;
-    bool has_frames = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
+    bool has_frames = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
     if(has_frames) {
-        frames = get_term_value(interpreter, index, bulletml_bases);
+        frames = get_term_value(interpreter, element_index, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_action_index(interpreter->vbm, index);
+    VirtualBullet* vb = get_virtual_bullet_by_action_id(interpreter->vbm, action_info_block->action_id);
     if(vb != NULL) {
         switch(direction_type) {
         case AARS_TYPE_AIM: {
@@ -374,30 +448,30 @@ void play_change_direction(Interpreter* interpreter, int parent_action_index, in
     }
 }
 
-void play_accel(Interpreter* interpreter, int parent_action_index, int index, int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
-    Accel* change_speed = (Accel*)bulletml_bases[index];
+void play_accel(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
+    Accel* change_speed = (Accel*)bulletml_bases[element_index];
 
     int new_horizontal_index;
-    if(!find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_HORIZONTAL, bulletml_bases, &new_horizontal_index)) return;
+    if(!find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_HORIZONTAL, bulletml_bases, &new_horizontal_index)) return;
     ARS_TYPE horizontal_type;
-    float new_horizontal_value = get_horizontal(interpreter, index, bulletml_bases, &horizontal_type);
+    float new_horizontal_value = get_horizontal(interpreter, element_index, bulletml_bases, &horizontal_type);
 
     int new_vertical_index;
-    if(!find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_VERTICAL, bulletml_bases, &new_vertical_index)) return;
+    if(!find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_VERTICAL, bulletml_bases, &new_vertical_index)) return;
     ARS_TYPE vertical_type;
-    float new_vertical_value = get_vertical(interpreter, index, bulletml_bases, &vertical_type);
+    float new_vertical_value = get_vertical(interpreter, element_index, bulletml_bases, &vertical_type);
     switch(vertical_type) {
     default:break;
     }
 
     int frames_index;
     unsigned int frames = 1;
-    bool has_frames = find_child_element_of_type(interpreter, index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
+    bool has_frames = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &frames_index);
     if(has_frames) {
-        frames = get_term_value(interpreter, index, bulletml_bases);
+        frames = get_term_value(interpreter, element_index, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_action_index(interpreter->vbm, index);
+    VirtualBullet* vb = get_virtual_bullet_by_action_id(interpreter->vbm, action_info_block->action_id);
     if(vb != NULL) {
         switch(horizontal_type) {
         case ARS_TYPE_RELATIVE: {
@@ -426,20 +500,20 @@ void play_accel(Interpreter* interpreter, int parent_action_index, int index, in
     }
 }
 
-void play_vanish(Interpreter* interpreter, int parent_action_index, int index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
+void play_vanish(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
     //Vanish* vanish = (Vanish*)bulletml_bases[index];
 
-    VirtualBullet* vb = get_virtual_bullet_by_action_index(interpreter->vbm, index);
+    VirtualBullet* vb = get_virtual_bullet_by_action_id(interpreter->vbm, action_info_block->action_id);
     if(vb != NULL) {
         destroy_vbm_bullet(interpreter->vbm, vb->handle);
     }
 }
 
-int get_times_value(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+int get_times_value(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     int result = 1;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_TIMES, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_TIMES, bulletml_bases, &index)) {
         Times* times = (Times*)bulletml_bases[index];
         result = evaluate_bml_number_as_unsigned_int(&times->contents);
     }
@@ -447,11 +521,11 @@ int get_times_value(Interpreter* interpreter, int parent_index, BulletmlBase* bu
     return result;
 }
 
-int get_term_value(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+int get_term_value(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     int result = 1;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &index)) {
         Term* term = (Term*)bulletml_bases[index];
         result = evaluate_bml_number_as_unsigned_int(&term->contents);
     }
@@ -459,12 +533,12 @@ int get_term_value(Interpreter* interpreter, int parent_index, BulletmlBase* bul
     return result;
 }
 
-float get_direction(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type) {
+float get_direction(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type) {
     *direction_type = AARS_TYPE_ABSOLUTE;
     int result = 0.0f;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &index)) {
         Direction* direction = (Direction*)bulletml_bases[index];
         *direction_type = direction->attribute;
         result = evaluate_bml_number_as_float(&direction->contents);
@@ -473,12 +547,12 @@ float get_direction(Interpreter* interpreter, int parent_index, BulletmlBase* bu
     return result;
 }
 
-float get_speed(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* speed_type) {
+float get_speed(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* speed_type) {
     *speed_type = ARS_TYPE_ABSOLUTE;
     int result = 1.0f;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &index)) {
         Speed* speed = (Speed*)bulletml_bases[index];
         *speed_type = speed->attribute;
         result = evaluate_bml_number_as_float(&speed->contents);
@@ -487,12 +561,12 @@ float get_speed(Interpreter* interpreter, int parent_index, BulletmlBase* bullet
     return result;
 }
 
-float get_horizontal(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* horizontal_type) {
+float get_horizontal(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* horizontal_type) {
     *horizontal_type = ARS_TYPE_ABSOLUTE;
     int result = 0.0f;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_HORIZONTAL, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_HORIZONTAL, bulletml_bases, &index)) {
         Horizontal* horizontal = (Horizontal*)bulletml_bases[index];
         *horizontal_type = horizontal->attribute;
         result = evaluate_bml_number_as_float(&horizontal->contents);
@@ -501,12 +575,12 @@ float get_horizontal(Interpreter* interpreter, int parent_index, BulletmlBase* b
     return result;
 }
 
-float get_vertical(Interpreter* interpreter, int parent_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* vertical_type) {
+float get_vertical(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* vertical_type) {
     *vertical_type = ARS_TYPE_ABSOLUTE;
     int result = 0.0f;
 
     int index;
-    if(find_child_element_of_type(interpreter, parent_index, BULLETML_ELEMENT_TYPE_VERTICAL, bulletml_bases, &index)) {
+    if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_VERTICAL, bulletml_bases, &index)) {
         Vertical* vertical = (Vertical*)bulletml_bases[index];
         *vertical_type = vertical->attribute;
         result = evaluate_bml_number_as_float(&vertical->contents);
@@ -515,8 +589,8 @@ float get_vertical(Interpreter* interpreter, int parent_index, BulletmlBase* bul
     return result;
 }
 
-bool find_child_element_of_type(Interpreter* interpreter, int parent_index, BULLETML_ELEMENT_TYPE type, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index) {
-    BulletmlBase* parent = bulletml_bases[parent_index];
+bool find_child_element_of_type(Interpreter* interpreter, int parent_element_index, BULLETML_ELEMENT_TYPE type, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index) {
+    BulletmlBase* parent = bulletml_bases[parent_element_index];
 
     for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) {
         BulletmlBase* child = bulletml_bases[index];

@@ -3,10 +3,10 @@
 
 #include "virtual_bullet.h"
 
-void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, int action_index, BULLETML_ATTRIBUTE_TYPE bulletml_attribute, Vector2 position, float angle_degrees, float speed) {
+void init_virtual_bullet(VirtualBullet* vb, MKSBMLI_BULLET_HANDLE handle, unsigned int action_id, BULLETML_ATTRIBUTE_TYPE bulletml_attribute, Vector2 position, float angle_degrees, float speed) {
     vb->handle = handle;
 
-    vb->action_index = action_index;
+    vb->action_id = action_id;
 
     vb->bulletml_attribute = bulletml_attribute;
 

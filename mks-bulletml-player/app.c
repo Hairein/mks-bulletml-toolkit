@@ -173,8 +173,8 @@ void render_app(App* app) {
 
             DrawTexture(app->bullet_texture, (int)position.x, (int)position.y, WHITE);
 
-            if(position.x <=  min_edges.x || position.x >= max_edges.x
-                || position.y <= min_edges.y || position.y >= max_edges.y) {
+            if(position.x <  min_edges.x || position.x > max_edges.x
+                || position.y < min_edges.y || position.y > max_edges.y) {
                 delete_bullets[nos_delete_bullets++] = bullet->handle;
             }
         }

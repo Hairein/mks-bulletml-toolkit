@@ -67,20 +67,22 @@ MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action
         new_handle = vbm->next_free_bullet_handle++;
         init_virtual_bullet(&vbm->bullets[index], new_handle, action_index, type, position, angle_degrees, speed);
 
-        printf("New vbullet spawned: %d", new_handle);
+        printf("New vbullet spawned: %d\n", new_handle);
         break;
     }
 
     return new_handle;
 }
 
-VirtualBullet* get_virtual_bullet_by_action_index(VirtualBulletManager* vbm, int action_index) {
+VirtualBullet* get_virtual_bullet_by_action_id(VirtualBulletManager* vbm, unsigned int action_id) {
     VirtualBullet* result = NULL;
 
-    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
-        if(vbm->bullets[index].handle != (MKSBMLI_BULLET_HANDLE)0) continue;
+    if(action_id == 0) return result;
 
-        if(vbm->bullets[index].action_index != action_index) continue;
+    for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+        if(vbm->bullets[index].handle == (MKSBMLI_BULLET_HANDLE)0) continue;
+
+        if(vbm->bullets[index].action_id != action_id) continue;
 
         result = &vbm->bullets[index];
         break;
