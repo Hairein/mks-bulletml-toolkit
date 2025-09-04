@@ -32,6 +32,7 @@ int init_app(App* app) {
     app->pause_after_frame = false;
     app->start_playing = false;
     app->stop_playing = false;
+    app->rewind_playback = true;
 
     app->frame_counter = 0;
 
@@ -55,8 +56,12 @@ void update_app(App* app) {
     if(app->start_playing) {
         app->start_playing = false;
 
-        mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
-        printf("start playing\n");
+        if(app->rewind_playback) {
+            app->rewind_playback = false;
+
+            mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
+            printf("start playing\n");
+        }
 
         app->is_playing = true;
     }
@@ -107,9 +112,12 @@ void post_update_app(App* app) {
         app->stop_playing = false;
 
         mksbmli_stop_playback(app->playback_handles[app->current_active_playback_index]);
+        mksbmli_clear_bullets(app->playback_handles[app->current_active_playback_index]);
         app->frame_counter = 0;
 
         app->is_playing = false;
+        app->rewind_playback = true;
+
 
         printf("stopped playing\n");
     }
@@ -117,9 +125,11 @@ void post_update_app(App* app) {
     int xml_index;
     if(query_xml_index_changed(&app->ui, &xml_index)) {
         mksbmli_stop_playback(app->playback_handles[app->current_active_playback_index]);
+        mksbmli_clear_bullets(app->playback_handles[app->current_active_playback_index]);
         app->frame_counter = 0;
 
         app->is_playing = false;
+        app->rewind_playback = true;
 
         printf("stopped playing xml file index: %d\n", app->current_active_playback_index);
 

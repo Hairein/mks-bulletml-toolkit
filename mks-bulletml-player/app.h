@@ -15,6 +15,7 @@ typedef struct {
     bool pause_after_frame;
     bool start_playing;
     bool stop_playing;
+    bool rewind_playback;
 
     unsigned int frame_counter;
 
