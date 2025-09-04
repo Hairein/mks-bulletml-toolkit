@@ -62,6 +62,13 @@ Linux : `nm -D libmks-bulletml-interpreter.so | grep init`
 
 If you have any questions or want to get in touch about anything related to this project.
 
-Website - [Micah Koleoso Software](https://micahkoleososoftware.com)
-Mail - [micah@micahkoleososoftware.com](mailto:micah@micahkoleososoftware.com)
-BulletML Pattern Editor (Steam), creates BulletML patterns - [MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/)
+Website:  
+[Micah Koleoso Software](https://micahkoleososoftware.com)
+
+
+Email:  
+[micah@micahkoleososoftware.com](mailto:micah@micahkoleososoftware.com)
+
+
+BulletML Pattern Editor (Steam), creates BulletML patterns:  
+[MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/)
