@@ -198,7 +198,7 @@ void render_app(App* app) {
     DrawTexture(app->player_cursor_texture, player_cursor_position_x, player_cursor_position_y, YELLOW);
 
     char nos_bullets_text[128];
-    snprintf(nos_bullets_text, 128, "Player XY(%4d, %4d), Nos Bullets: %d",
+    snprintf(nos_bullets_text, 128, "Player XY(%6d, %6d), Nos Bullets: %4d",
              (int)app->player_position.x, (int)app->player_position.y,
             nos_bullets);
     DrawText(nos_bullets_text, 8, 34, 12, DARKGRAY);

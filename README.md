@@ -1,16 +1,67 @@
 # mks-bulletml-toolkit
-MKS BulletML Toolkit - A collection of tools to work with BulletML XML files
+MKS BulletML Toolkit - A collection of tools to visualize and work with BulletML XML files.
+
+The entire project is provided under the MIT license except foreign files and libraries used within which retain their respective licensing.
+
+## Interpreter 
+The interpreter library loads and parses the BulletML XML files provided and enables them to be played back. After each updated frame, the virtual bullets can be read back and tracked with unique handles per bullet.
+The library using application is responsible for providing information when specific bullets can be deleted within the library, e.g. when bullets leave specific bounds. Otherwise, memory usage can accumulate.
+
+## Player
+A small application to show how the library is used and those functions can be called.
+It visualizes the bullets interpreted within the library.
+To use this sample app, provide BulletML XML files withing the folder 'bulletml_files', all will be loaded automatically on startup. 
+The 'asset' folder contains all resources required to run the player application.
+
+---
+
+## API Functions
+
+| Function Signature                                                                 | Description            |
+|------------------------------------------------------------------------------------|------------------------|
+| `int mksbmli_init();`                                                              | Fist call before using the library                      |
+| `int mksbmli_shutdown();`                                                          | Last call during shutdown of the application to free the resources used                     |
+| `void mksbmli_get_version(int* major, int* minor, int* patch);`                    | Print out the library version                       |
+| `int mksbmli_set_random_seed(int seed);`                                           | Set the same seed for repeated results or random each run                       |
+| `int mksbmli_load_xml(const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE* handle);` | Each XML file gets it's own run and can be frame-rate controlled                        |
+| `int mksbmli_unload_xml(MKSBMLI_PLAYBACK_HANDLE handle);`                          | Remove the XML file if not needed and that slot can be reused with new file, limit is 100 concurrently at this time                       |
+| `int mksbmli_count_xmls();`                                                        | Shows how many slots of 1000 max. are used in the library                       |
+| `void mksbmli_start_playback(MKSBMLI_PLAYBACK_HANDLE handle);`                     | Start the BulletML sequence with the first Action                       |
+| `void mksbmli_stop_playback(MKSBMLI_PLAYBACK_HANDLE handle);`                      | Stop the specific playback frames, loses the frame number reached in playback previously                       |
+| `void mksbmli_next_frame(MKSBMLI_PLAYBACK_HANDLE handle);`                         | Moves playback of the specific Bulletml XML file to the next iteration/frame. playback restarts continously at the end                       |
+| `int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, VirtualBullet** bullets, int* nos_bullets);` | After each next frame call, get the new positions of the bullets as they were handled. Provide an array of max_bullets, returned nos will be provided               |
+| `int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);` | Any bullets that leave the user's app bounds or are not needed anymore for other reasons can be deleted         |
+| `int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);`                       | Clears all currently active and tracked bullets of the XML file playback, playback doesn't reset to start                       |
+| `int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, Vector2 player_position);` | For using aimed shots in the BulletML XML file, you need to provide the player virtual positon to be aimed at              |
+
+---
+
+## DEV
+
+### Build
+
+The project is configured with CMAKE and was built using Qt Creator on various Ubuntu 24.04 LTS platforms.
+
+TODO - CMake configuration and build instructions here for various operating systems
+
+### Install dependencies
+
+Linux : `sudo apt install libxml2-dev`
+
+---
+
+## NOTES
 
 These projects were created with the help of AI.
 
----
+### Check mks-bulletml-interpreter exports
 
-## Install dependencies
+Linux : `nm -D libmks-bulletml-interpreter.so | grep init`
 
-sudo apt install libxml2-dev
+### Contact
 
----
+If you have any questions or want to get in touch about anything related to this project.
 
-## Check mks-bulletml-interpreter exports
-
-nm -D libmks-bulletml-interpreter.so | grep init
+Website - [Micah Koleoso Software](https://micahkoleososoftware.com)
+Mail - [micah@micahkoleososoftware.com](mailto:micah@micahkoleososoftware.com)
+BulletML Pattern Editor (Steam), creates BulletML patterns - [MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/)

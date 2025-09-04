@@ -13,7 +13,7 @@
 #endif
 
 #define MKSBMLI_MAJOR_VERSION 0
-#define MKSBMLI_MINOR_VERSION 1
+#define MKSBMLI_MINOR_VERSION 8
 #define MKSBMLI_PATCH_VERSION 0
 
 EXPORT int mksbmli_init();
