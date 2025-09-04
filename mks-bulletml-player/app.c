@@ -24,9 +24,11 @@ int init_app(App* app) {
     }
 
     app->bullet_texture = LoadTexture("../assets/textures/8x8_default_bullet.png");
+    app->player_cursor_texture = LoadTexture("../assets/textures/player_cursor.png");
 
     app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
+    app->player_position = (Vector2){0.0f, 0.0f};
 
     app->is_playing = false;
     app->pause_after_frame = false;
@@ -60,39 +62,39 @@ void update_app(App* app) {
             app->rewind_playback = false;
 
             mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
-            printf("start playing\n");
+            //printf("start playing\n");
         }
 
         app->is_playing = true;
     }
 
+    Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+    Vector2 mouse_position = GetMousePosition();
+    Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
+    float projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+    Vector2 min_edges = (Vector2){
+        screen_half.x - (virtual_half.x * projected_scale),
+        screen_half.y - (virtual_half.y * projected_scale)
+    };
+    Vector2 max_edges = (Vector2){
+        screen_half.x + (virtual_half.x * projected_scale),
+        screen_half.y + (virtual_half.y * projected_scale)
+    };
+    app->player_position = (Vector2){0.0f, -virtual_half.y + (virtual_half.y * 0.33f)};
+    if(mouse_position.x >= min_edges.x && mouse_position.x <= max_edges.x
+        && mouse_position.y >= min_edges.y && mouse_position.y <= max_edges.y) {
+        app->player_position = (Vector2){
+            (mouse_position.x - screen_half.x) / projected_scale,
+            (-mouse_position.y + screen_half.y) / projected_scale,
+        };
+    }
+    mksbmli_set_player_position(app->playback_handles[app->current_active_playback_index], app->player_position);
+    //printf("Player: x(%d), y(%d)\n", (int)player_position.x, (int)player_position.y);
+
     if(app->is_playing) {
-        Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
-        Vector2 mouse_position = GetMousePosition();
-        Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
-        int projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
-        Vector2 min_edges = (Vector2){
-            screen_half.x - (virtual_half.x * projected_scale),
-            screen_half.y - (virtual_half.y * projected_scale)
-        };
-        Vector2 max_edges = (Vector2){
-            screen_half.x + (virtual_half.x * projected_scale),
-            screen_half.y + (virtual_half.y * projected_scale)
-        };
-
-        Vector2 player_position = (Vector2){0.0f, - virtual_half.y + (virtual_half.y * 0.33f)};
-        if(mouse_position.x >= min_edges.x && mouse_position.y <= max_edges.x
-            && mouse_position.y >= min_edges.y && mouse_position.y <= max_edges.y) {
-            player_position = (Vector2){
-                (mouse_position.x - screen_half.x) / projected_scale,
-                (mouse_position.y - screen_half.y) / projected_scale,
-            };
-        }
-        mksbmli_set_player_position(app->playback_handles[app->current_active_playback_index], player_position);
-
         mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);
 
-        printf("playing frame %d...\n", app->frame_counter++);
+        //printf("playing frame %d...\n", app->frame_counter++);
         if(app->frame_counter >= UINT_MAX) app->frame_counter -= UINT_MAX;
     }
 }
@@ -105,7 +107,7 @@ void post_update_app(App* app) {
 
         app->is_playing = false;
 
-        printf("paused playing\n");
+        //printf("paused playing\n");
     }
 
     if(app->stop_playing) {
@@ -119,7 +121,7 @@ void post_update_app(App* app) {
         app->rewind_playback = true;
 
 
-        printf("stopped playing\n");
+        //printf("stopped playing\n");
     }
 
     int xml_index;
@@ -131,10 +133,10 @@ void post_update_app(App* app) {
         app->is_playing = false;
         app->rewind_playback = true;
 
-        printf("stopped playing xml file index: %d\n", app->current_active_playback_index);
+        //printf("stopped playing xml file index: %d\n", app->current_active_playback_index);
 
         app->current_active_playback_index = xml_index;
-        printf("selected xml file index: %d\n", app->current_active_playback_index);
+        //printf("selected xml file index: %d\n", app->current_active_playback_index);
     }
 
     int new_width, new_height;
@@ -152,17 +154,18 @@ void render_app(App* app) {
 
     DrawRectangle(app->projected_playfield.x, app->projected_playfield.y, app->projected_playfield.width, app->projected_playfield.height, playfield_bg_color);
 
+    Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+    float projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+
     VirtualBullet* bullets[MKSBMLI_MAX_BULLETS];
     int nos_bullets = 0;
     MKSBMLI_BULLET_HANDLE delete_bullets[MKSBMLI_MAX_BULLETS];
     int nos_delete_bullets = 0;
     mksbmli_get_bullets(app->playback_handles[app->current_active_playback_index], MKSBMLI_MAX_BULLETS, bullets, &nos_bullets);
     if(nos_bullets > 0) {
-        Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
         Vector2 texture_half = (Vector2){app->bullet_texture.width / 2.0f, app->bullet_texture.height / 2.0f};
         Vector2 bullet_offset = (Vector2){screen_half.x - texture_half.x, screen_half.y - texture_half.y};
         Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
-        int projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
 
         Vector2 min_edges = (Vector2){
             screen_half.x - (virtual_half.x * projected_scale),
@@ -189,8 +192,15 @@ void render_app(App* app) {
             }
         }
     }
+
+    int player_cursor_position_x = (int)(screen_half.x + (app->player_position.x * projected_scale) - (app->player_cursor_texture.width / 2.0f));
+    int player_cursor_position_y = (int)(screen_half.y - (app->player_position.y * projected_scale) - (app->player_cursor_texture.height / 2.0f));
+    DrawTexture(app->player_cursor_texture, player_cursor_position_x, player_cursor_position_y, YELLOW);
+
     char nos_bullets_text[128];
-    snprintf(nos_bullets_text, 128, "Nos Bullets: %d", nos_bullets);
+    snprintf(nos_bullets_text, 128, "Player XY(%4d, %4d), Nos Bullets: %d",
+             (int)app->player_position.x, (int)app->player_position.y,
+            nos_bullets);
     DrawText(nos_bullets_text, 8, 34, 12, DARKGRAY);
 
     if(nos_delete_bullets > 0) {

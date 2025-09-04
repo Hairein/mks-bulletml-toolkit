@@ -24,7 +24,10 @@ typedef struct {
     char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
     int xml_count;
 
+    Vector2 player_position;
+
     Texture2D bullet_texture;
+    Texture2D player_cursor_texture;
 } App;
 
 int init_app(App* app);

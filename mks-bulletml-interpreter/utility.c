@@ -152,7 +152,13 @@ float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2 source, Vector2 t
     }
     Vector2 unit_direction_vector = Vector2Normalize(Vector2Subtract(target, source));
 
-    return Vector2LineAngle(unit_reference_vector, unit_direction_vector);
+    float radian_result = acosf(Vector2DotProduct(unit_reference_vector, unit_direction_vector));
+    float degree_result = 0.0f;
+    if((type == BULLETML_ATTRIBUTE_TYPE_VERTICAL && unit_direction_vector.x >= 0)
+        || (type == BULLETML_ATTRIBUTE_TYPE_HORIZONTAL && unit_direction_vector.y <= 0)) degree_result = -RAD2DEG * radian_result;
+    else degree_result = RAD2DEG * radian_result;
+
+    return degree_result;
 }
 
 bool string_contained(char* source, char* text) {

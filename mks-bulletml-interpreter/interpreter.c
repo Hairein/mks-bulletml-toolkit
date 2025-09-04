@@ -122,12 +122,12 @@ void play_action(Interpreter* interpreter, int parent_action_index, int action_i
     BulletmlBase* current_element = bulletml_bases[element_index];
     Action* current_action = (Action*)current_element;
 
-    printf("play current: Action(%s)\n", current_action->label);
+    //printf("play current: Action(%s)\n", current_action->label);
 
     int start_child_index = element_index + 1;
 
     if(action_info_block->is_waiting) {
-        printf("waiting: %d\n", action_info_block->wait_frames);
+        //printf("waiting: %d\n", action_info_block->wait_frames);
 
         action_info_block->wait_frames--;
         if(action_info_block->wait_frames > 0) return;
@@ -146,62 +146,62 @@ void play_action(Interpreter* interpreter, int parent_action_index, int action_i
         BULLETML_ELEMENT_TYPE child_element_type = child_element->type;
         switch(child_element_type) {
         case BULLETML_ELEMENT_TYPE_REPEAT: {
-            printf("play child: Repeat\n");
+            //printf("play child: Repeat\n");
 
             play_repeat(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE: {
-            printf("play child: Fire\n");
+            //printf("play child: Fire\n");
 
             play_fire(interpreter, parent_action_index, action_index, child_index, offset, action_info_block,bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE_REF: {
-            printf("play child: FireRef\n");
+            //printf("play child: FireRef\n");
 
             play_fire_ref(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_SPEED: {
-            printf("play child: Speed\n");
+            //printf("play child: Speed\n");
 
             play_change_speed(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_DIRECTION: {
-            printf("play child: Direction\n");
+            //printf("play child: Direction\n");
 
             play_change_direction(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACCEL: {
-            printf("play child: Accel\n");
+            //printf("play child: Accel\n");
 
             play_accel(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_WAIT: {
-            printf("play child: Wait\n");
+            //printf("play child: Wait\n");
 
             play_wait(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
             return;
         };
             break;
         case BULLETML_ELEMENT_TYPE_VANISH: {
-            printf("play child: Vanish\n");
+            //printf("play child: Vanish\n");
 
             play_vanish(interpreter, parent_action_index, action_index, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION: {
-            printf("play child: Action\n");
+            //printf("play child: Action\n");
 
             play_action(interpreter, element_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION_REF: {
-            printf("play child: ActionRef\n");
+            //printf("play child: ActionRef\n");
 
             play_action_ref(interpreter, parent_action_index, action_index, child_index, offset, action_info_block, bulletml_bases);
         };
@@ -278,7 +278,8 @@ void play_fire(Interpreter* interpreter, int parent_action_index, int action_ind
     float bullet_direction = get_direction(interpreter, found_bullet_index, bulletml_bases, &bullet_direction_type);
     switch(bullet_direction_type) {
     case AARS_TYPE_AIM: {
-        angle_degrees = calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
+        angle_degrees = bullet_direction + calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
+        //printf("bullet: player(%d, %d), angle_degrees: %d\n", (int)interpreter->player_position.x, (int)interpreter->player_position.y, (int)angle_degrees);
     }; break;
     case AARS_TYPE_ABSOLUTE: {
         angle_degrees = bullet_direction;
@@ -313,7 +314,7 @@ void play_fire(Interpreter* interpreter, int parent_action_index, int action_ind
     float fire_direction = get_direction(interpreter, element_index, bulletml_bases, &fire_direction_type);
     switch(fire_direction_type) {
     case AARS_TYPE_AIM: {
-        angle_degrees = calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
+        angle_degrees = fire_direction + calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
     }; break;
     case AARS_TYPE_ABSOLUTE: {
         angle_degrees = fire_direction;
@@ -378,7 +379,7 @@ void play_wait(Interpreter* interpreter, int parent_action_index, int action_ind
 
     set_waiting(action_info_block, frames, element_index);
 
-    printf("start wait: %d\n", action_info_block->wait_frames);
+    //printf("start wait: %d\n", action_info_block->wait_frames);
 }
 
 void play_change_speed(Interpreter* interpreter, int parent_action_index, int action_index, int element_index, int action_offset, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
@@ -535,7 +536,7 @@ int get_term_value(Interpreter* interpreter, int parent_element_index, BulletmlB
 
 float get_direction(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type) {
     *direction_type = AARS_TYPE_ABSOLUTE;
-    int result = 0.0f;
+    float result = 0.0f;
 
     int index;
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &index)) {
@@ -549,7 +550,7 @@ float get_direction(Interpreter* interpreter, int parent_element_index, Bulletml
 
 float get_speed(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* speed_type) {
     *speed_type = ARS_TYPE_ABSOLUTE;
-    int result = 1.0f;
+    float result = 1.0f;
 
     int index;
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &index)) {

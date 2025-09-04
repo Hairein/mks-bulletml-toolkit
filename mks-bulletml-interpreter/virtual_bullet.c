@@ -58,10 +58,10 @@ void update_virtual_bullet(VirtualBullet* vb) {
 void calculate_vb_velocity(VirtualBullet* vb) {
     if(vb->handle == 0) return;
 
-    float radians = DEG2RAD * vb->angle_degrees;
+    float radians = -DEG2RAD * vb->angle_degrees;
     Vector2 unit_direction_vector = (Vector2){1.0f, 0.0f};
     if(vb->bulletml_attribute == BULLETML_ATTRIBUTE_TYPE_VERTICAL) {
-        unit_direction_vector = (Vector2){0.0f, 1.0f};
+        unit_direction_vector = (Vector2){0.0f, -1.0f};
     }
     Vector2 direction_vector = Vector2Normalize(Vector2Rotate(unit_direction_vector, radians));
 

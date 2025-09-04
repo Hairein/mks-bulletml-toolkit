@@ -67,7 +67,7 @@ MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action
         new_handle = vbm->next_free_bullet_handle++;
         init_virtual_bullet(&vbm->bullets[index], new_handle, action_index, type, position, angle_degrees, speed);
 
-        printf("New vbullet spawned: %d\n", new_handle);
+        //printf("New vbullet spawned: %d\n", new_handle);
         break;
     }
 
