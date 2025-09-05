@@ -74,19 +74,33 @@ MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action
     return new_handle;
 }
 
-VirtualBullet* get_virtual_bullet_by_action_id(VirtualBulletManager* vbm, unsigned int action_id) {
-    VirtualBullet* result = NULL;
-
-    if(action_id == 0) return result;
+VirtualBullet* get_virtual_bullet_by_bullet_id(VirtualBulletManager* vbm, unsigned int bullet_id) {
+    if(bullet_id == 0) return NULL;
 
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
         if(vbm->bullets[index].handle == (MKSBMLI_BULLET_HANDLE)0) continue;
 
-        if(vbm->bullets[index].action_id != action_id) continue;
+        if(vbm->bullets[index].action_id != bullet_id) continue;
 
-        result = &vbm->bullets[index];
-        break;
+        return &vbm->bullets[index];
     }
 
-    return result;
+    return NULL;
 }
+
+// VirtualBullet* get_virtual_bullet_by_action_id(VirtualBulletManager* vbm, unsigned int action_id) {
+//     VirtualBullet* result = NULL;
+
+//     if(action_id == 0) return result;
+
+//     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
+//         if(vbm->bullets[index].handle == (MKSBMLI_BULLET_HANDLE)0) continue;
+
+//         if(vbm->bullets[index].action_id != action_id) continue;
+
+//         result = &vbm->bullets[index];
+//         break;
+//     }
+
+//     return result;
+// }
