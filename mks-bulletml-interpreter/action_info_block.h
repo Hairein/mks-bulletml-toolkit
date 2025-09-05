@@ -8,6 +8,9 @@ typedef struct {
     int action_index;
     int action_element_index;
 
+    int parent_block_index;
+    int block_index;
+
     unsigned int bullet_id;
 
     bool is_waiting;
@@ -15,6 +18,8 @@ typedef struct {
     int wait_element_index;
 
     bool is_finished;
+
+    unsigned int offset;
 
     // int parent_action_index;
     // int action_index;
@@ -26,7 +31,7 @@ typedef struct {
     // int wait_index;
 } ActionInfoBlock;
 
-void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index);
+void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index);
 // void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int action_id);
 void clear_action_info_block(ActionInfoBlock* block);
 

@@ -26,19 +26,22 @@ void reset_playhead(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBM
 void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 void play_wait(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
-void play_fire_ref(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, unsigned int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
-void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, unsigned int action_offset, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
+void play_fire_ref(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
+void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
+void play_repeat(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 
 int find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
-void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index);
+void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index, unsigned int offset, int parent_block_index);
 bool check_actions_playback_finished(Interpreter* interpreter);
 
 float get_direction(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type);
 float get_speed(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* speed_type);
+int get_times_value(Interpreter* interpreter, int parent_element_index, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 
 bool find_element_by_label(Interpreter* interpreter, BULLETML_ELEMENT_TYPE type, char* label, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index);
 bool find_child_element_of_type(Interpreter* interpreter, int parent_element_index, BULLETML_ELEMENT_TYPE type, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index);
 
+int get_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks);
 
 // void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index);
 // void remove_action_from_playback(Interpreter* interpreter, int action_index);
