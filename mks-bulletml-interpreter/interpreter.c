@@ -113,6 +113,12 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
             break;
         case BULLETML_ELEMENT_TYPE_FIRE_REF: {
             printf("play child: FireRef\n");
+
+            float params[MKSBMLI_MAX_PARAMS];
+            int nos_params = 0;
+            get_params_for_element(interpreter, child_index, MKSBMLI_MAX_PARAMS, params, &nos_params, bulletml_bases);
+            // TODO use params
+
             play_fire_ref(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
@@ -150,6 +156,12 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
             break;
         case BULLETML_ELEMENT_TYPE_ACTION_REF: {
             printf("play child: ActionRef\n");
+
+            float params[MKSBMLI_MAX_PARAMS];
+            int nos_params = 0;
+            get_params_for_element(interpreter, child_index, MKSBMLI_MAX_PARAMS, params, &nos_params, bulletml_bases);
+            // TODO use params
+
             ActionRef* action_ref= (ActionRef*)bulletml_bases[child_index];
 
             int action_element_index;
@@ -213,6 +225,12 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
         bullet = (Bullet*)bulletml_bases[bullet_index];
         found_bullet_index = bullet_index;
     } else if(has_bullet_ref) {
+
+        float params[MKSBMLI_MAX_PARAMS];
+        int nos_params = 0;
+        get_params_for_element(interpreter, bullet_ref_index, MKSBMLI_MAX_PARAMS, params, &nos_params, bulletml_bases);
+        // TODO use params
+
         BulletRef* bullet_ref =  (BulletRef*)bulletml_bases[bullet_ref_index];
         if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_BULLET, bullet_ref->label, bulletml_bases, &found_bullet_index)) {
             bullet = (Bullet*)bulletml_bases[found_bullet_index];
@@ -650,6 +668,22 @@ bool find_child_element_of_type(Interpreter* interpreter, int parent_element_ind
     }
 
     return false;
+}
+
+void get_params_for_element(Interpreter* interpreter, int parent_element_index, int max_params, float* params, int* nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    *nos_params = 0;
+
+    BulletmlBase* parent = bulletml_bases[parent_element_index];
+
+    for(int index = parent_element_index + 1; index < MKSBMLI_MAX_ELEMENTS; index++) {
+        BulletmlBase* child = bulletml_bases[index];
+        if(child == NULL || child->type != BULLETML_ELEMENT_TYPE_PARAM || child->parent != parent) continue;
+
+        float new_value = 1.0f;
+        params[*nos_params++] = new_value;
+
+        if(*nos_params >= max_params) return;
+    }
 }
 
 int get_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks) {

@@ -48,6 +48,7 @@ float get_vertical(Interpreter* interpreter, int parent_element_index, BulletmlB
 
 bool find_element_by_label(Interpreter* interpreter, BULLETML_ELEMENT_TYPE type, char* label, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index);
 bool find_child_element_of_type(Interpreter* interpreter, int parent_element_index, BULLETML_ELEMENT_TYPE type, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], int* found_index);
+void get_params_for_element(Interpreter* interpreter, int parent_element_index, int max_params, float* params, int* nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 
 int get_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks);
 
