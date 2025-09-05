@@ -95,7 +95,8 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
 
     for(int child_index = next_child_index; child_index < MKSBMLI_MAX_ELEMENTS; child_index++) {
         BulletmlBase* child_base = bulletml_bases[child_index];
-        if(child_base == NULL || child_base->parent != action_base) break;
+        if(child_base == NULL) break;
+        else if(child_base->parent != action_base) continue;
 
         BULLETML_ELEMENT_TYPE child_element_type = child_base->type;
         switch(child_element_type) {
