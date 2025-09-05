@@ -194,3 +194,42 @@ void replace_rand_keyword(char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSB
 
     replace_keyword(target, source, rand_keyword, random_value_text);
 }
+
+void replace_rank_keyword(float rank, char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]) {
+    char rand_keyword[] = "$rank";
+
+    if(!string_contained(source, rand_keyword)) {
+        strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH);
+        return;
+    }
+
+    char rank_value_text[MKSBMLI_MAX_NUMBER_TEXT_LENGTH];
+    memset(rank_value_text, 0, MKSBMLI_MAX_NUMBER_TEXT_LENGTH);
+    snprintf(rank_value_text, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "%f", rank);
+
+    replace_keyword(target, source, rand_keyword, rank_value_text);
+}
+
+void replace_parameters_keyword(float* params, int nos_params, char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]) {
+    if(params == NULL || nos_params <= 0) {
+        copy_text(target, source);
+        return;
+    }
+
+    for(int index = 0; index < nos_params; index++) {
+        char param_keyword[MKSBMLI_MAX_NUMBER_TEXT_LENGTH];
+        memset(param_keyword, 0, MKSBMLI_MAX_NUMBER_TEXT_LENGTH);
+        snprintf(param_keyword, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "$%d", index + 1);
+
+        if(!string_contained(source, param_keyword)) {
+            strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH);
+            continue;
+        }
+
+        char param_value_text[MKSBMLI_MAX_NUMBER_TEXT_LENGTH];
+        memset(param_value_text, 0, MKSBMLI_MAX_NUMBER_TEXT_LENGTH);
+        snprintf(param_value_text, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "%f", params[index]);
+
+        replace_keyword(target, source, param_keyword, param_value_text);
+    }
+}

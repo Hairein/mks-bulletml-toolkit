@@ -31,6 +31,7 @@ void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm) {
     interpreter->vbm = vbm;
 
     interpreter->player_position = (Vector2){0};
+    interpreter->rank = 0.5f;
 
     interpreter->next_free_bullet_id = 1;
 }
@@ -166,7 +167,7 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
 
 void play_wait(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
         Wait* wait = (Wait*)bulletml_bases[element_index];
-        unsigned int frames = evaluate_bml_number_as_unsigned_int(&wait->content);
+    unsigned int frames = evaluate_bml_number_as_unsigned_int(&wait->content, interpreter->rank, NULL, 0);
 
         action_info_block->is_waiting = true;
         action_info_block->wait_frames = frames;
@@ -500,7 +501,7 @@ float get_direction(Interpreter* interpreter, int parent_element_index, Bulletml
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_DIRECTION, bulletml_bases, &index)) {
         Direction* direction = (Direction*)bulletml_bases[index];
         *direction_type = direction->attribute;
-        result = evaluate_bml_number_as_float(&direction->contents);
+        result = evaluate_bml_number_as_float(&direction->contents, interpreter->rank, NULL, 0);
     }
 
     return result;
@@ -514,7 +515,7 @@ float get_speed(Interpreter* interpreter, int parent_element_index, BulletmlBase
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_SPEED, bulletml_bases, &index)) {
         Speed* speed = (Speed*)bulletml_bases[index];
         *speed_type = speed->attribute;
-        result = evaluate_bml_number_as_float(&speed->contents);
+        result = evaluate_bml_number_as_float(&speed->contents, interpreter->rank, NULL, 0);
     }
 
     return result;
@@ -526,7 +527,7 @@ int get_times_value(Interpreter* interpreter, int parent_element_index, Bulletml
     int index;
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_TIMES, bulletml_bases, &index)) {
         Times* times = (Times*)bulletml_bases[index];
-        result = evaluate_bml_number_as_unsigned_int(&times->contents);
+        result = evaluate_bml_number_as_unsigned_int(&times->contents, interpreter->rank, NULL, 0);
     }
 
     return result;
@@ -538,7 +539,7 @@ int get_term_value(Interpreter* interpreter, int parent_element_index, BulletmlB
     int index;
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_TERM, bulletml_bases, &index)) {
         Term* term = (Term*)bulletml_bases[index];
-        result = evaluate_bml_number_as_unsigned_int(&term->contents);
+        result = evaluate_bml_number_as_unsigned_int(&term->contents, interpreter->rank, NULL, 0);
     }
 
     return result;
@@ -552,7 +553,7 @@ float get_horizontal(Interpreter* interpreter, int parent_element_index, Bulletm
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_HORIZONTAL, bulletml_bases, &index)) {
         Horizontal* horizontal = (Horizontal*)bulletml_bases[index];
         *horizontal_type = horizontal->attribute;
-        result = evaluate_bml_number_as_float(&horizontal->contents);
+        result = evaluate_bml_number_as_float(&horizontal->contents, interpreter->rank, NULL, 0);
     }
 
     return result;
@@ -566,7 +567,7 @@ float get_vertical(Interpreter* interpreter, int parent_element_index, BulletmlB
     if(find_child_element_of_type(interpreter, parent_element_index, BULLETML_ELEMENT_TYPE_VERTICAL, bulletml_bases, &index)) {
         Vertical* vertical = (Vertical*)bulletml_bases[index];
         *vertical_type = vertical->attribute;
-        result = evaluate_bml_number_as_float(&vertical->contents);
+        result = evaluate_bml_number_as_float(&vertical->contents, interpreter->rank, NULL, 0);
     }
 
     return result;

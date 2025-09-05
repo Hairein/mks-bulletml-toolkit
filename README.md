@@ -1,5 +1,5 @@
 # mks-bulletml-toolkit
-MKS BulletML Toolkit - A collection of tools to visualize and work with BulletML XML files.
+MKS BulletML Toolkit - A collection of tools to visualize and work with cpesific BulletML XML files. Initially, this library parses output from the [MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/) but intention here is to make it a generic BulletML XML file parser.
 
 The entire project is provided under the MIT license except foreign files and libraries used within which retain their respective licensing.
 
@@ -33,6 +33,7 @@ The 'asset' folder contains all resources required to run the player application
 | `int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);` | Any bullets that leave the user's app bounds or are not needed anymore for other reasons can be deleted         |
 | `int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);`                       | Clears all currently active and tracked bullets of the XML file playback, playback doesn't reset to start                       |
 | `int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, Vector2 player_position);` | For using aimed shots in the BulletML XML file, you need to provide the player virtual positon to be aimed at              |
+| `int mksbmli_set_rank(MKSBMLI_PLAYBACK_HANDLE handle, float rank);` | The rank value [0.0f..1.0f] for expression evaluation              |
 
 ---
 

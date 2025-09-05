@@ -94,6 +94,12 @@ void set_player_position(Playback* playback, Vector2 player_position) {
     playback->interpreter.player_position = player_position;
 }
 
+void set_rank(Playback* playback, float rank) {
+    if(rank < 0.0f) playback->interpreter.rank = 0.0f;
+    else if(rank > 1.0f) playback->interpreter.rank = 1.0f;
+    else playback->interpreter.rank = rank;
+}
+
 int parse_xml_file(Playback* playback, const char* xml_filename) {
     xmlDocPtr doc = xmlReadFile(xml_filename, NULL, 0);
     if (doc == NULL) {

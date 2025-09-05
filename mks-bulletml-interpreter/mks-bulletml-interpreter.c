@@ -118,3 +118,16 @@ int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, Vector2 player_p
 
     return MKSBMLI_INVALID_HANDLE;
 }
+
+int mksbmli_set_rank(MKSBMLI_PLAYBACK_HANDLE handle, float rank) {
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            set_rank(&state.playbacks[index], rank);
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
+}
+

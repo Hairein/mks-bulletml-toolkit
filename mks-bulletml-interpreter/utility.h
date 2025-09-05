@@ -37,5 +37,7 @@ float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2 source, Vector2 t
 bool string_contained(char* source, char* text);
 void replace_keyword(char*target_text, char *source_text, const char *old_text, const char *new_text);
 void replace_rand_keyword(char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]);
+void replace_rank_keyword(float rank, char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]);
+void replace_parameters_keyword(float* params, int nos_params, char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]);
 
 #endif // UTILITY_H
