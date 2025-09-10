@@ -58,7 +58,7 @@ void clear_vbm_bullets(VirtualBulletManager* vbm) {
     }
 }
 
-MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2 position, float angle_degrees, float speed) {
+MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2D position, float angle_degrees, float speed) {
     MKSBMLI_BULLET_HANDLE new_handle = (MKSBMLI_BULLET_HANDLE)0;
 
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {

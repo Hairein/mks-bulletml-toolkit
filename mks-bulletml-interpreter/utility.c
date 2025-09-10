@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "platform-random.h"
 #include "utility.h"
@@ -145,18 +146,18 @@ float get_random_unit_float() {
     return (float)(float)GET_RANDOM() / (float)RAND_MAX;
 }
 
-float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2 source, Vector2 target) {
-    Vector2 unit_reference_vector = (Vector2){1.0f, 0.0f};
+float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2D source, Vector2D target) {
+    Vector2D unit_reference_vector = (Vector2D){1.0f, 0.0f};
     if(type == BULLETML_ATTRIBUTE_TYPE_VERTICAL) {
-        unit_reference_vector = (Vector2){0.0f, 1.0f};
+        unit_reference_vector = (Vector2D){0.0f, 1.0f};
     }
-    Vector2 unit_direction_vector = Vector2Normalize(Vector2Subtract(target, source));
+    Vector2D unit_direction_vector = Vector2DNormalize(Vector2DSubtract(target, source));
 
-    float radian_result = acosf(Vector2DotProduct(unit_reference_vector, unit_direction_vector));
+    float radian_result = acosf(Vector2DDotProduct(unit_reference_vector, unit_direction_vector));
     float degree_result = 0.0f;
     if((type == BULLETML_ATTRIBUTE_TYPE_VERTICAL && unit_direction_vector.x >= 0)
-        || (type == BULLETML_ATTRIBUTE_TYPE_HORIZONTAL && unit_direction_vector.y <= 0)) degree_result = -RAD2DEG * radian_result;
-    else degree_result = RAD2DEG * radian_result;
+        || (type == BULLETML_ATTRIBUTE_TYPE_HORIZONTAL && unit_direction_vector.y <= 0)) degree_result = -DEGREES_FACTOR * radian_result;
+    else degree_result = DEGREES_FACTOR * radian_result;
 
     return degree_result;
 }

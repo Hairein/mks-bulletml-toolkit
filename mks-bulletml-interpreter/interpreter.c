@@ -30,7 +30,7 @@
 void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm) {
     interpreter->vbm = vbm;
 
-    interpreter->player_position = (Vector2){0};
+    interpreter->player_position = (Vector2D){0};
     interpreter->rank = 0.5f;
 
     interpreter->next_free_bullet_id = 1;
@@ -201,7 +201,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
     int action_index = action_info_block->action_index;
     unsigned int action_offset = action_info_block->offset;
 
-    Vector2 position = (Vector2){0};
+    Vector2D position = (Vector2D){0};
     float angle_degrees = 0.0f;
     float speed = 0.0f;
 
@@ -468,7 +468,7 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
         default:break;
         }
 
-        Vector2 acceleration = (Vector2){new_horizontal_value, new_vertical_value};
+        Vector2D acceleration = (Vector2D){new_horizontal_value, new_vertical_value};
         set_virtual_bullet_acceleration(vb, acceleration, frames);
     }
 }

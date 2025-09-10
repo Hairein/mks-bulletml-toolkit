@@ -90,7 +90,7 @@ void clear_bullets(Playback* playback) {
     clear_vbm_bullets(&playback->virtual_bullet_manager);
 }
 
-void set_player_position(Playback* playback, Vector2 player_position) {
+void set_player_position(Playback* playback, Vector2D player_position) {
     playback->interpreter.player_position = player_position;
 }
 
