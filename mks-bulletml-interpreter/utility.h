@@ -4,10 +4,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "raylib.h"
-#include "raymath.h"
-
 #include "mksbmli-defines.h"
+#include "Vector2D.h"
 
 int extract_xml_property_text(xmlNode* node, char*name, char* text);
 
@@ -32,7 +30,7 @@ int get_ars_type_text(ARS_TYPE type, char* text);
 
 float get_random_unit_float();
 
-float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2 source, Vector2 target);
+float calc_angle_degrees(BULLETML_ATTRIBUTE_TYPE type, Vector2D source, Vector2D target);
 
 bool string_contained(char* source, char* text);
 void replace_keyword(char*target_text, char *source_text, const char *old_text, const char *new_text);

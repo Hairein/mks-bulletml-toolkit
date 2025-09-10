@@ -9,7 +9,7 @@
 
 typedef struct {
     BULLETML_ATTRIBUTE_TYPE bulletml_attribute;
-    Vector2 player_position;
+    Vector2D player_position;
     float rank;
 
     VirtualBulletManager* vbm;

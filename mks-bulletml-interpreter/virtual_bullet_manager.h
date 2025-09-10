@@ -17,7 +17,7 @@ void destroy_vbm_bullets(VirtualBulletManager* vbm, MKSBMLI_BULLET_HANDLE* bulle
 void destroy_vbm_bullet(VirtualBulletManager* vbm, MKSBMLI_BULLET_HANDLE bullet_handle);
 void clear_vbm_bullets(VirtualBulletManager* vbm);
 
-MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2 position, float angle_degrees, float speed);
+MKSBMLI_BULLET_HANDLE spawn_virtual_bullet(VirtualBulletManager* vbm, int action_index, BULLETML_ATTRIBUTE_TYPE type, Vector2D position, float angle_degrees, float speed);
 
 VirtualBullet* get_virtual_bullet_by_bullet_id(VirtualBulletManager* vbm, unsigned int bullet_id);
 //VirtualBullet* get_virtual_bullet_by_action_id(VirtualBulletManager* vbm, unsigned int action_id);

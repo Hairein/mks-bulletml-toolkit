@@ -88,8 +88,8 @@ void update_app(App* app) {
             (-mouse_position.y + screen_half.y) / projected_scale,
         };
     }
-    mksbmli_set_player_position(app->playback_handles[app->current_active_playback_index], app->player_position);
-    //printf("Player: x(%d), y(%d)\n", (int)player_position.x, (int)player_position.y);
+    mksbmli_set_player_position(app->playback_handles[app->current_active_playback_index], app->player_position.x, app->player_position.y);
+    //printf("Player: x(%d), y(%d)\n", (int)app->player_position.x, (int)app->player_position.y);
 
     if(app->is_playing) {
         mksbmli_next_frame(app->playback_handles[app->current_active_playback_index]);

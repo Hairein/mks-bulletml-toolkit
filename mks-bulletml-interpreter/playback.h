@@ -51,7 +51,7 @@ void get_bullets(Playback* playback, int max_bullets, VirtualBullet** bullets, i
 void destroy_bullets(Playback* playback, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 void clear_bullets(Playback* playback);
 
-void set_player_position(Playback* playback, Vector2 player_position);
+void set_player_position(Playback* playback, Vector2D player_position);
 void set_rank(Playback* playback, float rank);
 
 int parse_xml_file(Playback* playback, const char* xml_filename);
