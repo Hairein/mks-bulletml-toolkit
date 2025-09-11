@@ -107,6 +107,18 @@ int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle) {
     return MKSBMLI_INVALID_HANDLE;
 }
 
+int mksbmli_set_emitter_center(MKSBMLI_PLAYBACK_HANDLE handle, float emitter_position_x, float emitter_position_y) {
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(state.playbacks[index].handle == handle) {
+            set_emitter_position(&state.playbacks[index], (Vector2D){emitter_position_x, emitter_position_y});
+
+            return MKSBMLI_NO_ERROR;
+        }
+    }
+
+    return MKSBMLI_INVALID_HANDLE;
+}
+
 int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, float player_position_x, float player_position_y) {
     for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
         if(state.playbacks[index].handle == handle) {

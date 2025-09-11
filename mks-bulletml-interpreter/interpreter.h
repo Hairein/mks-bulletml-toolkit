@@ -9,6 +9,7 @@
 
 typedef struct {
     BULLETML_ATTRIBUTE_TYPE bulletml_attribute;
+    Vector2D emitter_position;
     Vector2D player_position;
     float rank;
 

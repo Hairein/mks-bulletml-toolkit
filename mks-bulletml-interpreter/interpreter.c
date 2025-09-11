@@ -30,6 +30,7 @@
 void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm) {
     interpreter->vbm = vbm;
 
+    interpreter->emitter_position = (Vector2D){0};
     interpreter->player_position = (Vector2D){0};
     interpreter->rank = 0.5f;
 
@@ -201,7 +202,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
     int action_index = action_info_block->action_index;
     unsigned int action_offset = action_info_block->offset;
 
-    Vector2D position = (Vector2D){0};
+    Vector2D position = (Vector2D){interpreter->emitter_position.x, interpreter->emitter_position.y};
     float angle_degrees = 0.0f;
     float speed = 0.0f;
 

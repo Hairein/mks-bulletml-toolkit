@@ -32,7 +32,8 @@ The 'asset' folder contains all resources required to run the player application
 | `int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, VirtualBullet** bullets, int* nos_bullets);` | After each next frame call, get the new positions of the bullets as they were handled. Provide an array of max_bullets, returned nos will be provided               |
 | `int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);` | Any bullets that leave the user's app bounds or are not needed anymore for other reasons can be deleted         |
 | `int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);`                       | Clears all currently active and tracked bullets of the XML file playback, playback doesn't reset to start                       |
-| `int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle,  float player_position_x, float player_position_y);` | For using aimed shots in the BulletML XML file, you need to provide the player virtual positon to be aimed at              |
+| `int mksbmli_set_emitter_center(MKSBMLI_PLAYBACK_HANDLE handle, float emitter_position_x, float emitter_position_y);` | The coordinate from which new bullets without parent bullets should be emitted, defaults to (0.0/0.0)              |
+| `int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, float player_position_x, float player_position_y);` | For using aimed shots in the BulletML XML file, you need to provide the player virtual positon to be aimed at              |
 | `int mksbmli_set_rank(MKSBMLI_PLAYBACK_HANDLE handle, float rank);` | The rank value [0.0f..1.0f] for expression evaluation              |
 
 ---

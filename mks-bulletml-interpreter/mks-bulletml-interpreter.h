@@ -34,6 +34,7 @@ EXPORT int mksbmli_get_bullets(MKSBMLI_PLAYBACK_HANDLE handle, int max_bullets, 
 EXPORT int mksbmli_delete_bullets(MKSBMLI_PLAYBACK_HANDLE handle, MKSBMLI_BULLET_HANDLE* bullet_handles, int nos_bullet_handles);
 EXPORT int mksbmli_clear_bullets(MKSBMLI_PLAYBACK_HANDLE handle);
 
+EXPORT int mksbmli_set_emitter_center(MKSBMLI_PLAYBACK_HANDLE handle, float emitter_position_x, float emitter_position_y);
 EXPORT int mksbmli_set_player_position(MKSBMLI_PLAYBACK_HANDLE handle, float player_position_x, float player_position_y);
 EXPORT int mksbmli_set_rank(MKSBMLI_PLAYBACK_HANDLE handle, float rank);
 
