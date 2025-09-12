@@ -4,32 +4,17 @@
   <action label="top">
     <fireRef label="fire">
     </fireRef>
-    <wait>60</wait>
-  </action>
-  <action label="side">
+    <direction type="aim">0</direction>
+    <term>15</term>
     <wait>30</wait>
-    <fireRef label="side_fire">
-    </fireRef>
   </action>
   <fire label="fire">
     <direction type="absolute">0.0</direction>
     <speed type="absolute">1.0</speed>
-    <bulletRef label="bullet1">
+    <bulletRef label="bullet">
     </bulletRef>
   </fire>
-  <fire label="side_fire">
-    <direction type="relative">90.0</direction>
-    <speed type="absolute">1.0</speed>
-    <bulletRef label="bullet2">
-    </bulletRef>
-  </fire>
-  <bullet label="bullet1">
-    <direction type="absolute">0.0</direction>
-    <speed type="absolute">1.0</speed>
-    <actionRef label="side">
-    </actionRef>
-  </bullet>
-  <bullet label="bullet2">
+  <bullet label="bullet">
     <direction type="absolute">0.0</direction>
     <speed type="absolute">1.0</speed>
   </bullet>

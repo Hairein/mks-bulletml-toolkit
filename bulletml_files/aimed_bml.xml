@@ -3,11 +3,11 @@
 <bulletml type="horizontal" xmlns="http://www.asahi-net.or.jp/~cs8k-cyu/bulletml">
   <action label="top">
     <repeat>
-      <times>15</times>
+      <times>3</times>
       <actionRef label="spray">
       </actionRef>
     </repeat>
-    <wait>15</wait>
+    <wait>30</wait>
   </action>
   <action label="spray">
     <fireRef label="aimed fire">
@@ -21,6 +21,6 @@
   </fire>
   <bullet label="new aimed bullet">
     <direction type="aim">-10.0 + ($rand * 20.0)</direction>
-    <speed type="absolute">0.25 + ($rand * 1.5)</speed>
+    <speed type="absolute">1.0 + ($rand * 2.5)</speed>
   </bullet>
 </bulletml>
