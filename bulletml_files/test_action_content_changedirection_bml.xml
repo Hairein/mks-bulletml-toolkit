@@ -4,8 +4,10 @@
   <action label="top">
     <fireRef label="fire">
     </fireRef>
-    <direction type="aim">0</direction>
-    <term>15</term>
+    <changeDirection>
+      <direction type="aim">0</direction>
+      <term>15</term>
+    </changeDirection>
     <wait>30</wait>
   </action>
   <fire label="fire">

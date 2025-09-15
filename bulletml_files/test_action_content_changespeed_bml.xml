@@ -4,8 +4,10 @@
   <action label="top">
     <fireRef label="fire">
     </fireRef>
-    <speed type="sequence">2</speed>
-    <term>90</term>
+    <changeSpeed>
+      <speed type="sequence">2</speed>
+      <term>90</term>
+    </changeSpeed>
     <wait>30</wait>
   </action>
   <fire label="fire">

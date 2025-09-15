@@ -261,7 +261,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
         speed += bullet_speed;
     }; break;
     case ARS_TYPE_SEQUENCE: {
-        speed = bullet_speed * (1 + action_offset);
+        speed += bullet_speed * (1 + action_offset);
     }; break;
     default: break;
     }
@@ -296,7 +296,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
         speed += fire_speed;
     }; break;
     case ARS_TYPE_SEQUENCE: {
-        speed = fire_speed * (1 + action_offset);
+        speed += fire_speed * (1 + action_offset);
     }; break;
     default: break;
     }
@@ -375,7 +375,7 @@ void play_change_speed(Interpreter* interpreter, int element_index, ActionInfoBl
             new_speed += vb->speed;
         }; break;
         case ARS_TYPE_SEQUENCE: {
-            new_speed = vb->speed * (1 + action_offset);
+            new_speed = vb->speed + (new_speed * (1 + action_offset));
         }; break;
         case ARS_TYPE_ABSOLUTE:
         default: break;
@@ -412,7 +412,7 @@ void play_change_direction(Interpreter* interpreter, int element_index, ActionIn
             new_direction += vb->angle_degrees;
         }; break;
         case AARS_TYPE_SEQUENCE: {
-            new_direction = vb->angle_degrees * (1 + action_offset);
+            new_direction = vb->angle_degrees + (new_direction * (1 + action_offset));
         }; break;
         case AARS_TYPE_ABSOLUTE:
         default: break;
@@ -423,7 +423,7 @@ void play_change_direction(Interpreter* interpreter, int element_index, ActionIn
 }
 
 void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
-    Accel* change_speed = (Accel*)bulletml_bases[element_index];
+    Accel* accel = (Accel*)bulletml_bases[element_index];
 
     int action_offset = action_info_block->offset;
 
@@ -454,7 +454,7 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
             new_horizontal_value += vb->acceleration_vector.x;
         }; break;
         case ARS_TYPE_SEQUENCE: {
-            new_horizontal_value = vb->acceleration_vector.x * (1 + action_offset);
+            new_horizontal_value = vb->acceleration_vector.x + (new_horizontal_value * (1 + action_offset));
         }; break;
         case ARS_TYPE_ABSOLUTE:
         default:break;
@@ -465,13 +465,13 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
             new_vertical_value += vb->acceleration_vector.x;
         }; break;
         case ARS_TYPE_SEQUENCE: {
-            new_vertical_value = vb->acceleration_vector.x * (1 + action_offset);
+            new_vertical_value = vb->acceleration_vector.x + (new_vertical_value * (1 + action_offset));
         }; break;
         case ARS_TYPE_ABSOLUTE:
         default:break;
         }
 
-        Vector2D acceleration = (Vector2D){new_horizontal_value, new_vertical_value};
+        Vector2D acceleration = (Vector2D){new_horizontal_value / frames, new_vertical_value / frames};
         set_virtual_bullet_acceleration(vb, acceleration, frames);
     }
 }
