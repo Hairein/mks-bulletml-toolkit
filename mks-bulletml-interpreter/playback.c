@@ -335,10 +335,10 @@ void parse_speed(Playback* playback, xmlNode* node, BulletmlBase* parent, Speed*
     ARS_TYPE type = ARS_TYPE_ABSOLUTE;
     extract_xml_property_ars_type(node, &type);
 
-    char degrees[MKSBMLI_MAX_TEXT_LENGTH];
-    extract_xml_text_content(node, degrees, "0.0");
+    char velocity[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, velocity, "0.0");
 
-    init_speed(speed, parent, type, degrees);
+    init_speed(speed, parent, type, velocity);
 }
 
 void parse_horizontal(Playback* playback, xmlNode* node, BulletmlBase* parent, Horizontal* horizontal) {
@@ -400,6 +400,9 @@ void parse_fire_ref(Playback* playback, xmlNode* node, BulletmlBase* parent, Fir
 }
 
 void parse_param(Playback* playback, xmlNode* node, BulletmlBase* parent, Param* param) {
-    init_param(param, parent);
+    char contents[MKSBMLI_MAX_TEXT_LENGTH];
+    extract_xml_text_content(node, contents, "1.0");
+
+    init_param(param, parent, contents);
 }
 

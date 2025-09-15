@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "mksbmli-defines.h"
+
 typedef struct {
     int parent_action_index;
     int action_index;
@@ -21,21 +23,19 @@ typedef struct {
 
     unsigned int offset;
 
-    // int parent_action_index;
-    // int action_index;
+    float action_params[MKSBMLI_MAX_PARAMS];
+    int nos_action_params;
 
-    // unsigned int action_id;
+    float fire_params[MKSBMLI_MAX_PARAMS];
+    int nos_fire_params;
 
-    // bool is_waiting;
-    // unsigned int wait_frames;
-    // int wait_index;
+    float bullet_params[MKSBMLI_MAX_PARAMS];
+    int nos_bullet_params;
 } ActionInfoBlock;
 
 void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index);
-// void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int action_id);
 void clear_action_info_block(ActionInfoBlock* block);
 
-// void set_waiting(ActionInfoBlock* block, int frames, int wait_index);
-// void clear_waiting(ActionInfoBlock* block);
+void set_action_info_block_action_params(ActionInfoBlock* block, float* params, int nos_params);
 
 #endif // ACTION_INFO_BLOCK_H

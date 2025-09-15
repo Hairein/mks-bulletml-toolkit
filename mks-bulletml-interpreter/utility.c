@@ -212,8 +212,9 @@ void replace_rank_keyword(float rank, char target[MKSBMLI_MAX_TEXT_LENGTH], char
 }
 
 void replace_parameters_keyword(float* params, int nos_params, char target[MKSBMLI_MAX_TEXT_LENGTH], char source[MKSBMLI_MAX_TEXT_LENGTH]) {
+    copy_text(target, source);
+
     if(params == NULL || nos_params <= 0) {
-        copy_text(target, source);
         return;
     }
 
@@ -223,13 +224,14 @@ void replace_parameters_keyword(float* params, int nos_params, char target[MKSBM
         snprintf(param_keyword, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "$%d", index + 1);
 
         if(!string_contained(source, param_keyword)) {
-            strncpy(target, source, MKSBMLI_MAX_TEXT_LENGTH);
             continue;
         }
 
+        float param_value = params[index];
+
         char param_value_text[MKSBMLI_MAX_NUMBER_TEXT_LENGTH];
         memset(param_value_text, 0, MKSBMLI_MAX_NUMBER_TEXT_LENGTH);
-        snprintf(param_value_text, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "%f", params[index]);
+        snprintf(param_value_text, MKSBMLI_MAX_NUMBER_TEXT_LENGTH, "%f", param_value);
 
         replace_keyword(target, source, param_keyword, param_value_text);
     }
