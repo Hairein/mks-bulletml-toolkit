@@ -15,12 +15,12 @@ int init_app(App* app) {
     app->xml_count = 0;
     load_xml_filenames("../bulletml_files", app->xml_filenames, &app->xml_count);
     if(app->xml_count > 0) {
-        printf("\n");
+        // printf("\n");
         for (int i = 0; i < app->xml_count; i++) {
             int add_result = add_xml_file(app, app->xml_filenames[i]);
-            printf("add xml file %s result: %d\n", app->xml_filenames[i], (int)add_result);
+            // printf("add xml file %s result: %d\n", app->xml_filenames[i], (int)add_result);
         }
-        printf("\n");
+        // printf("\n");
     }
 
     app->bullet_texture = LoadTexture("../assets/textures/8x8_default_bullet.png");

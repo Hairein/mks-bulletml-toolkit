@@ -56,7 +56,7 @@ void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_M
 
     interpreter->first_frame = check_actions_playback_finished(interpreter);
     if(interpreter->first_frame) {
-        printf("Playing first frame\n");
+        // printf("Playing first frame\n");
         interpreter->first_frame = false;
 
         reset_playhead(interpreter, bulletml_bases);
@@ -88,18 +88,18 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         BulletmlBase* parent_action_base = bulletml_bases[parent_action_index];
         Action* parent_action = (Action*)bulletml_bases[parent_action_index];
 
-        printf("Play action[%s] at index(%d), parent action[%s] at index(%d)\n",
-               action->label, action_index,
-               parent_action->label, parent_action_index);
+        // printf("Play action[%s] at index(%d), parent action[%s] at index(%d)\n",
+        //        action->label, action_index,
+        //        parent_action->label, parent_action_index);
     } else {
-        printf("Play action[%s] at index(%d), no parent \n",
-               action->label, action_index);
+        // printf("Play action[%s] at index(%d), no parent \n",
+        //        action->label, action_index);
     }
 
     int next_child_index = action_index + 1;
     if(action_info_block->is_waiting) {
         if(action_info_block->wait_frames > 0) {
-            printf("waiting: %d\n", action_info_block->wait_frames);
+            // printf("waiting: %d\n", action_info_block->wait_frames);
             action_info_block->wait_frames--;
             return;
         }
@@ -116,17 +116,17 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         BULLETML_ELEMENT_TYPE child_element_type = child_base->type;
         switch(child_element_type) {
         case BULLETML_ELEMENT_TYPE_REPEAT: {
-            printf("play child: Repeat\n");
+            // printf("play child: Repeat\n");
             play_repeat(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE: {
-            printf("play child: Fire\n");
+            // printf("play child: Fire\n");
             play_fire(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE_REF: {
-            printf("play child: FireRef\n");
+            // printf("play child: FireRef\n");
 
             get_params_for_element(interpreter, child_index, action_info_block->action_params, action_info_block->nos_action_params, MKSBMLI_MAX_PARAMS, action_info_block->fire_params, &action_info_block->nos_fire_params, bulletml_bases);
 
@@ -134,39 +134,39 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_SPEED: {
-            printf("play child: Speed\n");
+            // printf("play child: Speed\n");
             play_change_speed(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_CHANGE_DIRECTION: {
-            printf("play child: Direction\n");
+            // printf("play child: Direction\n");
             play_change_direction(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACCEL: {
-            printf("play child: Accel\n");
+            // printf("play child: Accel\n");
             play_accel(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_WAIT: {
-            printf("play child: Wait\n");
+            // printf("play child: Wait\n");
             play_wait(interpreter, child_index, action_info_block, bulletml_bases);
             return;
         };
             break;
         case BULLETML_ELEMENT_TYPE_VANISH: {
-            printf("play child: Vanish\n");
+            // printf("play child: Vanish\n");
             play_vanish(interpreter, child_index, action_info_block, bulletml_bases);
             return;
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION: {
-            printf("play child: Action\n");
+            // printf("play child: Action\n");
             insert_action_for_playback(interpreter, action_index, child_index, 0, action_info_block->block_index, NULL, 0);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION_REF: {
-            printf("play child: ActionRef\n");
+            // printf("play child: ActionRef\n");
 
             float sub_action_params[MKSBMLI_MAX_PARAMS];
             int nos_sub_action_params;
@@ -195,7 +195,7 @@ void play_wait(Interpreter* interpreter, int element_index, ActionInfoBlock* act
         action_info_block->wait_frames = frames;
         action_info_block->wait_element_index = element_index;
 
-        printf("start wait: %d\n", action_info_block->wait_frames);
+        // printf("start wait: %d\n", action_info_block->wait_frames);
 }
 
 void play_fire_ref(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
