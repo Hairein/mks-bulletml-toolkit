@@ -20,6 +20,8 @@ typedef struct {
 
     ActionInfoBlock active_actions[MKSBMLI_MAX_ELEMENTS];
     // unsigned int next_free_action_id;
+
+    bool is_valid;
 } Interpreter;
 
 void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm);

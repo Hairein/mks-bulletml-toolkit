@@ -36,16 +36,24 @@ void init_interpreter(Interpreter* interpreter, VirtualBulletManager* vbm) {
     interpreter->rank = 0.5f;
 
     interpreter->next_free_bullet_id = 1;
+
+    interpreter->is_valid = true;
 }
 
 void reset_playhead(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-   for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) clear_action_info_block(&interpreter->active_actions[index]);
+    for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) clear_action_info_block(&interpreter->active_actions[index]);
 
-   Bulletml* bulletml = (Bulletml*)bulletml_bases[0];
-   interpreter->bulletml_attribute = bulletml->attribute;
+    Bulletml* bulletml = (Bulletml*)bulletml_bases[0];
+    if(bulletml != NULL) {
+        interpreter->bulletml_attribute = bulletml->attribute;
+    } else {
+        interpreter->is_valid = false;
+    }
 }
 
 void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    if(!interpreter->is_valid) return;
+
     interpreter->first_frame = check_actions_playback_finished(interpreter);
     if(interpreter->first_frame) {
         printf("Playing first frame\n");
@@ -55,6 +63,10 @@ void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_M
 
         int top_action_index = find_top_action_index(interpreter, bulletml_bases);
         if(top_action_index != -1) insert_action_for_playback(interpreter, -1, top_action_index, 0, -1, NULL, 0);
+        else {
+            interpreter->is_valid = false;
+            return;
+        }
     }
 
     for(int current_block_index = 0; current_block_index < MKSBMLI_MAX_ELEMENTS; current_block_index++) {
@@ -197,6 +209,7 @@ void play_fire_ref(Interpreter* interpreter, int element_index, ActionInfoBlock*
 
 void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     int action_index = action_info_block->action_index;
+    int block_index = action_info_block->block_index;
     unsigned int action_offset = action_info_block->offset;
 
     Vector2D position = (Vector2D){interpreter->emitter_position.x, interpreter->emitter_position.y};
@@ -321,7 +334,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
 
             int found_bullet_child_index = 0;
             if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, bullet_child_action_ref->label, bulletml_bases, &found_bullet_child_index))
-                insert_action_for_playback(interpreter, action_index, found_bullet_child_index, 0, bullet_child_action_index, sub_action_params, nos_sub_action_params);
+                insert_action_for_playback(interpreter, action_index, found_bullet_child_index, 0, block_index, sub_action_params, nos_sub_action_params);
         }
     }
 }
@@ -487,6 +500,9 @@ void play_vanish(Interpreter* interpreter, int element_index, ActionInfoBlock* a
 
 int find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
     for(int next_index = 1; next_index < MKSBMLI_MAX_ELEMENTS; next_index++) {
+        BulletmlBase* base = bulletml_bases[next_index];
+        if(base == NULL) continue;
+
         BULLETML_ELEMENT_TYPE element_type = bulletml_bases[next_index]->type;
         if(element_type == BULLETML_ELEMENT_TYPE_ACTION) {
             return next_index;
