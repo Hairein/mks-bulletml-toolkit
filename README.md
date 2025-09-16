@@ -42,7 +42,14 @@ The 'asset' folder contains all resources required to run the player application
 
 Keys Q,W,E,R - Stop, Play, Play frame, Pause playback
 C - Hold With click of LMB to set emitter center
-X - To reset emitter center to center zero
+X - To reset emitter center to (zero/zero), i.e. to the default middle of the playfield
+
+---
+
+## NOTE
+
+The library performs the outer looping of a BulletML file structure playback. Avoid using wrapping <repeat> loops with large repeat times count, instead
+let the playback functionality of the library play the frame continuously and control playback with start and stop API calls through the library.
 
 ---
 
