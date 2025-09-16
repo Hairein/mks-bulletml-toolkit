@@ -8,8 +8,13 @@
 #include "mksbmlp-defines.h"
 #include "mks-bulletml-interpreter.h"
 
+#define MKSBMLP_FILES_PER_PAGE 15
+#define MKSBMLP_NUMBER_WIDTH 8
+
 typedef struct {
-    char loaded_xml_file_list[MKSBMLP_MAX_LINE_LENGTH];
+    char xml_filenames_copy[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
+
+    char displayed_xml_file_list[MKSBMLP_MAX_LINE_LENGTH];
     int nos_loaded_xmls_files;
     int active_xml_file;
     int active_xml_file_change_requested;
@@ -28,15 +33,21 @@ typedef struct {
     bool change_virtual_dims_requested;
     int new_virtual_dims[2];
 
-    char width_buffer[8];
+    char width_buffer[MKSBMLP_NUMBER_WIDTH];
     bool width_buffer_edit;
-    char height_buffer[8];
+    char height_buffer[MKSBMLP_NUMBER_WIDTH];
     bool height_buffer_edit;
+
+    int current_page;
+    int nos_pages;
 } UserInterface;
 
 void init_user_interface(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int xml_count,
     int v_width, int v_height);
 void render_user_interface(UserInterface* ui);
+
+void prepare_displayed_file_list(UserInterface* ui);
+void build_displayed_file_list(UserInterface* ui);
 
 int count_loaded_xml_files(UserInterface* ui);
 
@@ -50,6 +61,9 @@ void validate_width(UserInterface* ui);
 void validate_height(UserInterface* ui);
 void update_dims(UserInterface* ui);
 
-void extract_xml_shortnames(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH]);
+void previous_page(UserInterface* ui);
+void next_page(UserInterface* ui);
+
+void copy_xml_filenames(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH]);
 
 #endif // USER_INTERFACE_H

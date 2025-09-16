@@ -120,7 +120,6 @@ void post_update_app(App* app) {
         app->is_playing = false;
         app->rewind_playback = true;
 
-
         //printf("stopped playing\n");
     }
 

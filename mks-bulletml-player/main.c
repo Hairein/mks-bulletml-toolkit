@@ -7,7 +7,7 @@
 int main()
 {
     char title[MKSBMLI_MAX_TEXT_LENGTH];
-    sprintf(title, "MKS BulletML Player v%d.%d.%d startup.", MKSBMLP_MAJOR_VERSION, MKSBMLP_MINOR_VERSION, MKSBMLP_PATCH_VERSION);
+    snprintf(title, MKSBMLI_MAX_TEXT_LENGTH, "MKS BulletML Player v%d.%d.%d startup.", MKSBMLP_MAJOR_VERSION, MKSBMLP_MINOR_VERSION, MKSBMLP_PATCH_VERSION);
 
     mksbmli_init();
 
