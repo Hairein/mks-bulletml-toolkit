@@ -25,6 +25,7 @@ typedef struct {
     int xml_count;
 
     Vector2 player_position;
+    Vector2 emitter_center;
 
     Texture2D bullet_texture;
     Texture2D player_cursor_texture;
@@ -37,5 +38,8 @@ void render_app(App* app);
 
 void handle_app_input(App* app);
 void handle_ui_input(App* app);
+
+void set_emitter_center(App* app);
+void reset_emitter_center(App* app);
 
 #endif // APP_H

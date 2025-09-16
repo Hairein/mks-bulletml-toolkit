@@ -38,6 +38,14 @@ The 'asset' folder contains all resources required to run the player application
 
 ---
 
+## Player Controls
+
+Keys Q,W,E,R - Stop, Play, Play frame, Pause playback
+C - Hold With click of LMB to set emitter center
+X - To reset emitter center to center zero
+
+---
+
 ## DEV
 
 ### Build

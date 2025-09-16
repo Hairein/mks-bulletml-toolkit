@@ -29,6 +29,7 @@ int init_app(App* app) {
     app->virtual_playfield_dims = (Vector2){320.0f, 240.0f};
     app->projected_playfield = (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
     app->player_position = (Vector2){0.0f, 0.0f};
+    app->emitter_center = (Vector2){0.0f, 0.0f};
 
     app->is_playing = false;
     app->pause_after_frame = false;
@@ -45,6 +46,9 @@ int init_app(App* app) {
 
         app->current_active_playback_index = 0;
     }
+
+    mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
+        app->emitter_center.x, app->emitter_center.y);
 
     return MKSBMLP_NO_ERROR;
 }
@@ -136,11 +140,15 @@ void post_update_app(App* app) {
 
         app->current_active_playback_index = xml_index;
         //printf("selected xml file index: %d\n", app->current_active_playback_index);
+
+        reset_emitter_center(app);
     }
 
     int new_width, new_height;
     if(query_virtual_dims_change(&app->ui, &new_width, &new_height)) {
         app->virtual_playfield_dims = (Vector2){new_width, new_height};
+
+        reset_emitter_center(app);
     }
 }
 
@@ -155,6 +163,10 @@ void render_app(App* app) {
 
     Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
     float projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+
+    int emitter_position_x = (int)(screen_half.x + (app->emitter_center.x * projected_scale) - (app->player_cursor_texture.width / 2.0f));
+    int emitter_position_y = (int)(screen_half.y + (app->emitter_center.y * projected_scale) - (app->player_cursor_texture.height / 2.0f));
+    DrawTexture(app->player_cursor_texture, emitter_position_x, emitter_position_y, DARKGRAY);
 
     VirtualBullet* bullets[MKSBMLI_MAX_BULLETS];
     int nos_bullets = 0;
@@ -230,6 +242,12 @@ void handle_app_input(App* app)
             app->pause_after_frame = true;
         }
     }
+
+    if(IsKeyDown(KEY_C) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        set_emitter_center(app);
+    } else if(IsKeyPressed(KEY_X)) {
+        reset_emitter_center(app);
+    }
 }
 
 void handle_ui_input(App* app) {
@@ -246,4 +264,34 @@ void handle_ui_input(App* app) {
         app->pause_after_frame = true;
     }
     if(pause_requested && app->is_playing && !app->pause_after_frame) app->pause_after_frame = true;
+}
+
+void set_emitter_center(App* app) {
+    Vector2 mouse_position = GetMousePosition();
+
+    Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+    float projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
+
+    Vector2 relative_center = (Vector2){
+        (mouse_position.x - screen_half.x) / projected_scale,
+        (mouse_position.y - screen_half.y) / projected_scale,
+    };
+
+    Vector2 virtual_half = (Vector2){app->virtual_playfield_dims.x / 2.0f, app->virtual_playfield_dims.y / 2.0f};
+
+    if (relative_center.x >= -virtual_half.x && relative_center.x <= virtual_half.x
+        && relative_center.y >= -virtual_half.y && relative_center.y <= virtual_half.y) {
+        app->emitter_center.x = relative_center.x;
+        app->emitter_center.y = relative_center.y;
+
+        mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
+                                   app->emitter_center.x, app->emitter_center.y);
+    }
+}
+
+void reset_emitter_center(App* app) {
+    app->emitter_center = (Vector2){ 0.0f, 0.0f };
+
+    mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
+        app->emitter_center.x, app->emitter_center.y);
 }
