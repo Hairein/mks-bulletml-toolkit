@@ -17,12 +17,14 @@ int extract_xml_property_text(xmlNode* node, char* name, char* text) {
     return MKSBMLI_XML_PARSE_ERROR;
 }
 
-void extract_xml_property_label_text(xmlNode* node, char* text) {
+void extract_xml_property_label_text(xmlNode* node, char* text, char* default_text) {
     copy_text(text, "");
 
     char entry[MKSBMLI_MAX_TEXT_LENGTH];
     if(extract_xml_property_text(node, "label", entry) == MKSBMLI_NO_ERROR) {
-        strncpy(text, entry, MKSBMLI_MAX_TEXT_LENGTH - 1);
+        copy_text(text, entry);
+    } else if(default_text != NULL) {
+        copy_text(text, default_text);
     }
 }
 

@@ -9,7 +9,7 @@
 
 int extract_xml_property_text(xmlNode* node, char*name, char* text);
 
-void extract_xml_property_label_text(xmlNode* node, char* text);
+void extract_xml_property_label_text(xmlNode* node, char* text, char* default_text);
 void extract_xml_property_bulletml_type(xmlNode* node, BULLETML_ATTRIBUTE_TYPE* type);
 void extract_xml_property_aars_type(xmlNode* node, AARS_TYPE* type);
 void extract_xml_property_ars_type(xmlNode* node, ARS_TYPE* type);

@@ -52,6 +52,8 @@ void reset_playhead(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBM
 }
 
 void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    // printf("Play frame start...\n");
+
     if(!interpreter->is_valid) return;
 
     interpreter->first_frame = check_actions_playback_finished(interpreter);
@@ -76,6 +78,8 @@ void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_M
 
         play_action(interpreter, current_block, bulletml_bases);
     }
+
+    // printf("...Play frame end\n");
 }
 
 void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
@@ -157,6 +161,7 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         case BULLETML_ELEMENT_TYPE_VANISH: {
             // printf("play child: Vanish\n");
             play_vanish(interpreter, child_index, action_info_block, bulletml_bases);
+            action_info_block->is_finished = true;
             return;
         };
             break;
@@ -184,7 +189,9 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         }
     }
 
-    if(!action_info_block->is_waiting) action_info_block->is_finished = true;
+    if(!action_info_block->is_waiting) {
+        action_info_block->is_finished = true;
+    }
 }
 
 void play_wait(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
@@ -532,7 +539,7 @@ bool check_actions_playback_finished(Interpreter* interpreter) {
 }
 
 float get_direction(Interpreter* interpreter, int parent_element_index, float* params, int nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type) {
-    *direction_type = AARS_TYPE_ABSOLUTE;
+    *direction_type = AARS_TYPE_RELATIVE;
     float result = 0.0f;
 
     int index;
@@ -546,7 +553,7 @@ float get_direction(Interpreter* interpreter, int parent_element_index, float* p
 }
 
 float get_speed(Interpreter* interpreter, int parent_element_index, float* params, int nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], ARS_TYPE* speed_type) {
-    *speed_type = ARS_TYPE_ABSOLUTE;
+    *speed_type = ARS_TYPE_RELATIVE;
     float result = 1.0f;
 
     int index;

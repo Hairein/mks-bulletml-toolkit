@@ -29,6 +29,10 @@ typedef struct {
 
     Texture2D bullet_texture;
     Texture2D player_cursor_texture;
+
+    char stopped_text[MKSBMLP_TEXT_WIDTH];
+    char playing_text[MKSBMLP_TEXT_WIDTH];
+    char paused_text[MKSBMLP_TEXT_WIDTH];
 } App;
 
 int init_app(App* app);

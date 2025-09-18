@@ -27,9 +27,9 @@ void init_user_interface(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYB
     ui->play_frame_requested = false;
     ui->pause_requested = false;
 
-    snprintf(ui->width_buffer, MKSBMLP_NUMBER_WIDTH, "%d", v_width);
+    snprintf(ui->width_buffer, MKSBMLP_NUMBER_TEXT_WIDTH, "%d", v_width);
     ui->width_buffer_edit = false;
-    snprintf(ui->height_buffer, MKSBMLP_NUMBER_WIDTH, "%d", v_height);
+    snprintf(ui->height_buffer, MKSBMLP_NUMBER_TEXT_WIDTH, "%d", v_height);
     ui->height_buffer_edit = false;
     ui->change_virtual_dims_requested = false;
 
@@ -61,6 +61,7 @@ void render_user_interface(UserInterface* ui) {
         if(CustomGuiImageButton((Rectangle){ 30, panel_start_y, 30, 30 }, ui->play_button_texture)) ui->play_requested |= true;
         if(CustomGuiImageButton((Rectangle){ 60, panel_start_y, 30, 30 }, ui->play_frame_button_texture)) ui->play_frame_requested |= true;
         if(CustomGuiImageButton((Rectangle){ 90, panel_start_y, 30, 30 }, ui->pause_button_texture)) ui->pause_requested |= true;
+        GuiLabel((Rectangle){ 120, panel_start_y, 96, 30 }, ui->play_state_buffer);
 
         GuiLabel((Rectangle){ 264, panel_start_y, 146, 30 }, "Playfield Dimensions (WxHpx):");
 
@@ -175,7 +176,7 @@ void validate_width(UserInterface* ui) {
     if(width < 64) width = 64;
     else if(width > 4096) width = 4096;
 
-    snprintf(ui->width_buffer, MKSBMLP_NUMBER_WIDTH, "%d", width);
+    snprintf(ui->width_buffer, MKSBMLP_NUMBER_TEXT_WIDTH, "%d", width);
 }
 
 void validate_height(UserInterface* ui) {
@@ -185,7 +186,7 @@ void validate_height(UserInterface* ui) {
     if(height < 64) height = 64;
     else if(height > 4096) height = 4096;
 
-    snprintf(ui->height_buffer, MKSBMLP_NUMBER_WIDTH, "%d", height);
+    snprintf(ui->height_buffer, MKSBMLP_NUMBER_TEXT_WIDTH, "%d", height);
 }
 
 void update_dims(UserInterface* ui) {
@@ -196,4 +197,8 @@ void update_dims(UserInterface* ui) {
 
     ui->new_virtual_dims[0] = width;
     ui->new_virtual_dims[1] = height;
+}
+
+void set_play_state(UserInterface* ui, char* play_state_text) {
+    strncpy(ui->play_state_buffer, play_state_text, sizeof(char) * MKSBMLP_TEXT_WIDTH - 1);
 }

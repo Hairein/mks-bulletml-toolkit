@@ -9,7 +9,6 @@
 #include "mks-bulletml-interpreter.h"
 
 #define MKSBMLP_FILES_PER_PAGE 15
-#define MKSBMLP_NUMBER_WIDTH 8
 
 typedef struct {
     char xml_filenames_copy[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
@@ -33,13 +32,15 @@ typedef struct {
     bool change_virtual_dims_requested;
     int new_virtual_dims[2];
 
-    char width_buffer[MKSBMLP_NUMBER_WIDTH];
+    char width_buffer[MKSBMLP_NUMBER_TEXT_WIDTH];
     bool width_buffer_edit;
-    char height_buffer[MKSBMLP_NUMBER_WIDTH];
+    char height_buffer[MKSBMLP_NUMBER_TEXT_WIDTH];
     bool height_buffer_edit;
 
     int current_page;
     int nos_pages;
+
+    char play_state_buffer[MKSBMLP_TEXT_WIDTH];
 } UserInterface;
 
 void init_user_interface(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH], int xml_count,
@@ -65,5 +66,7 @@ void previous_page(UserInterface* ui);
 void next_page(UserInterface* ui);
 
 void copy_xml_filenames(UserInterface* ui, char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH]);
+
+void set_play_state(UserInterface* ui, char* play_state_text);
 
 #endif // USER_INTERFACE_H

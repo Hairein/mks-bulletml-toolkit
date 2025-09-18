@@ -50,6 +50,12 @@ int init_app(App* app) {
     mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
         app->emitter_center.x, app->emitter_center.y);
 
+    strncpy(app->stopped_text, "Stopped", MKSBMLP_TEXT_WIDTH - 1);
+    strncpy(app->playing_text, "Playing", MKSBMLP_TEXT_WIDTH - 1);
+    strncpy(app->paused_text, "Paused", MKSBMLP_TEXT_WIDTH - 1);
+
+    set_play_state(&app->ui, app->stopped_text);
+
     return MKSBMLP_NO_ERROR;
 }
 
@@ -67,9 +73,12 @@ void update_app(App* app) {
 
             mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
             //printf("start playing\n");
+
         }
 
         app->is_playing = true;
+
+        set_play_state(&app->ui, app->playing_text);
     }
 
     Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
@@ -112,6 +121,8 @@ void post_update_app(App* app) {
         app->is_playing = false;
 
         //printf("paused playing\n");
+
+        set_play_state(&app->ui, app->paused_text);
     }
 
     if(app->stop_playing) {
@@ -125,6 +136,8 @@ void post_update_app(App* app) {
         app->rewind_playback = true;
 
         //printf("stopped playing\n");
+
+        set_play_state(&app->ui, app->stopped_text);
     }
 
     int xml_index;
@@ -142,6 +155,8 @@ void post_update_app(App* app) {
         //printf("selected xml file index: %d\n", app->current_active_playback_index);
 
         reset_emitter_center(app);
+
+        set_play_state(&app->ui, app->stopped_text);
     }
 
     int new_width, new_height;
