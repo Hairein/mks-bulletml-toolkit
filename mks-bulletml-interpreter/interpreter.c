@@ -288,8 +288,12 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
 
     Fire* fire = (Fire*)bulletml_bases[element_index];
 
-    AARS_TYPE fire_direction_type;
-    float fire_direction = get_direction(interpreter, element_index, action_info_block->fire_params, action_info_block->nos_fire_params, bulletml_bases, &fire_direction_type);
+    AARS_TYPE fire_direction_type = AARS_TYPE_RELATIVE;
+    float fire_direction = 0.0f;
+    if(action_info_block->nos_fire_params > 0) fire_direction = get_direction(interpreter, element_index, action_info_block->fire_params, action_info_block->nos_fire_params, bulletml_bases, &fire_direction_type);
+    else if(action_info_block->nos_action_params > 0) fire_direction = get_direction(interpreter, element_index, action_info_block->action_params, action_info_block->nos_action_params, bulletml_bases, &fire_direction_type);
+    else fire_direction = get_direction(interpreter, element_index, NULL, 0, bulletml_bases, &fire_direction_type);
+
     switch(fire_direction_type) {
     case AARS_TYPE_AIM: {
         angle_degrees = fire_direction + calc_angle_degrees(interpreter->bulletml_attribute, position, interpreter->player_position);
@@ -306,8 +310,12 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
     default: break;
     }
 
-    ARS_TYPE fire_speed_type;
-    float fire_speed = get_speed(interpreter, element_index, action_info_block->fire_params, action_info_block->nos_fire_params, bulletml_bases, &fire_speed_type);
+    ARS_TYPE fire_speed_type = ARS_TYPE_RELATIVE;
+    float fire_speed = 0.0f;
+    if(action_info_block->nos_fire_params > 0) fire_speed = get_speed(interpreter, element_index, action_info_block->fire_params, action_info_block->nos_fire_params, bulletml_bases, &fire_speed_type);
+    else if(action_info_block->nos_action_params > 0) fire_speed = get_speed(interpreter, element_index, action_info_block->action_params, action_info_block->nos_action_params, bulletml_bases, &fire_speed_type);
+    else fire_speed = get_speed(interpreter, element_index, NULL, 0, bulletml_bases, &fire_speed_type);
+
     switch(fire_speed_type) {
     case ARS_TYPE_ABSOLUTE: {
         speed = fire_speed;
