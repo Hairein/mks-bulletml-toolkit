@@ -39,7 +39,7 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
 void play_vanish(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 
 int find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
-void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, float* params, int nos_params);
+int insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, float* params, int nos_params, unsigned int bullet_id);
 bool check_actions_playback_finished(Interpreter* interpreter);
 
 float get_direction(Interpreter* interpreter, int parent_element_index, float* params, int nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS], AARS_TYPE* direction_type);
@@ -54,5 +54,6 @@ bool find_child_element_of_type(Interpreter* interpreter, int parent_element_ind
 void get_params_for_element(Interpreter* interpreter, int parent_element_index, float* action_params, int nos_action_params, int max_params, float* params, int* nos_params, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]);
 
 int get_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks);
+int get_current_or_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks);
 
 #endif // INTERPRETER_H

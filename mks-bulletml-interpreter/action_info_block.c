@@ -2,7 +2,7 @@
 
 #include "action_info_block.h"
 
-void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index) {
+void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index, unsigned int bullet_id) {
     block->parent_action_index = parent_action_index;
     block->action_index = action_index;
 
@@ -11,7 +11,7 @@ void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int
 
     block->action_element_index = 0;
 
-    block->bullet_id = 0;
+    block->bullet_id = bullet_id;
 
     block->is_waiting = false;
     block->wait_frames = 0;

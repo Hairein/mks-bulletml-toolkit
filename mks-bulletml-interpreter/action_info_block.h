@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "mksbmli-defines.h"
+#include "Vector2D.h"
 
 typedef struct {
     int parent_action_index;
@@ -33,7 +34,7 @@ typedef struct {
     int nos_bullet_params;
 } ActionInfoBlock;
 
-void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index);
+void init_action_info_block(ActionInfoBlock* block, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, int block_index, unsigned int bullet_id);
 void clear_action_info_block(ActionInfoBlock* block);
 
 void set_action_info_block_action_params(ActionInfoBlock* block, float* params, int nos_params);

@@ -69,6 +69,9 @@ void update_playback(Playback* playback) {
 
 void reset_playback(Playback* playback) {
     reset_playhead(&playback->interpreter, playback->bulletml_bases);
+
+    init_virtual_bullet_manager(&playback->virtual_bullet_manager);
+    init_interpreter(&playback->interpreter, &playback->virtual_bullet_manager);
 }
 
 void set_playing(Playback* playback, bool flag) {

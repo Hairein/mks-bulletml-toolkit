@@ -80,7 +80,7 @@ VirtualBullet* get_virtual_bullet_by_bullet_id(VirtualBulletManager* vbm, unsign
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
         if(vbm->bullets[index].handle == (MKSBMLI_BULLET_HANDLE)0) continue;
 
-        if(vbm->bullets[index].action_id != bullet_id) continue;
+        if(vbm->bullets[index].handle != bullet_id) continue;
 
         return &vbm->bullets[index];
     }

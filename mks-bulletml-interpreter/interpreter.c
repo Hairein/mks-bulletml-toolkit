@@ -15,10 +15,6 @@
 #include "speed.h"
 #include "wait.h"
 #include "direction.h"
-#include "change-speed.h"
-#include "change-direction.h"
-#include "accel.h"
-//#include "vanish.h"
 #include "horizontal.h"
 #include "vertical.h"
 #include "term.h"
@@ -64,7 +60,7 @@ void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_M
         reset_playhead(interpreter, bulletml_bases);
 
         int top_action_index = find_top_action_index(interpreter, bulletml_bases);
-        if(top_action_index != -1) insert_action_for_playback(interpreter, -1, top_action_index, 0, -1, NULL, 0);
+        if(top_action_index != -1) insert_action_for_playback(interpreter, -1, top_action_index, 0, -1, NULL, 0, 0);
         else {
             interpreter->is_valid = false;
             return;
@@ -74,7 +70,7 @@ void play_frame(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_M
     for(int current_block_index = 0; current_block_index < MKSBMLI_MAX_ELEMENTS; current_block_index++) {
         ActionInfoBlock* current_block = &interpreter->active_actions[current_block_index];
         if(current_block->action_index == -1) break;
-        if(current_block->action_index != -1 && current_block->is_finished) continue;
+        if(current_block->is_finished) continue;
 
         play_action(interpreter, current_block, bulletml_bases);
     }
@@ -125,12 +121,13 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE: {
-            // printf("play child: Fire\n");
+            //printf("play child: Fire\n");
+
             play_fire(interpreter, child_index, action_info_block, bulletml_bases);
         };
             break;
         case BULLETML_ELEMENT_TYPE_FIRE_REF: {
-            // printf("play child: FireRef\n");
+            //printf("play child: FireRef\n");
 
             get_params_for_element(interpreter, child_index, action_info_block->action_params, action_info_block->nos_action_params, MKSBMLI_MAX_PARAMS, action_info_block->fire_params, &action_info_block->nos_fire_params, bulletml_bases);
 
@@ -167,7 +164,7 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
             break;
         case BULLETML_ELEMENT_TYPE_ACTION: {
             // printf("play child: Action\n");
-            insert_action_for_playback(interpreter, action_index, child_index, 0, action_info_block->block_index, NULL, 0);
+            insert_action_for_playback(interpreter, action_index, child_index, 0, action_info_block->block_index, NULL, 0, action_info_block->bullet_id);
         };
             break;
         case BULLETML_ELEMENT_TYPE_ACTION_REF: {
@@ -181,7 +178,7 @@ void play_action(Interpreter* interpreter, ActionInfoBlock* action_info_block, B
 
             int action_element_index;
             if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, action_ref->label, bulletml_bases, &action_element_index)) {
-                insert_action_for_playback(interpreter, action_index, action_element_index, 0, action_info_block->block_index, sub_action_params, nos_sub_action_params);
+                insert_action_for_playback(interpreter, action_index, action_element_index, 0, action_info_block->block_index, sub_action_params, nos_sub_action_params, action_info_block->bullet_id);
             }
         };
             break;
@@ -215,6 +212,8 @@ void play_fire_ref(Interpreter* interpreter, int element_index, ActionInfoBlock*
 }
 
 void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
+    //printf("enter play_fire\n");
+
     int action_index = action_info_block->action_index;
     int block_index = action_info_block->block_index;
     unsigned int action_offset = action_info_block->offset;
@@ -247,7 +246,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
 
         BulletRef* bullet_ref =  (BulletRef*)bulletml_bases[bullet_ref_index];
         if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_BULLET, bullet_ref->label, bulletml_bases, &found_bullet_index)) {
-            bullet = (Bullet*)bulletml_bases[found_bullet_index];
+            bullet = (Bullet*)bulletml_bases[found_bullet_index];            
         }
     }
     if(bullet == NULL) return;
@@ -285,6 +284,8 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
     }; break;
     default: break;
     }
+
+    //printf("fire->bullet proposed params: angle_degrees(%.2f), speed(%.2f)\n", angle_degrees, speed);
 
     Fire* fire = (Fire*)bulletml_bases[element_index];
 
@@ -333,13 +334,14 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
     spawn_virtual_bullet(interpreter->vbm, new_bullet_id, interpreter->bulletml_attribute, position, angle_degrees, speed);
     action_info_block->bullet_id = new_bullet_id;
 
+    //printf("New bullet id: %d\n", new_bullet_id);
+
     for(int bullet_child_action_index = found_bullet_index + 1; bullet_child_action_index < MKSBMLI_MAX_ELEMENTS; bullet_child_action_index++) {
         BulletmlBase* bullet_child =  bulletml_bases[bullet_child_action_index];
         if(bullet_child == NULL || bullet_child->parent != bulletml_bases[found_bullet_index]) break;
 
         if(bullet_child->type == BULLETML_ELEMENT_TYPE_ACTION) {
-            insert_action_for_playback(interpreter, action_index, bullet_child_action_index, 0, action_info_block->block_index, NULL, 0);
-
+            insert_action_for_playback(interpreter, action_index, bullet_child_action_index, 0, action_info_block->block_index, NULL, 0, new_bullet_id);
         } else if(bullet_child->type == BULLETML_ELEMENT_TYPE_ACTION_REF) {
             ActionRef* bullet_child_action_ref = (ActionRef*)bullet_child;
 
@@ -349,7 +351,7 @@ void play_fire(Interpreter* interpreter, int element_index, ActionInfoBlock* act
 
             int found_bullet_child_index = 0;
             if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, bullet_child_action_ref->label, bulletml_bases, &found_bullet_child_index))
-                insert_action_for_playback(interpreter, action_index, found_bullet_child_index, 0, block_index, sub_action_params, nos_sub_action_params);
+                insert_action_for_playback(interpreter, action_index, found_bullet_child_index, 0, block_index, sub_action_params, nos_sub_action_params, new_bullet_id);
         }
     }
 }
@@ -363,7 +365,7 @@ void play_repeat(Interpreter* interpreter, int element_index, ActionInfoBlock* a
     bool has_action_ref = find_child_element_of_type(interpreter, element_index, BULLETML_ELEMENT_TYPE_ACTION_REF, bulletml_bases, &found_action_ref_index);
 
     for(int loop_index = 0; loop_index < times; loop_index++) {
-        if(has_action) insert_action_for_playback(interpreter, action_info_block->action_index, found_action_index, loop_index, action_info_block->block_index, NULL, 0);
+        if(has_action) insert_action_for_playback(interpreter, action_info_block->action_index, found_action_index, loop_index, action_info_block->block_index, NULL, 0, action_info_block->bullet_id);
         else if(has_action_ref) {
             ActionRef* action_ref= (ActionRef*)bulletml_bases[found_action_ref_index];
 
@@ -373,14 +375,14 @@ void play_repeat(Interpreter* interpreter, int element_index, ActionInfoBlock* a
 
             int action_element_index;
             if(find_element_by_label(interpreter, BULLETML_ELEMENT_TYPE_ACTION, action_ref->label, bulletml_bases, &action_element_index)) {
-                insert_action_for_playback(interpreter, action_info_block->action_index, action_element_index, loop_index, action_info_block->block_index, sub_action_params, nos_sub_action_params);
+                insert_action_for_playback(interpreter, action_info_block->action_index, action_element_index, loop_index, action_info_block->block_index, sub_action_params, nos_sub_action_params, action_info_block->bullet_id);
             }
         }
     }
 }
 
 void play_change_speed(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
-    ChangeSpeed* change_speed = (ChangeSpeed*)bulletml_bases[element_index];
+    //ChangeSpeed* change_speed = (ChangeSpeed*)bulletml_bases[element_index];
 
     int action_offset = action_info_block->offset;
 
@@ -396,25 +398,28 @@ void play_change_speed(Interpreter* interpreter, int element_index, ActionInfoBl
         frames = get_term_value(interpreter, element_index, action_info_block->action_params, action_info_block->nos_action_params, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, action_info_block->bullet_id);
-    if(vb != NULL) {
-        switch(speed_type) {
-        case ARS_TYPE_RELATIVE: {
-            new_speed += vb->speed;
-        }; break;
-        case ARS_TYPE_SEQUENCE: {
-            new_speed = vb->speed + (new_speed * (1 + action_offset));
-        }; break;
-        case ARS_TYPE_ABSOLUTE:
-        default: break;
-        }
+    int bullet_id = get_current_or_ancestor_bullet_id(action_info_block, interpreter->active_actions);
+    if(bullet_id != 0) {
+        VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, bullet_id);
+        if(vb != NULL) {
+            switch(speed_type) {
+            case ARS_TYPE_RELATIVE: {
+                new_speed += vb->speed;
+            }; break;
+            case ARS_TYPE_SEQUENCE: {
+                new_speed = vb->speed + (new_speed * (1 + action_offset));
+            }; break;
+            case ARS_TYPE_ABSOLUTE:
+            default: break;
+            }
 
-        set_virtual_bullet_changing_speed(vb, new_speed, frames);
+            set_virtual_bullet_changing_speed(vb, new_speed, frames);
+        }
     }
 }
 
 void play_change_direction(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
-    ChangeDirection* change_speed = (ChangeDirection*)bulletml_bases[element_index];
+    //ChangeDirection* change_direction = (ChangeDirection*)bulletml_bases[element_index];
 
     int action_offset = action_info_block->offset;
 
@@ -430,28 +435,33 @@ void play_change_direction(Interpreter* interpreter, int element_index, ActionIn
         frames = get_term_value(interpreter, element_index, action_info_block->action_params, action_info_block->nos_action_params, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, action_info_block->bullet_id);
-    if(vb != NULL) {
-        switch(direction_type) {
-        case AARS_TYPE_AIM: {
-            new_direction += calc_angle_degrees(interpreter->bulletml_attribute, vb->position, interpreter->player_position);
-        }; break;
-        case AARS_TYPE_RELATIVE: {
-            new_direction += vb->angle_degrees;
-        }; break;
-        case AARS_TYPE_SEQUENCE: {
-            new_direction = vb->angle_degrees + (new_direction * (1 + action_offset));
-        }; break;
-        case AARS_TYPE_ABSOLUTE:
-        default: break;
-        }
+    int bullet_id = get_current_or_ancestor_bullet_id(action_info_block, interpreter->active_actions);
+    if(bullet_id != 0) {
+        VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, bullet_id);
+        if(vb != NULL) {
+            switch(direction_type) {
+            case AARS_TYPE_AIM: {
+                new_direction += calc_angle_degrees(interpreter->bulletml_attribute, vb->position, interpreter->player_position);
+            }; break;
+            case AARS_TYPE_RELATIVE: {
+                new_direction += vb->angle_degrees;
+            }; break;
+            case AARS_TYPE_SEQUENCE: {
+                new_direction = vb->angle_degrees + (new_direction * (1 + action_offset));
+            }; break;
+            case AARS_TYPE_ABSOLUTE:
+            default: break;
+            }
 
-        set_virtual_bullet_changing_direction(vb, new_direction, frames);
+            set_virtual_bullet_changing_direction(vb, new_direction, frames);
+        }
     }
+
+    // printf("play_change_direction params: bullet_id(%d), new_direction(%.2f), frames(%d)\n", bullet_id, new_direction, frames);
 }
 
 void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
-    Accel* accel = (Accel*)bulletml_bases[element_index];
+    //Accel* accel = (Accel*)bulletml_bases[element_index];
 
     int action_offset = action_info_block->offset;
 
@@ -475,42 +485,52 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
         frames = get_term_value(interpreter, element_index, action_info_block->action_params, action_info_block->nos_action_params, bulletml_bases);
     }
 
-    VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, action_info_block->bullet_id);
-    if(vb != NULL) {
-        switch(horizontal_type) {
-        case ARS_TYPE_RELATIVE: {
-            new_horizontal_value += vb->acceleration_vector.x;
-        }; break;
-        case ARS_TYPE_SEQUENCE: {
-            new_horizontal_value = vb->acceleration_vector.x + (new_horizontal_value * (1 + action_offset));
-        }; break;
-        case ARS_TYPE_ABSOLUTE:
-        default:break;
-        }
+    int bullet_id = get_current_or_ancestor_bullet_id(action_info_block, interpreter->active_actions);
+    if(bullet_id != 0) {
+        VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, bullet_id);
+        if(vb != NULL) {
+            switch(horizontal_type) {
+            case ARS_TYPE_RELATIVE: {
+                new_horizontal_value += vb->acceleration_vector.x;
+            }; break;
+            case ARS_TYPE_SEQUENCE: {
+                new_horizontal_value = vb->acceleration_vector.x + (new_horizontal_value * (1 + action_offset));
+            }; break;
+            case ARS_TYPE_ABSOLUTE:
+            default:break;
+            }
 
-        switch(vertical_type) {
-        case ARS_TYPE_RELATIVE: {
-            new_vertical_value += vb->acceleration_vector.x;
-        }; break;
-        case ARS_TYPE_SEQUENCE: {
-            new_vertical_value = vb->acceleration_vector.x + (new_vertical_value * (1 + action_offset));
-        }; break;
-        case ARS_TYPE_ABSOLUTE:
-        default:break;
-        }
+            switch(vertical_type) {
+            case ARS_TYPE_RELATIVE: {
+                new_vertical_value += vb->acceleration_vector.x;
+            }; break;
+            case ARS_TYPE_SEQUENCE: {
+                new_vertical_value = vb->acceleration_vector.x + (new_vertical_value * (1 + action_offset));
+            }; break;
+            case ARS_TYPE_ABSOLUTE:
+            default:break;
+            }
 
-        Vector2D acceleration = (Vector2D){new_horizontal_value / frames, new_vertical_value / frames};
-        set_virtual_bullet_acceleration(vb, acceleration, frames);
+            Vector2D acceleration = (Vector2D){new_horizontal_value / frames, new_vertical_value / frames};
+            set_virtual_bullet_acceleration(vb, acceleration, frames);
+        }
     }
 }
 
 void play_vanish(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
     //Vanish* vanish = (Vanish*)bulletml_bases[index];
 
-    VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, action_info_block->bullet_id);
-    if(vb != NULL) {
-        destroy_vbm_bullet(interpreter->vbm, vb->handle);
+    int bullet_id = get_ancestor_bullet_id(action_info_block, interpreter->active_actions);
+    if(bullet_id != 0) {
+        VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, bullet_id);
+        if(vb != NULL) {
+            destroy_vbm_bullet(interpreter->vbm, vb->handle);
+        }
     }
+
+    //printf("Vanish bullet_id(%d)\n", bullet_id);
+
+    action_info_block->is_finished = true;
 }
 
 int find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]) {
@@ -527,14 +547,17 @@ int find_top_action_index(Interpreter* interpreter, BulletmlBase* bulletml_bases
     return -1;
 }
 
-void insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, float* params, int nos_params) {
+int insert_action_for_playback(Interpreter* interpreter, int parent_action_index, int action_index, unsigned int offset, int parent_block_index, float* params, int nos_params, unsigned int bullet_id) {
     for(int index = 0; index < MKSBMLI_MAX_ELEMENTS; index++) {
         if(interpreter->active_actions[index].action_index == -1) {
-            init_action_info_block(&interpreter->active_actions[index], parent_action_index, action_index, offset, parent_block_index, index);
+            init_action_info_block(&interpreter->active_actions[index], parent_action_index, action_index, offset, parent_block_index, index, bullet_id);
             set_action_info_block_action_params(&interpreter->active_actions[index], params, nos_params);
-            break;
+
+            return index;
         }
     }
+
+    return -1;
 }
 
 bool check_actions_playback_finished(Interpreter* interpreter) {
@@ -727,6 +750,20 @@ void get_params_for_element(Interpreter* interpreter, int parent_element_index, 
 }
 
 int get_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks) {
+    if(block->parent_block_index == -1) return 0;
+
+    ActionInfoBlock* parent_block = &blocks[block->parent_block_index];
+    while(true) {
+        if(parent_block->bullet_id != 0) return parent_block->bullet_id;
+        if(parent_block->parent_block_index != -1) parent_block = &blocks[parent_block->parent_block_index];
+        else break;
+    }
+
+    return 0;
+}
+
+int get_current_or_ancestor_bullet_id(ActionInfoBlock* block, ActionInfoBlock* blocks) {
+    if(block->bullet_id != -1) return block->bullet_id;
     if(block->parent_block_index == -1) return 0;
 
     ActionInfoBlock* parent_block = &blocks[block->parent_block_index];
