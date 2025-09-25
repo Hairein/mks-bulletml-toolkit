@@ -1,7 +1,6 @@
 #ifndef APP_H
 #define APP_H
 
-#include "mks-bulletml-interpreter.h"
 #include "user-interface.h"
 
 typedef struct {
@@ -45,5 +44,9 @@ void handle_ui_input(App* app);
 
 void set_emitter_center(App* app);
 void reset_emitter_center(App* app);
+
+void set_playfield_dims(App* app, int width, int height);
+int add_xml_file(App* app, const char* xml_filename);
+void calculate_playfield(App* app);
 
 #endif // APP_H

@@ -65,3 +65,9 @@ _*
 
 build-mks-bulletml-interpreter-Desktop-Debug/
 build-mks-bulletml-player-Desktop-Debug/
+build-mks-bulletml-interpreter-Win-Desktop-Debug/
+build-mks-bulletml-interpreter-Win-Desktop-Release/
+build-mks-bulletml-player-Win-Desktop-Debug/
+build-mks-bulletml-player-Win-Desktop-Release/
+
+.qtc_clangd/

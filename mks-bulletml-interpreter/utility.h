@@ -4,6 +4,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include <stdbool.h>
+
 #include "mksbmli-defines.h"
 #include "Vector2D.h"
 

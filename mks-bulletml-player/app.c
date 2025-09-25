@@ -18,7 +18,7 @@ int init_app(App* app) {
         // printf("\n");
         for (int i = 0; i < app->xml_count; i++) {
             int add_result = add_xml_file(app, app->xml_filenames[i]);
-            // printf("add xml file %s result: %d\n", app->xml_filenames[i], (int)add_result);
+            printf("add xml file %s result: %d\n", app->xml_filenames[i], (int)add_result);
         }
         // printf("\n");
     }
@@ -283,7 +283,7 @@ void handle_ui_input(App* app) {
 void set_emitter_center(App* app) {
     Vector2 mouse_position = GetMousePosition();
 
-    Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0, GetScreenHeight() / 2.0f};
+    Vector2 screen_half = (Vector2){GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     float projected_scale = app->projected_playfield.width / app->virtual_playfield_dims.x;
 
     Vector2 relative_center = (Vector2){
@@ -308,4 +308,52 @@ void reset_emitter_center(App* app) {
 
     mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
         app->emitter_center.x, app->emitter_center.y);
+}
+
+void set_playfield_dims(App* app, int width, int height)
+{
+    if(width < 64) width = 64;
+    if(width > 4096) width = 4096;
+    if(height < 64) height = 64;
+    if(height > 4096) height = 4096;
+
+    app->virtual_playfield_dims = (Vector2){width, height};
+}
+
+int add_xml_file(App* app, const char* xml_filename){
+    MKSBMLI_PLAYBACK_HANDLE handle;
+    int load_result = mksbmli_load_xml(xml_filename, &handle);
+    if(load_result != MKSBMLP_NO_ERROR) return load_result;
+    if(handle == 0) return MKSBMLP_UNSPECIFIED_ERROR;
+
+    for(int index = 0; index < MKSBMLI_MAX_PLAYBACK_HANDLES; index++) {
+        if(app->playback_handles[index] != 0) continue;
+
+        app->playback_handles[index] = handle;
+
+        return MKSBMLP_NO_ERROR;
+    }
+
+    return MKSBMLP_TOO_MANY_XML_FILES;
+}
+
+void calculate_playfield(App* app) {
+    float screen_width = GetScreenWidth();
+    float screen_height = GetScreenHeight() - TOP_BOTTOM_CUTOFF;
+
+    float virtual_width_ratio = app->virtual_playfield_dims.x / app->virtual_playfield_dims.y;
+
+    float virtual_width = screen_width;
+    float virtual_height = screen_width / virtual_width_ratio;
+
+    if(virtual_height > screen_height) {
+        float virtual_height_ratio = app->virtual_playfield_dims.y / screen_height;
+        virtual_width = app->virtual_playfield_dims.x / virtual_height_ratio;
+        virtual_height = screen_height;
+    }
+
+    app->projected_playfield.x = screen_width / 2.0f - (virtual_width / 2.0f);
+    app->projected_playfield.y = screen_height / 2.0f - (virtual_height / 2.0f) + TOP_BOTTOM_CUTOFF_HALF;
+    app->projected_playfield.width = virtual_width;
+    app->projected_playfield.height = virtual_height;
 }

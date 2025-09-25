@@ -44,11 +44,32 @@ add_library(mks-bulletml-interpreter SHARED
     Vector2D.c Vector2D.h
 )
 
-# include headers
-target_include_directories(mks-bulletml-interpreter PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    /usr/include/libxml2
-)
+# Conditional libxml2 include and library paths
+if(WIN32)
+    set(LIBXML2_ROOT "e:/libxml2_build")
+    set(ICONV_ROOT "e:/iconv-1.14-win32-x86_64")
+    target_include_directories(mks-bulletml-interpreter PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        "${LIBXML2_ROOT}/include"
+        "${ICONV_ROOT}/include"
+    )
+    target_link_directories(mks-bulletml-interpreter PUBLIC
+        "${LIBXML2_ROOT}/lib"
+        "${ICONV_ROOT}/lib"
+    )
+    target_link_libraries(mks-bulletml-interpreter
+        libxml2
+    )
+else()
+    target_include_directories(mks-bulletml-interpreter PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        /usr/include/libxml2
+    )
+    target_link_libraries(mks-bulletml-interpreter
+        xml2
+        m
+    )
+endif()
 
 # target directory of the .so-file
 set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
@@ -60,10 +81,4 @@ add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
         $<TARGET_FILE:mks-bulletml-interpreter>
         ${PLAYER_BUILD_DIR}
     COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Debug"
-)
-
-# link libraries
-target_link_libraries(mks-bulletml-interpreter
-    xml2
-    m
 )

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "utility.h"
 #include "playback.h"
