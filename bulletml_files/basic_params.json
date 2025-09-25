@@ -1,0 +1,112 @@
+{
+  "exporter": "MKS BulletML Pattern Builder",
+  "file_version": 1,
+  "mks_website": "https://www.micahkoleososoftware.com",
+  "name": "basic_params",
+  "creation_date": "2025-08-06 14:03:00",
+  "description": "parametered basic pattern",
+  "virtual_screen_dims": [
+    320.0,
+    240.0
+  ],
+  "difficulty": 0.5,
+  "bulletml": {
+    "attribute": "HORIZONTAL",
+    "contents": {
+      "actions": [
+        {
+          "attribute": {
+            "text": "top"
+          },
+          "contents": {
+            "action_contents": [
+              {
+                "FireRef": {
+                  "attribute": {
+                    "text": "fire"
+                  },
+                  "contents": {
+                    "params": []
+                  }
+                }
+              },
+              {
+                "Wait": {
+                  "contents": {
+                    "frames": {
+                      "text": "30"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "fires": [
+        {
+          "attribute": {
+            "text": "fire"
+          },
+          "contents": {
+            "direction": {
+              "attribute": "ABSOLUTE",
+              "contents": {
+                "degrees": {
+                  "text": "0.0"
+                }
+              }
+            },
+            "speed": {
+              "attribute": "ABSOLUTE",
+              "contents": {
+                "speed": {
+                  "text": "1.0"
+                }
+              }
+            },
+            "bullet_ref": {
+              "attribute": {
+                "text": "bullet"
+              },
+              "contents": {
+                "params": []
+              }
+            }
+          }
+        }
+      ],
+      "bullets": [
+        {
+          "attribute": {
+            "text": "bullet"
+          },
+          "contents": {
+            "direction": {
+              "attribute": "ABSOLUTE",
+              "contents": {
+                "degrees": {
+                  "text": "0.0"
+                }
+              }
+            },
+            "speed": {
+              "attribute": "ABSOLUTE",
+              "contents": {
+                "speed": {
+                  "text": "1.0"
+                }
+              }
+            },
+            "action_refs": []
+          },
+          "turn_to_direction": true,
+          "bullet_texture_name": "8x8_arrow_c_bullet.png"
+        }
+      ]
+    }
+  },
+  "current_action_index": 0,
+  "current_fire_index": 0,
+  "current_bullet_index": 0
+}

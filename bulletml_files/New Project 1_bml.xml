@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bulletml PUBLIC "-//Nakamura//DTD BulletML 1.0//EN" "http://www.dan-ball.jp/bulletml/bulletml.dtd">
+<bulletml type="vertical" xmlns="http://www.asahi-net.or.jp/~cs8k-cyu/bulletml">
+  <bullet label="New Bullet 1">
+    <direction type="absolute">1.0</direction>
+    <speed type="absolute">1.0</speed>
+    <actionRef label="New Action 1">
+      <param>1.0</param>
+      <param>2</param>
+      <param>3</param>
+    </actionRef>
+    <actionRef label="New Action 2">
+      <param>7</param>
+      <param>8</param>
+    </actionRef>
+  </bullet>
+  <action label="New Action 1">
+    <fireRef label="New Fire 1">
+      <param>1.0*7/4.0</param>
+      <param>2.0</param>
+      <param>3.0/7</param>
+      <param>5.75</param>
+    </fireRef>
+    <actionRef label="New Action 2">
+      <param>2</param>
+      <param>1.0</param>
+    </actionRef>
+    <fireRef label="New Fire 1">
+      <param>1.0</param>
+    </fireRef>
+    <actionRef label="New Action 2">
+    </actionRef>
+    <wait>60</wait>
+    <vanish></vanish>
+  </action>
+  <action label="New Action 2">
+    <wait>45</wait>
+    <vanish></vanish>
+  </action>
+  <action label="Empty Action">
+  </action>
+  <fire label="New Fire 1">
+    <direction type="absolute">1.0</direction>
+    <speed type="absolute">1.0</speed>
+    <bulletRef label="New Bullet 1">
+      <param>360/7*2</param>
+      <param>2.0</param>
+      <param>3.0</param>
+    </bulletRef>
+  </fire>
+</bulletml>

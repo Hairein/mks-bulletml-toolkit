@@ -530,8 +530,7 @@ void play_accel(Interpreter* interpreter, int element_index, ActionInfoBlock* ac
 void play_vanish(Interpreter* interpreter, int element_index, ActionInfoBlock* action_info_block, BulletmlBase* bulletml_bases[MKSBMLI_MAX_ELEMENTS]){
     //Vanish* vanish = (Vanish*)bulletml_bases[index];
 
-    //int bullet_id = get_ancestor_bullet_id(action_info_block, interpreter->active_actions);
-    int bullet_id = action_info_block->bullet_id;
+    int bullet_id = get_ancestor_bullet_id(action_info_block, interpreter->active_actions);
     if(bullet_id != 0) {
         VirtualBullet* vb = get_virtual_bullet_by_bullet_id(interpreter->vbm, bullet_id);
         if(vb != NULL) {
