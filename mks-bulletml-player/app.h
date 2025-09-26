@@ -1,0 +1,52 @@
+#ifndef APP_H
+#define APP_H
+
+#include "user-interface.h"
+
+typedef struct {
+    Vector2 virtual_playfield_dims;
+    Rectangle projected_playfield;
+
+    MKSBMLI_PLAYBACK_HANDLE playback_handles[MKSBMLI_MAX_PLAYBACK_HANDLES];
+    unsigned int current_active_playback_index;
+
+    bool is_playing;
+    bool pause_after_frame;
+    bool start_playing;
+    bool stop_playing;
+    bool rewind_playback;
+
+    unsigned int frame_counter;
+
+    UserInterface ui;
+
+    char xml_filenames[MKSBMLI_MAX_PLAYBACK_HANDLES][MKSBMLI_XML_FILENAME_MAX_LENGTH];
+    int xml_count;
+
+    Vector2 player_position;
+    Vector2 emitter_center;
+
+    Texture2D bullet_texture;
+    Texture2D player_cursor_texture;
+
+    char stopped_text[MKSBMLP_TEXT_WIDTH];
+    char playing_text[MKSBMLP_TEXT_WIDTH];
+    char paused_text[MKSBMLP_TEXT_WIDTH];
+} App;
+
+int init_app(App* app);
+void update_app(App* app);
+void post_update_app(App* app);
+void render_app(App* app);
+
+void handle_app_input(App* app);
+void handle_ui_input(App* app);
+
+void set_emitter_center(App* app);
+void reset_emitter_center(App* app);
+
+void set_playfield_dims(App* app, int width, int height);
+int add_xml_file(App* app, const char* xml_filename);
+void calculate_playfield(App* app);
+
+#endif // APP_H

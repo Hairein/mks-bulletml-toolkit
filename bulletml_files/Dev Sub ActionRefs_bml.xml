@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bulletml PUBLIC "-//Nakamura//DTD BulletML 1.0//EN" "http://www.dan-ball.jp/bulletml/bulletml.dtd">
+<bulletml type="vertical" xmlns="http://www.asahi-net.or.jp/~cs8k-cyu/bulletml">
+  <bullet label="mainBullet">
+    <direction type="absolute">0</direction>
+    <speed type="absolute">0</speed>
+    <actionRef label="delayed">
+    </actionRef>
+  </bullet>
+  <bullet label="AngleBullet">
+    <direction type="absolute">0</direction>
+    <speed type="absolute">0</speed>
+  </bullet>
+  <action label="top">
+    <fireRef label="mainFire">
+    </fireRef>
+  </action>
+  <action label="delayed">
+    <wait>60</wait>
+    <fireRef label="angleFire">
+    </fireRef>
+  </action>
+  <fire label="mainFire">
+    <direction type="absolute">0</direction>
+    <speed type="absolute">1.5</speed>
+    <bulletRef label="mainBullet">
+    </bulletRef>
+  </fire>
+  <fire label="angleFire">
+    <direction type="relative">90</direction>
+    <speed type="absolute">1.5</speed>
+    <bulletRef label="AngleBullet">
+    </bulletRef>
+  </fire>
+</bulletml>

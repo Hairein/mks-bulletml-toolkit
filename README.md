@@ -44,7 +44,6 @@ Keys Q,W,E,R - Stop, Play, Play frame, Pause playback
 C - Hold With click of LMB to set emitter center
 X - To reset emitter center to (zero/zero), i.e. to the default middle of the playfield
 ```
-
 ---
 
 ## NOTE
