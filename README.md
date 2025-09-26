@@ -1,5 +1,5 @@
 # mks-bulletml-toolkit
-MKS BulletML Toolkit - A collection of tools to visualize and work with cpesific BulletML XML files. Initially, this library parses output from the [MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/) but intention here is to make it a generic BulletML XML file parser.
+MKS BulletML Toolkit - A collection of tools to visualize and work with specific BulletML XML files. Initially, this library parses output from the [MKS BulletML Pattern Builder](https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/) but the intention here is to make it a generic BulletML XML file parser.
 
 The entire project is provided under the MIT license except foreign files and libraries used within which retain their respective licensing.
 
@@ -9,8 +9,8 @@ The library using application is responsible for providing information when spec
 
 ## Player
 A small application to show how the library is used and those functions can be called.
-It visualizes the bullets interpreted within the library.
-To use this sample app, provide BulletML XML files withing the folder 'bulletml_files', all will be loaded automatically on startup. 
+It visualizes the bullets interpreted within the library using Raylib/RaylibGui.
+To use this sample app, provide BulletML XML files within the folder 'bulletml_files', all will be loaded automatically on startup. 
 The 'asset' folder contains all resources required to run the player application.
 
 ---
@@ -39,11 +39,11 @@ The 'asset' folder contains all resources required to run the player application
 ---
 
 ## Player Controls
-
+```
 Keys Q,W,E,R - Stop, Play, Play frame, Pause playback
 C - Hold With click of LMB to set emitter center
 X - To reset emitter center to (zero/zero), i.e. to the default middle of the playfield
-
+```
 ---
 
 ## NOTE
@@ -57,13 +57,29 @@ let the playback functionality of the library play the frame continuously and co
 
 ### Build
 
-The project is configured with CMAKE and was built using Qt Creator on various Ubuntu 24.04 LTS platforms.
-
-TODO - CMake configuration and build instructions here for various operating systems
+The project is configured with CMAKE and built using Qt Creator on various Ubuntu 24.04 LTS and Windows 11 platforms.
 
 ### Install dependencies
 
-Linux : `sudo apt install libxml2-dev`
+#### Windows
+
+Under Windows, you need to have environment variables set for these paths or you can provide hard-coded paths in the Player CMakeLists.txt, see that file for examples
+```
+Raylib Header and Libs/DLLs - RAYLIB_INCLUDE_DIR, RAYLIB_LIB_DIR
+
+LibXML2 Root Folder with include/lib - LIBXML2_ROOT through 
+
+(Optional) IConv ICONV_ROOT with include/lib - Only if your libXML2 build includes IConv
+```
+
+#### Linux
+
+Under Linux the following dependencies exist which can be installed, for example using Ubuntu/APT
+```
+sudo apt update
+sudo apt install libraylib-dev
+sudo apt install libxml2-dev
+```
 
 ---
 
@@ -73,7 +89,8 @@ These projects were created with the help of AI.
 
 ### Check mks-bulletml-interpreter exports
 
-Linux : `nm -D libmks-bulletml-interpreter.so | grep init`
+#### Linux
+`nm -D libmks-bulletml-interpreter.so | grep init`
 
 ### Contact
 
