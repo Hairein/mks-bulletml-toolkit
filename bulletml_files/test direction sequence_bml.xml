@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bulletml PUBLIC "-//Nakamura//DTD BulletML 1.0//EN" "http://www.dan-ball.jp/bulletml/bulletml.dtd">
+<bulletml type="vertical" xmlns="http://www.asahi-net.or.jp/~cs8k-cyu/bulletml">
+  <action label="top">
+    <fireRef label="standard">
+    </fireRef>
+    <wait>30</wait>
+    <direction type="sequence">90</direction>
+    <term>30</term>
+  </action>
+  <fire label="standard">
+    <direction type="absolute">0</direction>
+    <speed type="absolute">1</speed>
+    <bulletRef label="default">
+    </bulletRef>
+  </fire>
+  <bullet label="default">
+    <direction type="absolute">0</direction>
+    <speed type="absolute">1</speed>
+  </bullet>
+</bulletml>

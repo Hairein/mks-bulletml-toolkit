@@ -1,42 +1,38 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
-
-#include "raylib.h"
-
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
 
 #include "mks-bulletml-interpreter.h"
+#include "app.h"
 
 int main()
 {
+    char title[MKSBMLI_MAX_TEXT_LENGTH];
+    snprintf(title, MKSBMLI_MAX_TEXT_LENGTH, "MKS BulletML Player v%d.%d.%d startup.", MKSBMLP_MAJOR_VERSION, MKSBMLP_MINOR_VERSION, MKSBMLP_PATCH_VERSION);
+
     mksbmli_init();
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(800, 600, "MKS BulletML Player v0.0.1");
+    InitWindow(800, 600, title);
     SetTargetFPS(60);
+    SetWindowMinSize(64, 64);
 
-    bool showMessageBox = false;
+    App* app = calloc(1, sizeof(App));
+    init_app(app);
 
     while (!WindowShouldClose())
     {
+        update_app(app);
+
         BeginDrawing();
-            ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-
-            if (GuiButton((Rectangle){ 24, 24, 120, 30 }, "#191#Show Message")) showMessageBox = true;
-
-            if (showMessageBox)
-            {
-                int result = GuiMessageBox((Rectangle){ 85, 70, 250, 100 },
-                    "#191#Message Box", "Hi! This is a message!", "Nice;Cool");
-
-                if (result >= 0) showMessageBox = false;
-            }
-
+        render_app(app);
         EndDrawing();
+
+        post_update_app(app);
     }
 
     CloseWindow();
+
+    free(app);
 
     mksbmli_shutdown();
 
