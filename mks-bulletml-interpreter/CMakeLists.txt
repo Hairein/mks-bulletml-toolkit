@@ -71,14 +71,29 @@ else()
     )
 endif()
 
-# target directory of the .so-file
-set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
+# Set PLAYER_BUILD_DIR and copy target based on Debug or Release
+if(WIN32)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Win-Desktop-Debug")
+        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Win-Desktop-Debug")
+    else()
+        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Win-Desktop-Release")
+        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Win-Desktop-Release")
+    endif()
+else()
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
+        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Debug")
+    else()
+        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Release")
+        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Release")
+    endif()
+endif()
 
-# copy the .so-file after the build
 add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:mks-bulletml-interpreter>
         ${PLAYER_BUILD_DIR}
-    COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Debug"
+    COMMENT "${COPY_COMMENT}"
 )

@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(mks-bulletml-player LANGUAGES C)
 
-# activate c11
+# Activate C11
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# path to interpreter library
+# Paths to interpreter library
 set(INTERPRETER_INCLUDE_DIR "../mks-bulletml-interpreter")
 set(INTERPRETER_LIB_DIR "../build-mks-bulletml-interpreter-Win-Desktop-Debug")
 
@@ -39,28 +39,35 @@ if(WIN32)
     link_directories("${LIBXML2_ROOT}/lib")
     link_directories("${ICONV_ROOT}/lib")
     link_directories(${RAYLIB_LIB_DIR})
-else()
-    # Prefer target_include_directories for modern CMake
-    include_directories(
-        ${INTERPRETER_INCLUDE_DIR}
-        /usr/include/libxml2
-    )
 endif()
 
-# include .so-file/.dll/.lib
 link_directories(${INTERPRETER_LIB_DIR})
 
-# create executable
-add_executable(mks-bulletml-player
+# Source and header files
+set(SRC_FILES
     main.c
-    mksbmlp-defines.h
-    app.c app.h
-    utility.c utility.h
-    user-interface.c user-interface.h
-    dirent.h
+    app.c
+    utility.c
+    user-interface.c
 )
 
-# Modern way: set includes per target (uncomment if you want this style)
+set(HEADER_FILES
+    mksbmlp-defines.h
+    app.h
+    utility.h
+    user-interface.h
+)
+
+if(WIN32)
+    list(APPEND HEADER_FILES dirent.h)
+endif()
+
+add_executable(mks-bulletml-player ${SRC_FILES})
+
+# Make header files visible in IDE (not used for compiling)
+source_group("Header Files" FILES ${HEADER_FILES})
+
+# Modern way: set includes per target
 target_include_directories(mks-bulletml-player PRIVATE
     ${INTERPRETER_INCLUDE_DIR}
     $<$<BOOL:${WIN32}>:${RAYLIB_INCLUDE_DIR}>
@@ -77,9 +84,6 @@ if(WIN32)
     )
     # Copy DLLs to output dir after build
     add_custom_command(TARGET mks-bulletml-player POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${INTERPRETER_LIB_DIR}/mks-bulletml-interpreter.dll"
-            "$<TARGET_FILE_DIR:mks-bulletml-player>/mks-bulletml-interpreter.dll"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${RAYLIB_LIB_DIR}/raylib.dll"
             "$<TARGET_FILE_DIR:mks-bulletml-player>/raylib.dll"
