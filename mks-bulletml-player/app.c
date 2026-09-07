@@ -73,6 +73,10 @@ void update_app(App* app) {
 
             mksbmli_start_playback(app->playback_handles[app->current_active_playback_index]);
             //printf("start playing\n");
+  
+            mksbmli_set_rank(app->playback_handles[app->current_active_playback_index], 0.5f);
+            mksbmli_set_emitter_center(app->playback_handles[app->current_active_playback_index],
+                app->emitter_center.x, app->emitter_center.y);
         }
 
         app->is_playing = true;

@@ -105,12 +105,17 @@ public class MksBmlToolkitHandler : MonoBehaviour
                 
                 Debug.Log("BulletMLPlaybackHandle: " + BulletMLPlaybackHandle);
                
-                MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
-                MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
-                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY);
-                UpdatePlayerPositionFromMouse();
-
                 MksBulletmlInterpreterNative.mksbmli_start_playback(BulletMLPlaybackHandle);
+
+                MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
+                
+                MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
+                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY);      
+                MksBulletmlInterpreterNative.mksbmli_set_player_position(
+                    BulletMLPlaybackHandle,
+                    WindowCenterX * ScaleFactor,
+                    -(WindowCenterY + (WindowCenterY / 2f)) * ScaleFactor);
+                
                 IsPlaying = true;
 
                 PreInstantiateBullets();
