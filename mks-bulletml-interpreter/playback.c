@@ -10,8 +10,6 @@ int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK
     size_t filename_length = strlen(xml_filename);
     if(filename_length == 0 || filename_length >= MKSBMLI_XML_FILENAME_MAX_LENGTH) return MKSBMLI_INVALID_XML_FILENAME;
 
-    memset(playback, 0, sizeof(*playback));
-
     playback->handle = handle;
     playback->is_playing = false;
     copy_text(playback->xml_filename, xml_filename);
@@ -58,6 +56,8 @@ void shutdown_playback(Playback* playback) {
             playback->bulletml_bases[index] = NULL;
         }
     }
+
+    memset(playback, 0, sizeof(*playback));
 }
 
 void update_playback(Playback* playback) {
