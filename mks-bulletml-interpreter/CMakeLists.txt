@@ -87,13 +87,34 @@ endif()
 # and to CMAKE_BUILD_TYPE for single-config generators (Makefiles/Ninja)
 set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>")
 
-add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:mks-bulletml-interpreter>
-        ${PLAYER_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_LINKER_FILE:mks-bulletml-interpreter>
-        ${PLAYER_BUILD_DIR}
-    COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>"
-)
+if(WIN32)
+    add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
+
+        # The interpreter's runtime DLL only — no .lib, it's not needed at runtime
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:mks-bulletml-interpreter>
+            ${PLAYER_BUILD_DIR}
+
+        # Runtime dependencies the interpreter needs at load time
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIBXML2_ROOT}/lib/libxml2.dll"
+            ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ICONV_ROOT}/bin/libiconv-2.dll"
+            ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ICONV_ROOT}/bin/libcharset-1.dll"
+            ${PLAYER_BUILD_DIR}
+
+        COMMENT "Copy mks-bulletml-interpreter runtime DLL and dependencies to build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>"
+    )
+else()
+    add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:mks-bulletml-interpreter>
+            ${PLAYER_BUILD_DIR}
+        COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>"
+    )
+endif()
