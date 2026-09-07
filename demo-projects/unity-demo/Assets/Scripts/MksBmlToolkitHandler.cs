@@ -1,5 +1,8 @@
+// Example Unity script for handling MksBulletmlInterpreter playback and bullet management
+// Provided BulletML files were generated and exported by the MKS BulletML Pattern Builder @ https://store.steampowered.com/app/3950780/MKS_BulletML_Pattern_Builder/
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using MksBulletmlInterpreter;
 
 public class MksBmlToolkitHandler : MonoBehaviour
@@ -8,8 +11,14 @@ public class MksBmlToolkitHandler : MonoBehaviour
 
     int Major, Minor, Patch;
 
-    //string BulletMLFilepath = "Assets/BulletML_Files/aimed_bml.xml";
-    string BulletMLFilepath = @"F:\GitHub\mks-bulletml-toolkit\bulletml_files\basic_bml.xml";
+    [SerializeField] Sprite BulletSprite;
+
+    // UNCOMMENT one file here to load and display
+    // and move the mouse around in the window for the aimed xml files
+    //string BulletMLFilepath = "Assets/BulletML_Files/basic_bml.xml";
+    //string BulletMLFilepath = "Assets/BulletML_Files/aimed_single_bml.xml";
+    string BulletMLFilepath = "Assets/BulletML_Files/aimed_bml.xml";
+    
     bool BmlFileLoaded = false;
     uint BulletMLPlaybackHandle = 0;
 
@@ -23,8 +32,56 @@ public class MksBmlToolkitHandler : MonoBehaviour
     const int MaxBullets = 5000;
     VirtualBullet[] Bullets = new VirtualBullet[MaxBullets];
     IntPtr[] BulletPtrs = new IntPtr[MaxBullets];
+    uint[] BulletHandlesToDelete = new uint[MaxBullets];
+    GameObject[] BulletObjects = new GameObject[MaxBullets];
 
     int BulletCount = 0;
+    float ScaleFactor = 30.0f;
+
+    void UpdatePlayerPositionFromMouse()
+    {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
+        Camera activeCamera = Camera.main;
+
+        if (activeCamera == null)
+        {
+            return;
+        }
+
+        Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
+        float distanceFromCamera = Mathf.Abs(activeCamera.transform.position.z);
+        Vector3 mouseWorldPosition = activeCamera.ScreenToWorldPoint(new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, distanceFromCamera));
+
+        MksBulletmlInterpreterNative.mksbmli_set_player_position(
+            BulletMLPlaybackHandle,
+            mouseWorldPosition.x * ScaleFactor,
+            -mouseWorldPosition.y * ScaleFactor);
+    }
+
+    void PreInstantiateBullets()
+    {
+        if (BulletSprite == null)
+        {
+            Debug.LogError("BulletSprite is not assigned.");
+            return;
+        }
+
+        for (int i = 0; i < MaxBullets; i++)
+        {
+            GameObject bulletObject = new GameObject($"Bullet_{i}");
+            bulletObject.transform.SetParent(transform, false);
+
+            SpriteRenderer spriteRenderer = bulletObject.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = BulletSprite;
+
+            bulletObject.SetActive(false);
+            BulletObjects[i] = bulletObject;
+        }
+    }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,16 +108,12 @@ public class MksBmlToolkitHandler : MonoBehaviour
                 MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
                 MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
                 MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY);
-                MksBulletmlInterpreterNative.mksbmli_set_player_position(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY + (WindowCenterY / 2));
+                UpdatePlayerPositionFromMouse();
 
                 MksBulletmlInterpreterNative.mksbmli_start_playback(BulletMLPlaybackHandle);
-                
-                MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
-                MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
-                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY);
-                MksBulletmlInterpreterNative.mksbmli_set_player_position(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY + (WindowCenterY / 2));
-
                 IsPlaying = true;
+
+                PreInstantiateBullets();
                 
                 Debug.Log("Started playback");
             }
@@ -103,7 +156,9 @@ public class MksBmlToolkitHandler : MonoBehaviour
     {
        if(IsPlaying) 
        {
-           MksBulletmlInterpreterNative.mksbmli_next_frame(BulletMLPlaybackHandle);
+            UpdatePlayerPositionFromMouse();
+
+            MksBulletmlInterpreterNative.mksbmli_next_frame(BulletMLPlaybackHandle);
 
             if(MksBulletmlInterpreterNative.mksbmli_get_bullets(BulletMLPlaybackHandle, MaxBullets, BulletPtrs, out BulletCount) == (int)MksbmliErrorCode.NoError)
             {
@@ -111,12 +166,47 @@ public class MksBmlToolkitHandler : MonoBehaviour
                 
                 if(BulletCount > 0)
                 {
+                    int BulletDeleteCount = 0;
+
                     for(int i = 0; i < BulletCount; i++)
                     {
                         Bullets[i] = MksBulletmlInterpreterNative.ReadBullet(BulletPtrs[i]);
+                        float bulletX = Bullets[i].position.x / ScaleFactor;
+                        float bulletY = Bullets[i].position.y / ScaleFactor;
+
+                        if (BulletObjects[i] != null)
+                        {
+                            BulletObjects[i].SetActive(true);
+                            BulletObjects[i].transform.position = new Vector3(bulletX, bulletY, 0f);
+                        }
+
+                        // bool isOutsideWindow = bulletX < 50f || bulletX > (WindowWidth - 50f) || bulletY < 50f || bulletY > (WindowHeight - 50f);
+                        bool isOutsideWindow = bulletX < (-WindowCenterX/ScaleFactor) || bulletX > (WindowCenterX/ScaleFactor) || bulletY < -WindowCenterY/ScaleFactor || bulletY > (WindowCenterY/ScaleFactor);
+                        if (isOutsideWindow)
+                        {
+                            BulletHandlesToDelete[BulletDeleteCount++] = Bullets[i].handle;
+
+                            if (BulletObjects[i] != null)
+                            {
+                                BulletObjects[i].SetActive(false);
+                            }
+                        }
 
                         // Example access after marshaling:
                         // Debug.Log($"Bullet {i}: handle={Bullets[i].handle}, pos=({Bullets[i].position.x}, {Bullets[i].position.y})");
+                    }
+
+                    if (BulletDeleteCount > 0)
+                    {
+                        MksBulletmlInterpreterNative.mksbmli_delete_bullets(BulletMLPlaybackHandle, BulletHandlesToDelete, BulletDeleteCount);
+                    }
+
+                    for(int i = BulletCount; i < MaxBullets; i++)
+                    {
+                        if (BulletObjects[i] != null)
+                        {
+                            BulletObjects[i].SetActive(false);
+                        }
                     }
                 }
             }
@@ -124,6 +214,8 @@ public class MksBmlToolkitHandler : MonoBehaviour
             {
                 Debug.LogError("Failed to get bullets.");
             }
+
+            
        }
     }
 }

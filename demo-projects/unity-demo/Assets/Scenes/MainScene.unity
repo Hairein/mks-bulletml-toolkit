@@ -575,6 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c265c62ec7cbaa4eab33fdb4fd7cbb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MksBmlToolkitHandler
+  BulletSprite: {fileID: 21300000, guid: 7c9c4953c3b5e4647bfc1ccd930102f3, type: 3}
 --- !u!4 &1964400161
 Transform:
   m_ObjectHideFlags: 0
