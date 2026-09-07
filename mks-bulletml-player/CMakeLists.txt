@@ -60,7 +60,8 @@ if(WIN32)
     list(APPEND HEADER_FILES dirent.h)
 endif()
 
-add_executable(mks-bulletml-player ${SRC_FILES})
+add_executable(mks-bulletml-player ${SRC_FILES}
+    app.h mksbmlp-defines.h user-interface.h utility.h)
 
 # Make header files visible in IDE (not used for compiling)
 source_group("Header Files" FILES ${HEADER_FILES})
