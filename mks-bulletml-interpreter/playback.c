@@ -5,8 +5,6 @@
 #include "playback.h"
 
 int init_playback(Playback* playback, const char* xml_filename, MKSBMLI_PLAYBACK_HANDLE handle) {
-    memset(playback, 0, sizeof(*playback));
-
     if(handle == 0) return MKSBMLI_NO_ERROR;
 
     size_t filename_length = strlen(xml_filename);
