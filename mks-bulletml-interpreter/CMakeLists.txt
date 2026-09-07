@@ -95,5 +95,8 @@ add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:mks-bulletml-interpreter>
         ${PLAYER_BUILD_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_LINKER_FILE:mks-bulletml-interpreter>
+        ${PLAYER_BUILD_DIR}
     COMMENT "${COPY_COMMENT}"
 )
