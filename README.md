@@ -7,7 +7,7 @@ The entire project is provided under the MIT license except foreign files and li
 The interpreter library loads and parses the BulletML XML files provided and enables them to be played back. After each updated frame, the virtual bullets can be read back and tracked with unique handles per bullet.
 The library using application is responsible for providing information when specific bullets can be deleted within the library, e.g. when bullets leave specific bounds. Otherwise, memory usage can accumulate.
 
-## Player
+## Player (Windows only)
 A small application to show how the library is used and those functions can be called.
 It visualizes the bullets interpreted within the library using Raylib/RaylibGui.
 To use this sample app, provide BulletML XML files within the folder 'bulletml_files', all will be loaded automatically on startup. 

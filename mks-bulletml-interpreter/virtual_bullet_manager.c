@@ -21,6 +21,8 @@ void get_vbm_bullets(VirtualBulletManager* vbm, int max_bullets, VirtualBullet**
     for(int index = 0; index < MKSBMLI_MAX_BULLETS; index++) {
         if(vbm->bullets[index].handle == 0) continue;
 
+        if(bullet_index >= max_bullets) break;
+
         *nos_bullets = *nos_bullets + 1;
 
         bullets[bullet_index++] = &vbm->bullets[index];

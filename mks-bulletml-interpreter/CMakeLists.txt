@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-
 project(mks-bulletml-interpreter LANGUAGES C)
 
 # activate c11
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Default build type for single-config generators (Makefiles/Ninja) if unset
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+endif()
 
 # create library
 add_library(mks-bulletml-interpreter SHARED
@@ -71,29 +76,45 @@ else()
     )
 endif()
 
-# Set PLAYER_BUILD_DIR and copy target based on Debug or Release
+# Determine platform suffix
 if(WIN32)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Win-Desktop-Debug")
-        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Win-Desktop-Debug")
-    else()
-        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Win-Desktop-Release")
-        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Win-Desktop-Release")
-    endif()
+    set(PLATFORM_SUFFIX "Win-Desktop")
 else()
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Debug")
-        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Debug")
-    else()
-        set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-Desktop-Release")
-        set(COPY_COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-Desktop-Release")
-    endif()
+    set(PLATFORM_SUFFIX "Desktop")
 endif()
 
-add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:mks-bulletml-interpreter>
-        ${PLAYER_BUILD_DIR}
-    COMMENT "${COPY_COMMENT}"
-)
+# $<CONFIG> resolves per-build for multi-config generators (VS/Xcode/Ninja Multi-Config)
+# and to CMAKE_BUILD_TYPE for single-config generators (Makefiles/Ninja)
+set(PLAYER_BUILD_DIR "${CMAKE_SOURCE_DIR}/../build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>")
+
+if(WIN32)
+    add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
+
+        # The interpreter's runtime DLL only — no .lib, it's not needed at runtime
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:mks-bulletml-interpreter>
+            ${PLAYER_BUILD_DIR}
+
+        # Runtime dependencies the interpreter needs at load time
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIBXML2_ROOT}/lib/libxml2.dll"
+            ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ICONV_ROOT}/bin/libiconv-2.dll"
+            ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ICONV_ROOT}/bin/libcharset-1.dll"
+            ${PLAYER_BUILD_DIR}
+
+        COMMENT "Copy mks-bulletml-interpreter runtime DLL and dependencies to build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>"
+    )
+else()
+    add_custom_command(TARGET mks-bulletml-interpreter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PLAYER_BUILD_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:mks-bulletml-interpreter>
+            ${PLAYER_BUILD_DIR}
+        COMMENT "Copy libmks-bulletml-interpreter.so to build-mks-bulletml-player-${PLATFORM_SUFFIX}-$<CONFIG>"
+    )
+endif()

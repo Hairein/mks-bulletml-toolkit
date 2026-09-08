@@ -54,20 +54,27 @@ dkms.conf
 # debug information files
 *.dwo
 
+# Qt Creator / CMake user-specific files
+*.user
+*.user.*
+.qtc_clangd/
+
+# Build directories and generated CMake output
+build/
+build*/
+**/build/
+cmake-build-*/
+**/cmake-build-*/
+*.dir/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 tinyexpr - https://github.com/codeplea/tinyexpr# - zlib License
 
 # -------------------------------------------------------
 _*/
 _*
-
-*.user
-
-build-mks-bulletml-interpreter-Desktop-Debug/
-build-mks-bulletml-player-Desktop-Debug/
-build-mks-bulletml-interpreter-Win-Desktop-Debug/
-build-mks-bulletml-interpreter-Win-Desktop-Release/
-build-mks-bulletml-player-Win-Desktop-Debug/
-build-mks-bulletml-player-Win-Desktop-Release/
-
-.qtc_clangd/
