@@ -88,16 +88,22 @@ public class MksBmlToolkitHandler : MonoBehaviour
     {
         Debug.Log("Initializing MksBulletmlInterpreter...");
 
+        // 1. Initialize the MksBulletmlInterpreter
         if(MksBulletmlInterpreterNative.mksbmli_init() == (int)MksbmliErrorCode.NoError)
         {
             Debug.Log("MksBulletmlInterpreter initialized successfully.");
             
             MksBmlTkInitialized = true;
 
+            // 2. Read the version of the MksBulletmlInterpreter
             MksBulletmlInterpreterNative.mksbmli_get_version(out Major, out Minor, out Patch);  
             
             Debug.Log("MksBulletmlInterpreter version: " + Major + "." + Minor + "." + Patch);
 
+            // and set the random seed for reproducibility                
+            MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
+
+            // 3. Load the BulletML file
             BmlFileLoaded = MksBulletmlInterpreterNative.mksbmli_load_xml(BulletMLFilepath, out BulletMLPlaybackHandle) == (int)MksbmliErrorCode.NoError;            
             if(BmlFileLoaded)
             {
@@ -105,12 +111,12 @@ public class MksBmlToolkitHandler : MonoBehaviour
                 
                 Debug.Log("BulletMLPlaybackHandle: " + BulletMLPlaybackHandle);
                
+                // 4. Start playback and configure initial settings
                 MksBulletmlInterpreterNative.mksbmli_start_playback(BulletMLPlaybackHandle);
-
-                MksBulletmlInterpreterNative.mksbmli_set_random_seed(1337);
                 
+                // 5. Configure initial rank, emitter center, and player position
                 MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
-                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, WindowCenterX, WindowCenterY);      
+                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, 0, 0); // Relative to window center      
                 MksBulletmlInterpreterNative.mksbmli_set_player_position(
                     BulletMLPlaybackHandle,
                     WindowCenterX * ScaleFactor,
@@ -141,14 +147,17 @@ public class MksBmlToolkitHandler : MonoBehaviour
         {
             if(IsPlaying)
             {
+                // 1. Stop playback if it is currently playing
                 MksBulletmlInterpreterNative.mksbmli_stop_playback(BulletMLPlaybackHandle);
                 
                 Debug.Log("Stopped playback");
                 
+                // 2. Clear all bullets
                 MksBulletmlInterpreterNative.mksbmli_clear_bullets(BulletMLPlaybackHandle);                
             }
 
             Debug.Log("Shutting down MksBulletmlInterpreter...");
+
 
             MksBulletmlInterpreterNative.mksbmli_shutdown();
             
@@ -163,11 +172,13 @@ public class MksBmlToolkitHandler : MonoBehaviour
        {
             UpdatePlayerPositionFromMouse();
 
+            // 1. Calculate the next frame for the BulletML playback
             MksBulletmlInterpreterNative.mksbmli_next_frame(BulletMLPlaybackHandle);
 
+            // 2. Retrieve the current bullets from the BulletML playback
             if(MksBulletmlInterpreterNative.mksbmli_get_bullets(BulletMLPlaybackHandle, MaxBullets, BulletPtrs, out BulletCount) == (int)MksbmliErrorCode.NoError)
             {
-                Debug.Log("NosBullets: " + BulletCount);
+                //Debug.Log("NosBullets: " + BulletCount);
                 
                 if(BulletCount > 0)
                 {
@@ -185,7 +196,6 @@ public class MksBmlToolkitHandler : MonoBehaviour
                             BulletObjects[i].transform.position = new Vector3(bulletX, bulletY, 0f);
                         }
 
-                        // bool isOutsideWindow = bulletX < 50f || bulletX > (WindowWidth - 50f) || bulletY < 50f || bulletY > (WindowHeight - 50f);
                         bool isOutsideWindow = bulletX < (-WindowCenterX/ScaleFactor) || bulletX > (WindowCenterX/ScaleFactor) || bulletY < -WindowCenterY/ScaleFactor || bulletY > (WindowCenterY/ScaleFactor);
                         if (isOutsideWindow)
                         {
@@ -201,6 +211,8 @@ public class MksBmlToolkitHandler : MonoBehaviour
                         // Debug.Log($"Bullet {i}: handle={Bullets[i].handle}, pos=({Bullets[i].position.x}, {Bullets[i].position.y})");
                     }
 
+
+                    // 3. Delete bullets that have moved outside the window
                     if (BulletDeleteCount > 0)
                     {
                         MksBulletmlInterpreterNative.mksbmli_delete_bullets(BulletMLPlaybackHandle, BulletHandlesToDelete, BulletDeleteCount);
@@ -219,8 +231,6 @@ public class MksBmlToolkitHandler : MonoBehaviour
             {
                 Debug.LogError("Failed to get bullets.");
             }
-
-            
        }
     }
 }
