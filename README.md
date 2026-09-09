@@ -13,6 +13,45 @@ It visualizes the bullets interpreted within the library using Raylib/RaylibGui.
 To use this sample app, provide BulletML XML files within the folder 'bulletml_files', all will be loaded automatically on startup. 
 The 'asset' folder contains all resources required to run the player application.
 
+## Demos (Windows only)
+
+A demo project for both Godot (Mono version 4.7) and Unity (Mono, 6000.6.0f1) has been provided.
+It shows the call sequence to utilize the MKS BulletML toolkit library mks-bulletml-interpreter.dll through a C# Native declaration file MksBulletmlInterpreter.cs.
+
+### Godot Demo
+To setup the Godot Demo, the following steps are required:
+1. Unzip the mks-bulletml-tk-csharp_package.zip and copy all DLLs into the root folder of the Godot demo project at demo-projects\godot-demo.
+2. Open the Godot project for editing and run the project.
+3. Move the mouse within the Window
+4. See the relevant files at demo-projects\godot-demo\Scripts\GodotDemoHandler.cs and demo-projects\godot-demo\Scripts\MksBulletmlInterpreter.cs on how the library is used.
+
+### Unity Demo
+To setup the Unity Demo, the following steps are required:
+1. Unzip the mks-bulletml-tk-csharp_package.zip and move the entire folder into \demo-projects\unity-demo\Assets\Plugins folder.
+2. Open the Unity project for editing and run the project.
+3. Move the mouse within the Window
+4. See the relevant files at demo-projects\unity-demo\Assets\Scripts\MksBmlToolkitHandler.cs and demo-projects\unity-demo\Assets\Plugins\mks-bulletml-tk-csharp_package\MksBulletmlInterpreter.cs on how the library is used.
+
+### Call Sequence of the API Functions
+Both demos use the following functions in order to initialize and shutdown the library correctly while playing back a single loaded xml file during the run.
+- MksBulletmlInterpreterNative.mksbmli_init()
+- MksBulletmlInterpreterNative.mksbmli_get_version()
+- MksBulletmlInterpreterNative.mksbmli_set_random_seed()
+- MksBulletmlInterpreterNative.mksbmli_load_xml()
+
+- MksBulletmlInterpreterNative.mksbmli_start_playback()
+- MksBulletmlInterpreterNative.mksbmli_set_rank()
+- MksBulletmlInterpreterNative.mksbmli_set_emitter_center()
+- MksBulletmlInterpreterNative.mksbmli_set_player_position()
+
+- MksBulletmlInterpreterNative.mksbmli_next_frame()
+- MksBulletmlInterpreterNative.mksbmli_get_bullets()
+- MksBulletmlInterpreterNative.mksbmli_delete_bullets()
+
+- MksBulletmlInterpreterNative.mksbmli_stop_playback()
+- MksBulletmlInterpreterNative.mksbmli_clear_bullets()
+- MksBulletmlInterpreterNative.mksbmli_shutdown()
+
 ---
 
 ## API Functions

@@ -116,7 +116,7 @@ public class MksBmlToolkitHandler : MonoBehaviour
                 
                 // 5. Configure initial rank, emitter center, and player position
                 MksBulletmlInterpreterNative.mksbmli_set_rank(BulletMLPlaybackHandle, 0.5f);
-                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, 0, 0); // Relative to window center      
+                MksBulletmlInterpreterNative.mksbmli_set_emitter_center(BulletMLPlaybackHandle, 0, 0); // Relative to window center, the Unity Sprite is (0/0) at the center of the window      
                 MksBulletmlInterpreterNative.mksbmli_set_player_position(
                     BulletMLPlaybackHandle,
                     WindowCenterX * ScaleFactor,

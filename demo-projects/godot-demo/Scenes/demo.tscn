@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://w55sphb33loj"]
+
+[ext_resource type="Script" uid="uid://7lk38rehxjcv" path="res://Scripts/GodotDemoHandler.cs" id="1_nsw6b"]
+
+[node name="Node2D" type="Node2D" unique_id=1066775514]
+
+[node name="TitleLabel" type="Label" parent="." unique_id=76561833]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 361.0
+offset_bottom = 31.0
+scale = Vector2(0.4, 0.4)
+text = "Welcome to the Godot BulletML Toolkit Demo"
+
+[node name="LogicNode" type="Node" parent="." unique_id=242891469]
+script = ExtResource("1_nsw6b")

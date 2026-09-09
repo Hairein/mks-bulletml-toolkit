@@ -78,3 +78,6 @@ tinyexpr - https://github.com/codeplea/tinyexpr# - zlib License
 # -------------------------------------------------------
 _*/
 _*
+
+.vs/
+.vscode/
